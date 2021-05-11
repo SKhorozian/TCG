@@ -1,4 +1,3 @@
-
 using MLAPI;
 using UnityEngine;
 
@@ -15,7 +14,18 @@ public class GameManager : MonoBehaviour
         {
             StatusLabels();
 
-            SubmitNewPosition();
+            if (NetworkManager.Singleton.IsServer) {
+                if (NetworkManager.Singleton.ConnectedClients.TryGetValue(NetworkManager.Singleton.LocalClientId, out var networkedClient))
+                {
+                    var player = networkedClient.PlayerObject.GetComponent<Player>();
+                    if (player)
+                    {
+                        if (!player.HasGameStart)
+                            StartGame();
+                    }
+                }
+            }
+
         }
 
         GUILayout.EndArea();
@@ -25,7 +35,6 @@ public class GameManager : MonoBehaviour
     {
         if (GUILayout.Button("Host")) NetworkManager.Singleton.StartHost();
         if (GUILayout.Button("Client")) NetworkManager.Singleton.StartClient();
-        if (GUILayout.Button("Server")) NetworkManager.Singleton.StartServer();
     }
 
     static void StatusLabels()
@@ -38,19 +47,40 @@ public class GameManager : MonoBehaviour
         GUILayout.Label("Mode: " + mode);
     }
 
-    static void SubmitNewPosition()
+    static void DrawCard()
     {
-        if (GUILayout.Button(NetworkManager.Singleton.IsServer ? "Move" : "Request Position Change"))
+        if (GUILayout.Button(NetworkManager.Singleton.IsServer ? "Draw" : "Request Draw"))
         {
-            if (NetworkManager.Singleton.ConnectedClients.TryGetValue(NetworkManager.Singleton.LocalClientId,
-                out var networkedClient))
+            if (NetworkManager.Singleton.ConnectedClients.TryGetValue(NetworkManager.Singleton.LocalClientId, out var networkedClient))
             {
-                //var player = networkedClient.PlayerObject.GetComponent<HelloWorldPlayer>();
-                //if (player)
-                //{
-                //    player.Move();
-                //}
+                var player = networkedClient.PlayerObject.GetComponent<Player>();
+                if (player)
+                {
+                    player.Draw(1);
+                }
             }
         }
     }
+
+    static void StartGame () {
+        if (!NetworkManager.Singleton.IsServer) return;
+
+        if (NetworkManager.Singleton.IsServer) {
+            if (NetworkManager.Singleton.ConnectedClientsList.Count != 2) return;
+
+            if (GUILayout.Button("Start Game"))
+            {
+                //Start the game
+                //For each player start the game.
+                foreach (MLAPI.Connection.NetworkClient c in NetworkManager.Singleton.ConnectedClientsList) {
+                    var player = c.PlayerObject.GetComponent<Player>();
+                    if (player)
+                    {
+                        player.StartGame();
+                    }
+                }
+            }
+        }
+    }
+    
 }
