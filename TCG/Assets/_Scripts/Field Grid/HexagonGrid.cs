@@ -9,7 +9,7 @@ public class HexagonGrid : MonoBehaviour
 
     [SerializeField] HexagonCell cellPrefab;
 
-    List<HexagonCell> cells = new List<HexagonCell>();
+    Dictionary<Vector2, HexagonCell> cells = new Dictionary<Vector2, HexagonCell>();
 
 
     public void InitializeGrid() {
@@ -79,15 +79,18 @@ public class HexagonGrid : MonoBehaviour
 
     void CreateCell (int z, int x) {
         Vector3 position;
-        position.x = (x + z * 0.5f - z / 2) * (HexagonMetrics.innerRadius * 2f) - width/2;
+        position.x = (x + z * 0.5f - z / 2) * (HexagonMetrics.innerRadius * 2f) - width/2 + 1.2f;
         position.y = 0f;
         position.z = z * (HexagonMetrics.outerRadius * 1.5f) - height/3f;
 
         HexagonCell cell = Instantiate<HexagonCell> (cellPrefab);
-        cells.Add(cell);
+
+        Vector2 cellPos = new Vector2 (z, x);
+        cells.Add(cellPos, cell);
         cell.transform.name = "Cell: " + z + ", " + x;
         cell.transform.SetParent(transform, false);
         cell.transform.localPosition = position;
+        cell.Position = cellPos;
     }
 
 
@@ -102,4 +105,6 @@ public class HexagonGrid : MonoBehaviour
     {
         
     }
+
+    public Dictionary<Vector2, HexagonCell> Cells {get {return cells;}}
 }

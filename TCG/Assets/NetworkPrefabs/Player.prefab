@@ -61,20 +61,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: da99007302518da4589879e589043d16, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerHand: []
-  playerDeck:
-  - {fileID: 11400000, guid: ef793f3c5473c474c8b5a16b58dfa7ea, type: 2}
-  - {fileID: 11400000, guid: ef793f3c5473c474c8b5a16b58dfa7ea, type: 2}
-  - {fileID: 11400000, guid: ef793f3c5473c474c8b5a16b58dfa7ea, type: 2}
-  - {fileID: 11400000, guid: 27bc8e0f24966764eb64f3fd44950149, type: 2}
-  - {fileID: 11400000, guid: 27bc8e0f24966764eb64f3fd44950149, type: 2}
-  - {fileID: 11400000, guid: 27bc8e0f24966764eb64f3fd44950149, type: 2}
-  - {fileID: 11400000, guid: 58e4ba6ba6a3865428705ba928bcd966, type: 2}
-  - {fileID: 11400000, guid: 58e4ba6ba6a3865428705ba928bcd966, type: 2}
-  - {fileID: 11400000, guid: 58e4ba6ba6a3865428705ba928bcd966, type: 2}
-  - {fileID: 11400000, guid: a031451f7d5bb704f8b035909b914a56, type: 2}
-  - {fileID: 11400000, guid: a031451f7d5bb704f8b035909b914a56, type: 2}
-  - {fileID: 11400000, guid: a031451f7d5bb704f8b035909b914a56, type: 2}
+  startDeck:
+    deck:
+    - card: {fileID: 11400000, guid: 4a5d8e55584d2264dbda6a55f2a5ed83, type: 2}
+      copies: 4
+    - card: {fileID: 11400000, guid: 86675df5381bccb4085263a2a83be2db, type: 2}
+      copies: 4
+    - card: {fileID: 11400000, guid: 606da591aba12be4fab28b6781f4d87f, type: 2}
+      copies: 4
+    - card: {fileID: 11400000, guid: 222bbe14cecf8e94c93bc8d1bf7c7d36, type: 2}
+      copies: 3
+  controledUnits:
+  - {fileID: 0}
   playerHandPanelPrefab: {fileID: 531725264464121635, guid: ee3ed2799fccb7744b258472fc6b294b,
     type: 3}
   playerStatsPrefab: {fileID: 1559726142572488917, guid: fd45187d5885d6c43aaca2df036743ac,

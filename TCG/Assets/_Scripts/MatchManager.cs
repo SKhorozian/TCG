@@ -28,6 +28,7 @@ public class MatchManager : NetworkBehaviour
         WritePermission = NetworkVariablePermission.ServerOnly
     });
 
+    [SerializeField] GameObject fieldUnitPrefab;
 
     // Start is called before the first frame update
     void Start()
@@ -55,22 +56,66 @@ public class MatchManager : NetworkBehaviour
 
         priority = player1;
         localHasPriority = true;
+
+        InitializeMatchClientRpc ();
+    }
+    [ClientRpc]
+    void InitializeMatchClientRpc () {
+        if (NetworkManager.Singleton.ConnectedClients.TryGetValue(NetworkManager.Singleton.LocalClientId, out var networkedClient))
+        {
+            var player = networkedClient.PlayerObject.GetComponent<Player>();
+            if (player)
+            {
+                player.MatchManage = this;
+            }
+        }
+
+        fieldGrid = Instantiate (fieldGridPrefab).GetComponent<HexagonGrid> ();
+        fieldGrid.InitializeGrid();
+        if (!IsOwner) {
+            Camera.main.transform.position = (new Vector3 (0,7,5));
+            Camera.main.transform.rotation = Quaternion.Euler (new Vector3 (60,-180,0));
+        }
     }
 
     //Returns true if the card was played successfully, else return false
-    public bool PlayCard (Card card, Player player) {
+    public bool PlayCard (CardInstance card, Player player, Vector2 hexCellPos) {
         if (!IsServer) return false;
 
         if (!player.Equals(priority)) return false;
         if (player.CurrentMana < card.Cost) return false;
 
-        //TODO the card actually plays
+        switch (card.Type) {
+            case CardType.Unit:
+                Debug.Log ("Player " + player.OwnerClientId + " played " + card.CardName + " on cell " + hexCellPos);
+                HexagonCell cell;
+                fieldGrid.Cells.TryGetValue(hexCellPos, out cell);
+                SummonUnit (card, player, cell);
+                SwitchPriority (); //It becomes the other player's turn to play
+                break;
+            default:
+                break;
+        }
 
-        SwitchPriority (); //It becomes the other player's turn to play
 
         lastActionWasPass.Value = false;
 
         return true;
+    }
+
+    void SummonUnit (CardInstance card, Player player, HexagonCell cell) {
+        if (!IsServer) return;
+
+        GameObject newUnit = Instantiate(fieldUnitPrefab, cell.gameObject.transform.position, Quaternion.identity);
+
+        newUnit.gameObject.GetComponent<NetworkObject>().SpawnWithOwnership ( player.OwnerClientId, null, true);
+        FieldUnit fieldUnit = newUnit.GetComponent<FieldUnit> ();
+        fieldUnit.SummonUnit (card, player, cell);
+
+        cell.FieldCard = fieldUnit;
+
+        player.SummonUnit (fieldUnit);
+
     }
 
     void SwitchPriority () {
@@ -86,7 +131,6 @@ public class MatchManager : NetworkBehaviour
 
         SwitchPriorityClientRpc (priority.OwnerClientId);
     }
-
     [ClientRpc]
     void SwitchPriorityClientRpc (ulong netid) {
         if (NetworkManager.Singleton.LocalClientId == netid)
@@ -104,11 +148,17 @@ public class MatchManager : NetworkBehaviour
             if (lastActionWasPass.Value) {
                 EndTurn ();
                 lastActionWasPass.Value = false;
+                
+                if (turnNumber.Value % 2 == 1)
+                    priority = player1;
+                else
+                    priority = player2;
+
+                SwitchPriorityClientRpc (priority.OwnerClientId);
             } else {
                 lastActionWasPass.Value = true;
+                SwitchPriority();
             }
-
-            SwitchPriority();
         }
         
     }
@@ -137,5 +187,7 @@ public class MatchManager : NetworkBehaviour
             return localHasPriority;
         }
     }
+
+    public HexagonGrid FieldGrid {get {return fieldGrid;}}
 
 }

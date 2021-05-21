@@ -8,7 +8,7 @@ public class PlayerHandDisplay : MonoBehaviour
     [SerializeField] List<CardDisplay> cardDisplays;
     [SerializeField] GridLayoutGroup gridLayoutGroup;
 
-    public void UpdateCardDisplays (Card[] handCards) {
+    public void UpdateCardDisplays (CardInstance[] handCards) {
         for (int i = 0; i < cardDisplays.Count; i++) {
             cardDisplays[i].gameObject.SetActive (false);
         }

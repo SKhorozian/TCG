@@ -8,9 +8,17 @@ using MLAPI.Messaging;
 public class Player : NetworkBehaviour 
 {
     bool gameStart = false;
-    public List<Card> playerHand = new List<Card> ();
+    public List<CardInstance> playerHand = new List<CardInstance> ();
 
-    [SerializeField] private List<Card> playerDeck = new List<Card>();
+    [SerializeField] private Deck startDeck;
+    [SerializeField] private GameDeck playerDeck;
+
+    //All used spells and dead units go here
+    [SerializeField] private List<CardInstance> graveyard;
+    [SerializeField] private List<CardInstance> destroyedCards;
+
+    //Controled Field Cards
+    [SerializeField] List<FieldUnit> controledUnits;
 
     //UI
     [SerializeField] GameObject playerHandPanelPrefab;
@@ -23,6 +31,8 @@ public class Player : NetworkBehaviour
     [SerializeField] MatchManager matchManager;
 
     [SerializeField] GameObject turnButtonPrefab;
+
+
 
     //Stats:
     //Health
@@ -40,6 +50,8 @@ public class Player : NetworkBehaviour
         ReadPermission = NetworkVariablePermission.Everyone,
         WritePermission = NetworkVariablePermission.ServerOnly
     });
+
+    #region Gameplay
 
     //Starts the game
     public void StartGame () {
@@ -63,7 +75,6 @@ public class Player : NetworkBehaviour
 
         InitializeDeck();
         Draw(5); //TODO offer mulligan instead
-
     }
 
     [ClientRpc]
@@ -85,21 +96,20 @@ public class Player : NetworkBehaviour
 
     }
 
-    public void PlayCard (int c) {
+    public void PlayCard (int c, Vector2 cell) {
         if (IsServer) {
-            if (matchManager.PlayCard (playerHand[c], this)) {
-                SpendMana (playerHand[c].Cost);
+            if (matchManager.PlayCard (playerHand[c], this, cell)) {
                 playerHand.RemoveAt(c);
             }
             UpdatePlayerHand();
         } else {
-            PlayCardRequestServerRPC(c);
+            PlayCardRequestServerRPC(c, cell);
         }
     }
 
     [ServerRpc]
-    void PlayCardRequestServerRPC (int c) {
-        PlayCard(c);
+    void PlayCardRequestServerRPC (int c, Vector2 cell) {
+        PlayCard(c, cell);
     }
 
 
@@ -109,7 +119,7 @@ public class Player : NetworkBehaviour
 
             //We Loop for the number of times we want to draw.
             for (int i = 0; i < number; i++) {
-                if (playerDeck.Count <= 0 ) {
+                if (playerDeck.CurrentDeckSize <= 0 ) {
                     //No more cards in the deck
                     //Do something
                     break;
@@ -121,18 +131,17 @@ public class Player : NetworkBehaviour
                     break;
                 }
 
-                playerHand.Add(playerDeck[playerDeck.Count-1]);
-                playerDeck.RemoveAt(playerDeck.Count-1);
+                playerHand.Add(playerDeck.Draw());
             }
 
-            Debug.Log("Player: " + NetworkManager.ServerClientId + " drew " + number + " cards.");
+            Debug.Log("Player: " + OwnerClientId + " drew " + number + " cards.");
 
             UpdatePlayerHand ();
 
         } else {
             //We call an RPC
             DrawServerRpc(number);
-            Debug.Log("Player: " + NetworkManager.ServerClientId + " sent an RPC to draw " + number + " cards.");
+            Debug.Log("Player: " + OwnerClientId + " sent an RPC to draw " + number + " cards.");
         }
     }
 
@@ -142,9 +151,9 @@ public class Player : NetworkBehaviour
         string[] cardLocations = new string [playerHand.Count];
 
         for (int i = 0; i < playerHand.Count; i++) {
-            cardLocations[i] = "Cards/" + playerHand[i].Color.ToString() + "/" + playerHand[i].CardName;
+            cardLocations[i] = playerHand[i].CardLocation;
         }
-        
+
         UpdatePlayerHandClientRPC (cardLocations);
     }
 
@@ -152,14 +161,22 @@ public class Player : NetworkBehaviour
     void UpdatePlayerHandClientRPC (string[] cardLocations) {
         if (!IsOwner) return;
 
-        Card[] cards = new Card[cardLocations.Length];
+        CardInstance[] instances = new CardInstance [cardLocations.Length];
 
-        for (int i = 0; i < cards.Length; i++) {
-            cards[i] = Resources.Load<Card> (cardLocations[i]);
+        for (int i = 0; i < instances.Length; i++) {
+            
+            Card c = Resources.Load<Card> (cardLocations[i]);
+
+            switch (c.Type) {
+                case CardType.Unit:
+                    instances[i] = new UnitCardInstance (Resources.Load<Card> (cardLocations[i]));
+                    break;
+            }
+
+            
         }
 
-        playerHandDisplay.UpdateCardDisplays (cards);
-
+        playerHandDisplay.UpdateCardDisplays (instances);
     }
 
     [ServerRpc]
@@ -180,32 +197,13 @@ public class Player : NetworkBehaviour
 
     public void InitializeDeck () {
         if (NetworkManager.Singleton.IsServer) { 
-            List<Card> deck = new List<Card>();
-
-            foreach (Card c in playerDeck) {
-                deck.Add(Object.Instantiate (c));
-            }
-
-            playerDeck = deck;
-            ShuffleDeck();
+            playerDeck = startDeck.InitializeDeck();
         }
     }
 
     public void ShuffleDeck () {
         if (NetworkManager.Singleton.IsServer) { 
-            List<Card> cards = new List<Card> ();
-
-            int deckSize = playerDeck.Count;
-            
-
-            for (int i = 0; i < deckSize; i++) {
-                int r = Random.Range (0, playerDeck.Count);
-
-                cards.Add(playerDeck[r]);
-                playerDeck.RemoveAt(r);
-            }
-
-            playerDeck = cards;
+            playerDeck.ShuffleDeck();
         } else {
             ShuffleDeckServerRpc ();
         } 
@@ -251,9 +249,7 @@ public class Player : NetworkBehaviour
 
         Draw (1);
 
-        maxMana.Value++;
-        maxMana.Value = Mathf.Clamp (maxMana.Value, 0, 10);
-
+        RampManaPermanent (1, true);
         currentMana.Value = maxMana.Value;
 
     }
@@ -272,6 +268,42 @@ public class Player : NetworkBehaviour
         PassAction();
     }
 
+    #endregion
+
+    #region Unit Stuff 
+
+    public void SummonUnit (FieldUnit unit) {
+        if (!IsServer) return;
+
+        controledUnits.Add (unit);
+    }
+
+    public void MoveUnit (FieldUnit unit, Vector2 cell) {
+        if (!IsServer) return;
+
+        //Check if this unit can move
+        if (unit.actionPoints.Value <= 0) return;
+
+        HexagonCell hexCell;
+
+        if (matchManager.FieldGrid.Cells.TryGetValue (cell, out hexCell)) {
+            if (hexCell.FieldCard != null) return;
+
+            unit.Cell = null;
+
+            hexCell.FieldCard = unit;
+            unit.Cell = hexCell;
+
+            unit.position.Value = hexCell.transform.position;
+
+            unit.UpdateUnit ();
+        } 
+
+    }
+
+    #endregion 
+
+
     //Player Stats
 
     public void SpendMana (int cost) {
@@ -281,7 +313,21 @@ public class Player : NetworkBehaviour
         currentMana.Value = Mathf.Clamp (currentMana.Value, 0, maxMana.Value);
     }
 
+    public void RefillMana (int refillAmount) {
+        if (!IsServer) return;
+        currentMana.Value += refillAmount;
 
+        currentMana.Value = Mathf.Clamp (currentMana.Value, 0, maxMana.Value);
+    }
+
+    public void RampManaPermanent (int rampAmount, bool fillsMana) {
+        if (!IsServer) return;
+        maxMana.Value += rampAmount;
+        maxMana.Value = Mathf.Clamp (maxMana.Value, 0, 10);
+        if (fillsMana) {
+            RefillMana (rampAmount);
+        }
+    }
 
 
     //Getters and setters

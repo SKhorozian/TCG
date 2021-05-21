@@ -8,15 +8,6 @@ public class TurnButton : MonoBehaviour
     [SerializeField] Image button;
     [SerializeField] Player player;
 
-    void Start () {
-        if (!player) {
-            if (NetworkManager.Singleton.ConnectedClients.TryGetValue(NetworkManager.Singleton.LocalClientId, out var networkedClient))
-            {
-                player = networkedClient.PlayerObject.GetComponent<Player>();
-            }
-        }
-    }
-
     void Update () {
 
         if (!player) {

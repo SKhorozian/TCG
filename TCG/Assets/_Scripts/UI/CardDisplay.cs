@@ -7,7 +7,7 @@ using MLAPI;
 
 public class CardDisplay : MonoBehaviour
 {
-    [SerializeField] Card card;
+    [SerializeField] CardInstance card;
     [SerializeField] int handNumber;
 
     [SerializeField] RectTransform rectT;
@@ -32,6 +32,7 @@ public class CardDisplay : MonoBehaviour
 
     void UpdateCard () {
         if (card != null) {
+
             cardName.text = card.CardName;
 
             if (card.CardName.Length > 8)
@@ -42,8 +43,18 @@ public class CardDisplay : MonoBehaviour
             description.text = card.Description;
             cost.text = card.Cost.ToString();
 
-            strength.text = card.Strength.ToString();
-            health.text = card.Health.ToString();
+            switch (card.Type) {
+                case CardType.Unit:
+                    if (card.Card.GetType ().Name.Equals ("UnitCard")) {
+                        UnitCardInstance unitCard = (UnitCardInstance)card;
+                        strength.text = unitCard.Strength.ToString();
+                        health.text = unitCard.Health.ToString();   
+                    }
+                break;
+                default:
+                break;
+            }
+
 
             cardArt.sprite = card.CardArt;
 
@@ -69,7 +80,7 @@ public class CardDisplay : MonoBehaviour
         }
     }
 
-    public void SetCard (Card card) {
+    public void SetCard (CardInstance card) {
         this.card = card;
         UpdateCard();
     }
@@ -91,18 +102,27 @@ public class CardDisplay : MonoBehaviour
     }
 
     public void Drop() {
-        if (Input.mousePosition.y > Screen.height)
-            rectT.position = originalPos;
-        else {
+        
+        int layerMask = 1 << 6;
+
+        RaycastHit hit;
+        Ray ray = Camera.main.ScreenPointToRay (Input.mousePosition);
+
+        if (Physics.Raycast (ray, out hit, Mathf.Infinity, layerMask)) {
+            HexagonCell cell = hit.transform.GetComponent<HexagonCell> ();
+
             //Play the card
             if (NetworkManager.Singleton.ConnectedClients.TryGetValue(NetworkManager.Singleton.LocalClientId, out var networkedClient))
             {
                 var player = networkedClient.PlayerObject.GetComponent<Player>();
                 if (player)
                 {
-                    player.PlayCard (handNumber);
+                    player.PlayCard (handNumber, cell.Position);
                 }
             }
+        } else {
+            rectT.position = originalPos;
         }
+
     }
 }
