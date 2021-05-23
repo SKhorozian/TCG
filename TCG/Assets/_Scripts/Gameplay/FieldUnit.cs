@@ -92,16 +92,16 @@ public class FieldUnit : FieldCard
     }
 
     //Unit's basic movement.
-    public void MoveUnit (Vector2 cell) {
+    public void MoveUnit (Vector2 cell, ulong netid) {
         if (IsServer) {
-            player.MoveUnit (this, cell);
+            player.MatchManage.MoveUnit (this, cell, netid);
         } else {
-            MoveUnitServerRPC (cell);
+            MoveUnitServerRPC (cell, NetworkManager.Singleton.LocalClientId);
         }
     }
     [ServerRpc]
-    void MoveUnitServerRPC (Vector2 cell) {
-        MoveUnit (cell);
+    void MoveUnitServerRPC (Vector2 cell, ulong netid) {
+        MoveUnit (cell, netid);
     }
 
     public void UpdateUnit () {
@@ -113,12 +113,40 @@ public class FieldUnit : FieldCard
     }
     [ClientRpc]
     void UpdateUnitClientRPC () {
-        UpdateUnit ();
+        transform.position = position.Value;
+        strengthText.text = strength.Value.ToString();
+        healthText.text = health.Value.ToString();
     }
+
+    public Damage TakeDamage (Damage damage) {
+        if (!IsServer) return null;
+
+        health.Value -= damage.DamageAmount;
+        
+        health.Value = Mathf.Clamp (health.Value, 0, maxHealth.Value);
+
+        if (health.Value <= 0) {
+            Die ();
+        }
+
+        UpdateUnitClientRPC ();
+
+        return damage;
+    }
+
+    public void Die () {
+        if (!IsServer) return;
+        player.UnitDie (this);
+        NetworkObject.Despawn (true);
+    }
+
 
     void Update () {
-
-
+        if (IsClient) {
+            UpdateUnit ();
+        }
     }
+
+    public CardInstance UnitsCard {get {return unitCard;}}
 
 }

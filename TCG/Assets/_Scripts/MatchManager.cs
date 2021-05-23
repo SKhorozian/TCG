@@ -1,4 +1,4 @@
-using System.Collections;
+ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using MLAPI;
@@ -90,6 +90,7 @@ public class MatchManager : NetworkBehaviour
                 Debug.Log ("Player " + player.OwnerClientId + " played " + card.CardName + " on cell " + hexCellPos);
                 HexagonCell cell;
                 fieldGrid.Cells.TryGetValue(hexCellPos, out cell);
+                if (cell.FieldCard) return false; //If the cell is occupied return false
                 SummonUnit (card, player, cell);
                 SwitchPriority (); //It becomes the other player's turn to play
                 break;
@@ -106,10 +107,10 @@ public class MatchManager : NetworkBehaviour
     void SummonUnit (CardInstance card, Player player, HexagonCell cell) {
         if (!IsServer) return;
 
-        GameObject newUnit = Instantiate(fieldUnitPrefab, cell.gameObject.transform.position, Quaternion.identity);
-
+        GameObject newUnit = Instantiate(fieldUnitPrefab, Vector3.zero, Quaternion.identity);
         newUnit.gameObject.GetComponent<NetworkObject>().SpawnWithOwnership ( player.OwnerClientId, null, true);
         FieldUnit fieldUnit = newUnit.GetComponent<FieldUnit> ();
+        fieldUnit.position.Value = cell.gameObject.transform.position;
         fieldUnit.SummonUnit (card, player, cell);
 
         cell.FieldCard = fieldUnit;
@@ -137,6 +138,14 @@ public class MatchManager : NetworkBehaviour
             localHasPriority = true;
         else 
             localHasPriority = false;
+    }
+
+    public void MoveUnit (FieldUnit unit, Vector2 cell, ulong netid) {
+        if (priority.OwnerClientId != netid) return;
+        if (unit.OwnerClientId != netid) return;
+
+        unit.Player.MoveUnit (unit, cell);
+        lastActionWasPass.Value = false;
     }
 
 

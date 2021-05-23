@@ -21,16 +21,14 @@ public class Player : NetworkBehaviour
     [SerializeField] List<FieldUnit> controledUnits;
 
     //UI
-    [SerializeField] GameObject playerHandPanelPrefab;
-    PlayerHandDisplay playerHandDisplay;
+    [SerializeField] GameObject playerControllerPrefab;
+    PlayerController playerController;
 
     [SerializeField] GameObject playerStatsPrefab;
     PlayerStatsDisplay playerStats;
 
     [SerializeField] GameObject matchManagerPrefab;
     [SerializeField] MatchManager matchManager;
-
-    [SerializeField] GameObject turnButtonPrefab;
 
 
 
@@ -85,11 +83,9 @@ public class Player : NetworkBehaviour
 
         if (IsOwner)
         {
-            playerHandDisplay = Instantiate(playerHandPanelPrefab, canvas.transform).GetComponent<PlayerHandDisplay>();
+            playerController = Instantiate(playerControllerPrefab, canvas.transform).GetComponent<PlayerController> ();
 
             playerStats.GetComponent<RectTransform> ().anchoredPosition = new Vector3 (-200, -950, 0);
-
-            Instantiate (turnButtonPrefab, canvas.transform);
         } 
 
         playerStats.UpdateDisplay(heroHealth.Value, currentMana.Value, maxMana.Value);
@@ -176,7 +172,7 @@ public class Player : NetworkBehaviour
             
         }
 
-        playerHandDisplay.UpdateCardDisplays (instances);
+        playerController.UpdateCardDisplays (instances);
     }
 
     [ServerRpc]
@@ -232,8 +228,8 @@ public class Player : NetworkBehaviour
     public void EndGame () {
         if (!IsOwner) return;
 
-        if (playerHandDisplay)
-            DestroyImmediate (playerHandDisplay.gameObject);
+        if (playerController)
+            DestroyImmediate (playerController.gameObject);
 
         if (playerStats)
             DestroyImmediate (playerStats.gameObject);
@@ -268,6 +264,15 @@ public class Player : NetworkBehaviour
         PassAction();
     }
 
+    
+    public Damage DamageTarget (Player player, Damage damage) { //Deal damage to target player.
+        return damage;
+    }
+
+    public Damage DamageTarget (FieldUnit unit, Damage damage) { //Deal damage to target unit.
+        return damage;
+    }
+
     #endregion
 
     #region Unit Stuff 
@@ -289,7 +294,7 @@ public class Player : NetworkBehaviour
         if (matchManager.FieldGrid.Cells.TryGetValue (cell, out hexCell)) {
             if (hexCell.FieldCard != null) return;
 
-            unit.Cell = null;
+            unit.Cell.FieldCard = null;
 
             hexCell.FieldCard = unit;
             unit.Cell = hexCell;
@@ -299,6 +304,12 @@ public class Player : NetworkBehaviour
             unit.UpdateUnit ();
         } 
 
+    }
+
+    public void UnitDie (FieldUnit unit) {
+        if (!IsServer) return;
+
+        FieldUnits.Remove (unit);
     }
 
     #endregion 
@@ -355,5 +366,7 @@ public class Player : NetworkBehaviour
             return maxMana.Value;
         }
     }
+
+    public List<FieldUnit> FieldUnits {get {return controledUnits;}}
 
 }

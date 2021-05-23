@@ -7,11 +7,14 @@ using MLAPI;
 
 public class CardDisplay : MonoBehaviour
 {
-    [SerializeField] CardInstance card;
+    [SerializeField] PlayerController playerController;
+
+    [Space(10),SerializeField] CardInstance card;
     [SerializeField] int handNumber;
 
     [SerializeField] RectTransform rectT;
     [SerializeField] Vector3 originalPos;
+    [SerializeField] Vector3 focusPosition;
 
     [SerializeField] Image cardColor;
     [SerializeField] Image cardArt;
@@ -24,10 +27,13 @@ public class CardDisplay : MonoBehaviour
 
     [SerializeField] Color[] colors;
 
+    bool isFocus = false;
+
     // Start is called before the first frame update
     void Start()
     {
         UpdateCard();
+        originalPos = rectT.position;
     }
 
     void UpdateCard () {
@@ -86,11 +92,11 @@ public class CardDisplay : MonoBehaviour
     }
 
     public void Hover() {
-        rectT.localPosition = new Vector3 (rectT.localPosition.x,150,0); 
+        //rectT.localPosition = new Vector3 (rectT.localPosition.x,150,0); 
     }
 
     public void Lower() {
-        rectT.localPosition = new Vector3 (rectT.localPosition.x,0,0); 
+        //rectT.localPosition = new Vector3 (rectT.localPosition.x,0,0); 
     }
 
     public void StartDrag () {
@@ -102,7 +108,14 @@ public class CardDisplay : MonoBehaviour
     }
 
     public void Drop() {
-        
+        playerController.FocusCard (this);
+    }
+
+    public void DeFocus () {
+        rectT.position = originalPos;
+    }
+
+    public bool PlayCard () {
         int layerMask = 1 << 6;
 
         RaycastHit hit;
@@ -119,10 +132,12 @@ public class CardDisplay : MonoBehaviour
                 {
                     player.PlayCard (handNumber, cell.Position);
                 }
+                return true;
             }
-        } else {
-            rectT.position = originalPos;
         }
 
+        return false;
     }
+
+    public CardInstance cardInstance {get {return card;}}
 }

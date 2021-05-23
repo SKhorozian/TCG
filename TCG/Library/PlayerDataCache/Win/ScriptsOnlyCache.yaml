@@ -11,6 +11,7 @@ ScriptsOnlyBuild:
     - ManaRefillEffect
     - MatchManager
     - Player
+    - PlayerController
     - PlayerHandDisplay
     - PlayerStatsDisplay
     - TurnButton
@@ -111,6 +112,8 @@ ScriptsOnlyBuild:
       Script: {instanceID: 0}
     - Class: 64
       Script: {instanceID: 0}
+    - Class: 65
+      Script: {instanceID: 0}
     - Class: 81
       Script: {instanceID: 0}
     - Class: 89
@@ -130,19 +133,19 @@ ScriptsOnlyBuild:
     - Class: 114
       Script: {instanceID: 1620}
     - Class: 114
-      Script: {instanceID: 1628}
+      Script: {instanceID: 1630}
     - Class: 114
-      Script: {instanceID: 1800}
+      Script: {instanceID: 1802}
     - Class: 114
-      Script: {instanceID: 1872}
+      Script: {instanceID: 1874}
     - Class: 114
-      Script: {instanceID: 1936}
+      Script: {instanceID: 1938}
     - Class: 114
-      Script: {instanceID: 1940}
+      Script: {instanceID: 1942}
     - Class: 114
-      Script: {instanceID: 1962}
+      Script: {instanceID: 1964}
     - Class: 114
-      Script: {instanceID: 1994}
+      Script: {instanceID: 1996}
     - Class: 114
       Script: {instanceID: 2078}
     - Class: 114
@@ -200,59 +203,61 @@ ScriptsOnlyBuild:
     - Class: 114
       Script: {instanceID: 3956}
     - Class: 114
-      Script: {instanceID: 4056}
+      Script: {instanceID: 3998}
     - Class: 114
-      Script: {instanceID: 4124}
+      Script: {instanceID: 4058}
     - Class: 114
-      Script: {instanceID: 4164}
+      Script: {instanceID: 4126}
     - Class: 114
-      Script: {instanceID: 4196}
+      Script: {instanceID: 4166}
     - Class: 114
-      Script: {instanceID: 4282}
+      Script: {instanceID: 4198}
     - Class: 114
-      Script: {instanceID: 4286}
+      Script: {instanceID: 4284}
     - Class: 114
-      Script: {instanceID: 4358}
+      Script: {instanceID: 4288}
     - Class: 114
-      Script: {instanceID: 4470}
+      Script: {instanceID: 4362}
     - Class: 114
-      Script: {instanceID: 4492}
+      Script: {instanceID: 4474}
     - Class: 114
-      Script: {instanceID: 4576}
+      Script: {instanceID: 4496}
     - Class: 114
-      Script: {instanceID: 4644}
+      Script: {instanceID: 4580}
     - Class: 114
-      Script: {instanceID: 4718}
+      Script: {instanceID: 4648}
     - Class: 114
-      Script: {instanceID: 4774}
+      Script: {instanceID: 4722}
     - Class: 114
-      Script: {instanceID: 4824}
+      Script: {instanceID: 4778}
     - Class: 114
-      Script: {instanceID: 5166}
+      Script: {instanceID: 4828}
     - Class: 114
-      Script: {instanceID: 5256}
+      Script: {instanceID: 5170}
     - Class: 114
-      Script: {instanceID: 5304}
+      Script: {instanceID: 5260}
     - Class: 114
       Script: {instanceID: 5308}
     - Class: 114
-      Script: {instanceID: 5428}
+      Script: {instanceID: 5312}
     - Class: 114
-      Script: {instanceID: 5688}
+      Script: {instanceID: 5432}
     - Class: 114
-      Script: {instanceID: 5734}
+      Script: {instanceID: 5692}
     - Class: 114
-      Script: {instanceID: 5740}
+      Script: {instanceID: 5738}
     - Class: 114
-      Script: {instanceID: 5780}
+      Script: {instanceID: 5744}
     - Class: 114
-      Script: {instanceID: 5844}
+      Script: {instanceID: 5784}
     - Class: 114
-      Script: {instanceID: 6112}
+      Script: {instanceID: 5848}
     - Class: 114
-      Script: {instanceID: 6388}
+      Script: {instanceID: 6116}
     - Class: 114
-      Script: {instanceID: 6532}
+      Script: {instanceID: 6392}
+    - Class: 114
+      Script: {instanceID: 6536}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 128
@@ -430,7 +435,7 @@ ScriptsOnlyBuild:
     className: TMP_FontAsset
   - hash:
       serializedVersion: 2
-      Hash: 53789992e25b89d1cce6ed3fef8daaca
+      Hash: 35fb13ab9afaa127ce14c218ce35b6d2
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: PlayerHandDisplay
@@ -688,7 +693,7 @@ ScriptsOnlyBuild:
     className: TMP_SpriteAnimator
   - hash:
       serializedVersion: 2
-      Hash: d9a537a4c994463bb76dffe2bcb6cc7d
+      Hash: 1afb4827f9fa6b44f47998067ccf1a52
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: FieldUnit
@@ -706,7 +711,7 @@ ScriptsOnlyBuild:
     className: DebugUIHandlerIndirectFloatField
   - hash:
       serializedVersion: 2
-      Hash: 71bb6a6b6c8f052f948db64c7dd3ca4f
+      Hash: 966e452a52a34463028c9dcfceaddebd
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: HexagonCell
@@ -784,6 +789,12 @@ ScriptsOnlyBuild:
     className: Button
   - hash:
       serializedVersion: 2
+      Hash: 3c9140cf9f65fb37d6026cf64d5713e3
+    assemblyName: Assembly-CSharp.dll
+    namespaceName: 
+    className: PlayerController
+  - hash:
+      serializedVersion: 2
       Hash: ce66de8a2daf1f400e6c7f3516d2753e
     assemblyName: Unity.RenderPipelines.Universal.Runtime.dll
     namespaceName: UnityEngine.Rendering.Universal
@@ -842,6 +853,12 @@ ScriptsOnlyBuild:
     assemblyName: Unity.Timeline.dll
     namespaceName: UnityEngine.Timeline
     className: PlayableTrack
+  - hash:
+      serializedVersion: 2
+      Hash: 82cb7448287984d3099ff8f235120c4a
+    assemblyName: Assembly-CSharp.dll
+    namespaceName: 
+    className: TargetDamage
   - hash:
       serializedVersion: 2
       Hash: 5c8c09a17c088d57aaf2517819e28ac3
@@ -982,7 +999,7 @@ ScriptsOnlyBuild:
     className: SignalTrack
   - hash:
       serializedVersion: 2
-      Hash: ede62d161e8490052fe5e47535930844
+      Hash: 0a4bf1310c1c93705d580926b7e4ff66
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: CardDisplay
@@ -1120,7 +1137,7 @@ ScriptsOnlyBuild:
     className: DebugUIHandlerEnumHistory
   - hash:
       serializedVersion: 2
-      Hash: 82cd38e54f22256051b946e34a0ba92b
+      Hash: d2ced3e190128cd64ec1b7888db08e5b
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: Player

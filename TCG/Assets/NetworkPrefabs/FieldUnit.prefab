@@ -262,7 +262,8 @@ GameObject:
   - component: {fileID: 8712853119005858911}
   - component: {fileID: 8712853119005858909}
   - component: {fileID: 8712853119005858910}
-  m_Layer: 0
+  - component: {fileID: 682477358838572307}
+  m_Layer: 7
   m_Name: FieldUnit
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -317,15 +318,33 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 0}
+  position:
+    m_InternalValue: {x: 0, y: 0, z: 0}
+  cell: {fileID: 0}
   strength:
     m_InternalValue: 0
   health:
     m_InternalValue: 0
   maxHealth:
     m_InternalValue: 0
+  actionPoints:
+    m_InternalValue: 0
   icon: {fileID: 3567511517781798732}
   strengthText: {fileID: 8712853118088572085}
   healthText: {fileID: 8712853119730674310}
+--- !u!65 &682477358838572307
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8712853119005858904}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 0.5, y: 0.5, z: 0.5}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &8712853119730674304
 GameObject:
   m_ObjectHideFlags: 0

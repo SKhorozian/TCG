@@ -64,21 +64,23 @@ MonoBehaviour:
   startDeck:
     deck:
     - card: {fileID: 11400000, guid: 4a5d8e55584d2264dbda6a55f2a5ed83, type: 2}
-      copies: 4
+      copies: 3
     - card: {fileID: 11400000, guid: 86675df5381bccb4085263a2a83be2db, type: 2}
-      copies: 4
+      copies: 3
     - card: {fileID: 11400000, guid: 606da591aba12be4fab28b6781f4d87f, type: 2}
-      copies: 4
+      copies: 3
     - card: {fileID: 11400000, guid: 222bbe14cecf8e94c93bc8d1bf7c7d36, type: 2}
+      copies: 3
+    - card: {fileID: 11400000, guid: 527b448d1861bf54ab73282f9e6a2b55, type: 2}
+      copies: 3
+    - card: {fileID: 11400000, guid: 2ce9f58ee9b30e446adb1375ea8e55e7, type: 2}
       copies: 3
   controledUnits:
   - {fileID: 0}
-  playerHandPanelPrefab: {fileID: 531725264464121635, guid: ee3ed2799fccb7744b258472fc6b294b,
+  playerControllerPrefab: {fileID: 499625753408219366, guid: 5eefb5a580c14ab488e2e2859f87e251,
     type: 3}
   playerStatsPrefab: {fileID: 1559726142572488917, guid: fd45187d5885d6c43aaca2df036743ac,
     type: 3}
   matchManagerPrefab: {fileID: 8821859338342570603, guid: b50d1ec572dafca46a202fa3432b8d1a,
     type: 3}
   matchManager: {fileID: 0}
-  turnButtonPrefab: {fileID: 5394092101069080680, guid: 2fa09fec442ab654da851029ea336293,
-    type: 3}

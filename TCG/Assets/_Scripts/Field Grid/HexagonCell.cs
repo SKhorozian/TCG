@@ -5,7 +5,7 @@ using UnityEngine;
 public class HexagonCell : MonoBehaviour
 {
     Vector2 position;
-    FieldCard fieldCard;
+    [SerializeField] FieldCard fieldCard;
 
     public Vector2 Position {
         get {
