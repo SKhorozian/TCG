@@ -16,7 +16,7 @@ public class UnitCard : Card
     [SerializeField] CardEffect[] turnEndEffects;
     
     //Play Effect
-    [SerializeField] UnitOnPlay unitOnPlay;
+    [SerializeField] OnPlay unitOnPlay;
 
     //Keywords
     [SerializeField] CardKeywords keywords;

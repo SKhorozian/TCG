@@ -6,7 +6,7 @@ using MLAPI.Messaging;
 using MLAPI.NetworkVariable;
 using TMPro;
 
-public class FieldUnit : FieldCard
+public class FieldUnit : FieldCard, IDamageable
 {
     UnitCardInstance unitCard;
 
@@ -43,8 +43,8 @@ public class FieldUnit : FieldCard
         this.card = card;
 
         //Check if this is a unit first.
-        if (card.Card.GetType().Name.Equals ("UnitCard"))
-            unitCard = (UnitCardInstance) card;
+        if (card.Card is UnitCard)
+            unitCard = card as UnitCardInstance;
         else {
             throw new System.Exception ("CardType doesn't match the card's subclass");
         }
@@ -118,22 +118,6 @@ public class FieldUnit : FieldCard
         healthText.text = health.Value.ToString();
     }
 
-    public Damage TakeDamage (Damage damage) {
-        if (!IsServer) return null;
-
-        health.Value -= damage.DamageAmount;
-        
-        health.Value = Mathf.Clamp (health.Value, 0, maxHealth.Value);
-
-        if (health.Value <= 0) {
-            Die ();
-        }
-
-        UpdateUnitClientRPC ();
-
-        return damage;
-    }
-
     public void Die () {
         if (!IsServer) return;
         player.UnitDie (this);
@@ -145,6 +129,23 @@ public class FieldUnit : FieldCard
         if (IsClient) {
             UpdateUnit ();
         }
+    }
+
+    Damage IDamageable.TakeDamage(Damage damageInfo)
+    {
+        if (!IsServer) return null;
+
+        health.Value -= damageInfo.DamageAmount;
+        
+        health.Value = Mathf.Clamp (health.Value, 0, maxHealth.Value);
+
+        if (health.Value <= 0) {
+            Die ();
+        }
+
+        UpdateUnitClientRPC ();
+
+        return damageInfo;
     }
 
     public CardInstance UnitsCard {get {return unitCard;}}

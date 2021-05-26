@@ -4,7 +4,7 @@ using UnityEngine;
 using MLAPI.Serialization;
 
 [System.Serializable]
-public abstract class CardInstance
+public abstract class CardInstance : ITargetable
 {
     protected Card card;
     
