@@ -75,8 +75,11 @@ MonoBehaviour:
       copies: 3
     - card: {fileID: 11400000, guid: 2ce9f58ee9b30e446adb1375ea8e55e7, type: 2}
       copies: 3
-  controledUnits:
-  - {fileID: 0}
+    - card: {fileID: 11400000, guid: bd485eb2ddbf7d446b61f93067d8a4c4, type: 2}
+      copies: 3
+    - card: {fileID: 11400000, guid: 33d4cb8d27d726943b9e60ca19c03979, type: 2}
+      copies: 2
+  controledUnits: []
   playerControllerPrefab: {fileID: 499625753408219366, guid: 5eefb5a580c14ab488e2e2859f87e251,
     type: 3}
   playerStatsPrefab: {fileID: 1559726142572488917, guid: fd45187d5885d6c43aaca2df036743ac,

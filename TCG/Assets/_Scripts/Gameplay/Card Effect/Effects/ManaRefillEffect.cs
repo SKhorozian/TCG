@@ -7,7 +7,7 @@ public class ManaRefillEffect : CardEffect
 {
     [SerializeField] int refillAmount;
 
-    public override void DoEffect(FieldCard fieldCard)
+    public override void DoEffect()
     {
         fieldCard.Player.RefillMana (refillAmount);
     }

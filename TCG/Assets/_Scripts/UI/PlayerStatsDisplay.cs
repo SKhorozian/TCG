@@ -17,9 +17,9 @@ public class PlayerStatsDisplay : MonoBehaviour
 
         for (int i = 0; i < 10; i++) {
             if (i > maxMana - 1) {
-                manaIcons[i].color = Color.black;
-            } else if (i > mana - 1) {
                 manaIcons[i].color = Color.grey;
+            } else if (i > mana - 1) {
+                manaIcons[i].color = Color.black;
             } else {
                 manaIcons[i].color = Color.blue;
             }

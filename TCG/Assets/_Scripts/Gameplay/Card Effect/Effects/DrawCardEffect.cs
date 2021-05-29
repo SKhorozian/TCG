@@ -7,7 +7,7 @@ public class DrawCardEffect : CardEffect
 {
     [SerializeField] int drawAmount;
 
-    public override void DoEffect(FieldCard fieldCard)
+    public override void DoEffect()
     {
         fieldCard.Player.Draw (drawAmount);
     }

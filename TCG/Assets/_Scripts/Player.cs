@@ -58,8 +58,8 @@ public class Player : NetworkBehaviour
     
         //Initialize Player stats
         heroHealth.Value = 3000;
-        maxMana.Value = 1;
-        currentMana.Value = 1;
+        maxMana.Value = 0;
+        currentMana.Value = 0;
 
         // We tell all the clients that the game has started
         StartGameClientRPC();
@@ -240,36 +240,47 @@ public class Player : NetworkBehaviour
         
     }
 
+    public void EndTurn (int turnNumber) {
+
+        foreach (FieldUnit unit in controledUnits) {
+            unit.TurnEnd ();
+        }
+
+    }
+
     public void StartTurn (int turnNumber) {
         if (!IsServer) return;
 
         Draw (1);
 
-        RampManaPermanent (1, true);
+        RampManaPermanent (2, true);
         currentMana.Value = maxMana.Value;
+
+        foreach (FieldUnit unit in controledUnits) {
+            unit.TurnStart ();
+        }
+
+        matchManager.CallEffects ();
 
     }
 
 
-    public void PassAction (){
+    public void PassTurn (){
         if (IsServer) {
-            matchManager.PassAction (this);
+            matchManager.PassTurn (this);
         } else {
-            RequestPassActionServerRpc ();
+            RequestPassTurnServerRpc ();
         }
     }
 
     [ServerRpc]
-    void RequestPassActionServerRpc () {
-        PassAction();
+    void RequestPassTurnServerRpc () {
+        PassTurn();
     }
 
     
-    public Damage DamageTarget (Player player, Damage damage) { //Deal damage to target player.
-        return damage;
-    }
-
-    public Damage DamageTarget (FieldUnit unit, Damage damage) { //Deal damage to target unit.
+    public Damage DamageTarget (IDamageable target, Damage damage) { //Deal damage to target.
+        target.TakeDamage (damage);
         return damage;
     }
 
@@ -285,9 +296,6 @@ public class Player : NetworkBehaviour
 
     public void MoveUnit (FieldUnit unit, Vector2 cell) {
         if (!IsServer) return;
-
-        //Check if this unit can move
-        if (unit.actionPoints.Value <= 0) return;
 
         HexagonCell hexCell;
 
@@ -308,6 +316,8 @@ public class Player : NetworkBehaviour
 
     public void UnitDie (FieldUnit unit) {
         if (!IsServer) return;
+
+        unit.Cell.FieldCard = null;
 
         FieldUnits.Remove (unit);
     }

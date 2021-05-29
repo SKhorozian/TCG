@@ -9,7 +9,7 @@ public class ManaRampEffect : CardEffect
     [SerializeField] bool refillsMana;
     [SerializeField] bool isPermanent;
 
-    public override void DoEffect(FieldCard fieldCard)
+    public override void DoEffect()
     {
         //If it is a permanent ramp
         if (isPermanent) {

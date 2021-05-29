@@ -15,8 +15,9 @@ public class HexagonGrid : MonoBehaviour
     public void InitializeGrid() {
 
         for (int z = 0; z < height; z++) {
+            int i = 0;
             for (int x = GetHexLow(z); x < GetHexHigh(z); x++) {
-                CreateCell (z, x);
+                CreateCell (z, x, i++);
             }
         }
     }
@@ -77,7 +78,7 @@ public class HexagonGrid : MonoBehaviour
         return 0;
     }
 
-    void CreateCell (int z, int x) {
+    void CreateCell (int z, int x, int i) {
         Vector3 position;
         position.x = (x + z * 0.5f - z / 2) * (HexagonMetrics.innerRadius * 2f) - width/2 + 1.2f;
         position.y = 0f;
@@ -85,10 +86,13 @@ public class HexagonGrid : MonoBehaviour
 
         HexagonCell cell = Instantiate<HexagonCell> (cellPrefab);
 
-        Vector2 cellPos = new Vector2 (z, x);
+        Vector2Int cellPos = new Vector2Int (z, (i + GetHexLow (z)) * 2 + ((z % 2 == 0)? 0 : 1));
         cells.Add(cellPos, cell);
-        cell.transform.name = "Cell: " + z + ", " + x;
+        cell.transform.name = "Cell: " + cellPos.ToString();
+        cell.SetCoordinates (cellPos);
+
         cell.transform.SetParent(transform, false);
+
         cell.transform.localPosition = position;
         cell.Position = cellPos;
     }

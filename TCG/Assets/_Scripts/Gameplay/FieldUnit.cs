@@ -5,6 +5,7 @@ using MLAPI;
 using MLAPI.Messaging;
 using MLAPI.NetworkVariable;
 using TMPro;
+using System;
 
 public class FieldUnit : FieldCard, IDamageable
 {
@@ -25,10 +26,26 @@ public class FieldUnit : FieldCard, IDamageable
         WritePermission = NetworkVariablePermission.ServerOnly
     });
 
-    public NetworkVariableInt actionPoints = new NetworkVariableInt(new NetworkVariableSettings{
+    public NetworkVariableInt currActionPoints = new NetworkVariableInt(new NetworkVariableSettings{
         ReadPermission = NetworkVariablePermission.Everyone,
         WritePermission = NetworkVariablePermission.ServerOnly
     });
+
+    public NetworkVariableInt maxActionPoints = new NetworkVariableInt(new NetworkVariableSettings{
+        ReadPermission = NetworkVariablePermission.Everyone,
+        WritePermission = NetworkVariablePermission.ServerOnly
+    });
+
+    public NetworkVariableInt movementSpeed = new NetworkVariableInt(new NetworkVariableSettings{
+        ReadPermission = NetworkVariablePermission.Everyone,
+        WritePermission = NetworkVariablePermission.ServerOnly
+    });
+
+    public NetworkVariableInt attackRange = new NetworkVariableInt(new NetworkVariableSettings{
+        ReadPermission = NetworkVariablePermission.Everyone,
+        WritePermission = NetworkVariablePermission.ServerOnly
+    });
+
 
     [SerializeField] SpriteRenderer icon;
     [SerializeField] TextMeshPro strengthText;
@@ -58,13 +75,19 @@ public class FieldUnit : FieldCard, IDamageable
 
         //Initialize stats
         strength.Value = unitCard.Strength;
+
         maxHealth.Value = unitCard.Health;
         health.Value = maxHealth.Value;
-        actionPoints.Value = unitCard.ActionPoints;
+
+        maxActionPoints.Value = unitCard.ActionPoints;
+        currActionPoints.Value = maxActionPoints.Value;
+
+        movementSpeed.Value = unitCard.MovementSpeed;
+        attackRange.Value = unitCard.AttackRange;
 
         //Call Enterance Effects:
         foreach (CardEffect effect in unitCard._UnitCard.EnteranceEffects) {
-            effect.DoEffect (this);
+            player.MatchManage.AddEffectToStack (effect, this);
         }
 
         SummonUnitClientRPC (card.CardLocation, player.OwnerClientId);
@@ -91,23 +114,41 @@ public class FieldUnit : FieldCard, IDamageable
         }
     }
 
-    //Unit's basic movement.
-    public void MoveUnit (Vector2 cell, ulong netid) {
+    public void TargetCell (Vector2 cell, ulong netid) {
         if (IsServer) {
-            player.MatchManage.MoveUnit (this, cell, netid);
+            HexagonCell hexagonCell;
+            if (player.MatchManage.FieldGrid.Cells.TryGetValue (cell, out hexagonCell)) {
+                if (hexagonCell.FieldCard) {if (hexagonCell.FieldCard is FieldUnit) Attack (cell, netid);} //If the hex cell is ocupied and the occupant is a unit, attack it.
+                else MoveUnit (cell, netid); //else just move there
+            }
         } else {
-            MoveUnitServerRPC (cell, NetworkManager.Singleton.LocalClientId);
+            TargetCellServerRPC (cell, netid);
         }
     }
     [ServerRpc]
-    void MoveUnitServerRPC (Vector2 cell, ulong netid) {
-        MoveUnit (cell, netid);
+    public void TargetCellServerRPC (Vector2 cell, ulong netid) {
+        TargetCell(cell, netid);
+    }
+
+    //Unit's basic movement.
+    public void MoveUnit (Vector2 cell, ulong netid) {
+        if (!IsServer) return;
+        player.MatchManage.MoveUnit (this, cell, netid);
+    }
+
+    //Unit's Basic attack
+    public void Attack (Vector2 cell, ulong netid) {
+        if (!IsServer) return;
+        player.MatchManage.UnitAttack (this, cell, netid);
     }
 
     public void UpdateUnit () {
         transform.position = position.Value;
         strengthText.text = strength.Value.ToString();
         healthText.text = health.Value.ToString();
+
+        if (health.Value < maxHealth.Value) healthText.color = Color.red;
+        else healthText.color = Color.black;
 
         if (IsServer) UpdateUnitClientRPC ();
     }
@@ -118,10 +159,35 @@ public class FieldUnit : FieldCard, IDamageable
         healthText.text = health.Value.ToString();
     }
 
+    public void ConsumeActionPoint (int amount) {
+        if (!IsServer) return;
+        currActionPoints.Value -= amount;
+        
+        currActionPoints.Value = Mathf.Clamp (currActionPoints.Value, 0, maxActionPoints.Value);
+    }
+
     public void Die () {
         if (!IsServer) return;
         player.UnitDie (this);
         NetworkObject.Despawn (true);
+    }
+
+    public void TurnStart()
+    {
+        currActionPoints.Value = maxActionPoints.Value; //Untap
+    
+        foreach (CardEffect effect in unitCard._UnitCard.TurnStartEffects) { //Upkeep
+            player.MatchManage.AddEffectToStack (effect, this);
+        }
+    
+    }
+
+    public void TurnEnd () {
+
+        foreach (CardEffect effect in unitCard._UnitCard.TurnEndEffects) { //End Turn
+            player.MatchManage.AddEffectToStack (effect, this);
+        }
+
     }
 
 
@@ -131,7 +197,7 @@ public class FieldUnit : FieldCard, IDamageable
         }
     }
 
-    Damage IDamageable.TakeDamage(Damage damageInfo)
+    public Damage TakeDamage(Damage damageInfo)
     {
         if (!IsServer) return null;
 
@@ -147,6 +213,8 @@ public class FieldUnit : FieldCard, IDamageable
 
         return damageInfo;
     }
+
+
 
     public CardInstance UnitsCard {get {return unitCard;}}
 

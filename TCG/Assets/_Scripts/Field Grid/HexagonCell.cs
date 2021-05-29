@@ -1,11 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class HexagonCell : MonoBehaviour
 {
     Vector2 position;
     [SerializeField] FieldCard fieldCard;
+    [SerializeField] TextMeshPro cellCoordiantes;
 
     public Vector2 Position {
         get {
@@ -23,5 +25,9 @@ public class HexagonCell : MonoBehaviour
         set {
             fieldCard = value;
         }
+    }
+
+    public void SetCoordinates (Vector2Int position) {
+        cellCoordiantes.text = position.ToString ();
     }
 }

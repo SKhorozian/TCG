@@ -12,8 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 07bffd1aee5804b45b9a1bb7f6f14641, type: 3}
   m_Name: Fish
   m_EditorClassIdentifier: 
-  cardName: 
-  description: 'Enterance: Refill 1 Mana.'
+  cardName: Fish
+  description: '<b>Entrance:</b> Refill 1 Mana.
+
+    <i>Just a fish.</i>'
   color: 1
   cardArt: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
   cost: 1
@@ -21,6 +23,8 @@ MonoBehaviour:
   strength: 50
   health: 150
   actionPoints: 1
+  movementSpeed: 1
+  attackRange: 1
   enteranceEffects:
   - {fileID: 11400000, guid: 6872f7aabb7838041b05113f582ba783, type: 2}
   turnStartEffects: []

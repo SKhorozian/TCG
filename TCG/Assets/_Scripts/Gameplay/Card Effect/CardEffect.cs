@@ -3,5 +3,8 @@ using UnityEngine;
 [System.Serializable]
 public abstract class CardEffect : ScriptableObject
 {
-    public abstract void DoEffect (FieldCard fieldCard);
+    protected FieldCard fieldCard;
+
+    public abstract void DoEffect ();
+    public FieldCard FieldCard {get {return fieldCard;} set {fieldCard = value;}}
 }

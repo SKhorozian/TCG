@@ -43,6 +43,7 @@ public class PlayerController : MonoBehaviour
         } else if (focusUnit) {
 
             if (Input.GetButtonDown ("Fire1")) {
+
                 int layerMask = 1 << 6;
 
                 RaycastHit hit;
@@ -50,7 +51,7 @@ public class PlayerController : MonoBehaviour
 
                 if (Physics.Raycast (ray, out hit, Mathf.Infinity, layerMask)) {
                     HexagonCell cell = hit.transform.GetComponent<HexagonCell> ();
-                    focusUnit.MoveUnit (cell.Position, NetworkManager.Singleton.LocalClientId);
+                    focusUnit.TargetCell (cell.Position, NetworkManager.Singleton.LocalClientId);
                 }
 
                 focusUnit = null;
@@ -91,5 +92,18 @@ public class PlayerController : MonoBehaviour
     public void FocusUnit (FieldUnit unit) {
         focusUnit = unit;
         focusCard = null;
+    }
+
+    public void OnDrawGizmos () {
+        if (focusUnit) {
+            Gizmos.color = Color.blue;
+            Gizmos.DrawWireSphere (focusUnit.position.Value, focusUnit.movementSpeed.Value);
+
+            Gizmos.color = Color.red;
+            Gizmos.DrawWireSphere (focusUnit.position.Value, focusUnit.attackRange.Value);
+
+        } else if (focusCard) {
+
+        }
     }
 }

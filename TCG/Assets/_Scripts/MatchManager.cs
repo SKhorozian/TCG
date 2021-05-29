@@ -17,18 +17,15 @@ public class MatchManager : NetworkBehaviour
         WritePermission = NetworkVariablePermission.ServerOnly
     });
 
-    [SerializeField] Player priority; //Who's turn is it to play.
-    [SerializeField] bool localHasPriority; //Does the local client have the priority
+    [SerializeField] Player playerTurn; //Who's turn is it to play.
+    [SerializeField] bool localPlayerTurn; //Does the local client have the priority
 
     [SerializeField] GameObject fieldGridPrefab;
     HexagonGrid fieldGrid;
 
-    [SerializeField] NetworkVariableBool lastActionWasPass = new NetworkVariableBool (new NetworkVariableSettings {
-        ReadPermission = NetworkVariablePermission.Everyone,
-        WritePermission = NetworkVariablePermission.ServerOnly
-    });
-
     [SerializeField] GameObject fieldUnitPrefab;
+
+    [SerializeField] Stack<CardEffect> effectStack = new Stack<CardEffect> ();
 
     // Start is called before the first frame update
     void Start()
@@ -54,8 +51,10 @@ public class MatchManager : NetworkBehaviour
 
         turnNumber.Value = 1;
 
-        priority = player1;
-        localHasPriority = true;
+        playerTurn = player1;
+        localPlayerTurn = true;
+
+        playerTurn.RampManaPermanent (1, true);
 
         InitializeMatchClientRpc ();
     }
@@ -82,7 +81,7 @@ public class MatchManager : NetworkBehaviour
     public bool PlayCard (CardInstance card, Player player, Vector2 hexCellPos) {
         if (!IsServer) return false;
 
-        if (!player.Equals(priority)) return false;
+        if (!player.Equals(playerTurn)) return false;
         if (player.CurrentMana < card.Cost) return false;
 
         switch (card.Type) {
@@ -92,14 +91,10 @@ public class MatchManager : NetworkBehaviour
                 fieldGrid.Cells.TryGetValue(hexCellPos, out cell);
                 if (cell.FieldCard) return false; //If the cell is occupied return false
                 SummonUnit (card, player, cell);
-                SwitchPriority (); //It becomes the other player's turn to play
                 break;
             default:
                 break;
         }
-
-
-        lastActionWasPass.Value = false;
 
         return true;
     }
@@ -116,60 +111,108 @@ public class MatchManager : NetworkBehaviour
         cell.FieldCard = fieldUnit;
 
         player.SummonUnit (fieldUnit);
-
+        
+        CallEffects ();
     }
 
-    void SwitchPriority () {
-        if (!IsServer) return;
+    // void SwitchPriority () {
+    //     if (!IsServer) return;
 
-        //Here we swap the priority 
-        if (priority.Equals (player1)) {
-            priority = player2;
-        } else {
-            priority = player1;
-        }
+    //     //Here we swap the priority 
+    //     if (playerTurn.Equals (player1)) {
+    //         playerTurn = player2;
+    //     } else {
+    //         playerTurn = player1;
+    //     }
 
 
-        SwitchPriorityClientRpc (priority.OwnerClientId);
-    }
-    [ClientRpc]
-    void SwitchPriorityClientRpc (ulong netid) {
-        if (NetworkManager.Singleton.LocalClientId == netid)
-            localHasPriority = true;
-        else 
-            localHasPriority = false;
-    }
+    //     SwitchPriorityClientRpc (playerTurn.OwnerClientId);
+    // }
+    // [ClientRpc]
+    // void SwitchPriorityClientRpc (ulong netid) {
+    //     if (NetworkManager.Singleton.LocalClientId == netid)
+    //         localHasPriority = true;
+    //     else 
+    //         localHasPriority = false;
+    // }
 
     public void MoveUnit (FieldUnit unit, Vector2 cell, ulong netid) {
-        if (priority.OwnerClientId != netid) return;
+        if (playerTurn.OwnerClientId != netid) return;
         if (unit.OwnerClientId != netid) return;
+        if (HexagonMetrics.GetDistantce (unit.Cell.Position, cell) > unit.movementSpeed.Value) return;
+        if (unit.currActionPoints.Value <= 0) return;
 
         unit.Player.MoveUnit (unit, cell);
-        lastActionWasPass.Value = false;
+        unit.ConsumeActionPoint (1);
+    }
+
+    public void UnitAttack (FieldUnit attacker, Vector2 cell, ulong netid) {
+
+        if (playerTurn.OwnerClientId != netid) return;
+        if (attacker.OwnerClientId != netid) return;
+        if (HexagonMetrics.GetDistantce (attacker.Cell.Position, cell) > attacker.attackRange.Value) return;
+        if (attacker.currActionPoints.Value <= 0) return;
+
+        HexagonCell hexCell;
+
+        if (attacker.Player.MatchManage.FieldGrid.Cells.TryGetValue (cell, out hexCell)) {
+            if (hexCell.FieldCard) {
+                if (hexCell.FieldCard is FieldUnit)  {
+
+                    FieldUnit target = hexCell.FieldCard as FieldUnit;
+
+                    if (attacker.Player.FieldUnits.Contains (target)) return; //Return if target unit is a friendly.
+
+                    Damage damage = new Damage (attacker.strength.Value, DamageSource.Attack, attacker.Player);
+                    attacker.Player.DamageTarget (hexCell.FieldCard as FieldUnit, damage);
+
+                    attacker.ConsumeActionPoint (1);
+                }
+            }
+        }
+
+    }
+
+    public void PassTurn (Player player) {
+        if (!IsServer) return;
+
+        //If the player requesting the pass is the player who has the turn... 
+        if (player.Equals(playerTurn)) {            
+            if (turnNumber.Value % 2 == 0)
+                playerTurn = player1;
+            else
+                playerTurn = player2;
+
+            PassTurnClientRPC (playerTurn.OwnerClientId);
+
+            EndTurn ();
+        }
+        
+    }
+    [ClientRpc]
+    void PassTurnClientRPC (ulong netid) {
+        if (NetworkManager.Singleton.LocalClientId == netid)
+            localPlayerTurn = true;
+        else 
+            localPlayerTurn = false;
     }
 
 
-    public void PassAction (Player player) {
-        if (!IsServer) return;
+    public void AddEffectToStack (CardEffect effect, FieldCard fieldCard) {
+        CardEffect _effect = Instantiate<CardEffect> (effect);
+        _effect.FieldCard = fieldCard;
 
-        //If the player requesting the pass is the player who has the priority... 
-        if (player.Equals(priority)) {
-            if (lastActionWasPass.Value) {
-                EndTurn ();
-                lastActionWasPass.Value = false;
-                
-                if (turnNumber.Value % 2 == 1)
-                    priority = player1;
-                else
-                    priority = player2;
+        effectStack.Push (_effect);
+    }
 
-                SwitchPriorityClientRpc (priority.OwnerClientId);
-            } else {
-                lastActionWasPass.Value = true;
-                SwitchPriority();
+    public void CallEffects () {
+        if (effectStack.Count > 0) {
+            CardEffect effect = effectStack.Pop();
+            if (effect.FieldCard != null) {
+                effect.DoEffect ();
             }
+            CallEffects ();
         }
-        
     }
 
     //End Turn here!
@@ -177,6 +220,7 @@ public class MatchManager : NetworkBehaviour
         if (!IsServer) return;
 
         //TODO end turn stuff here
+        playerTurn.EndTurn (turnNumber.Value);
 
         StartTurn ();
     }
@@ -186,17 +230,31 @@ public class MatchManager : NetworkBehaviour
 
         turnNumber.Value++;
 
-        player1.StartTurn (turnNumber.Value);
-        player2.StartTurn (turnNumber.Value);
-
+        playerTurn.StartTurn (turnNumber.Value);
     }
 
-    public bool LocalHasPriority {
+    public bool LocalPlayerTurn {
         get {
-            return localHasPriority;
+            return localPlayerTurn;
         }
     }
 
     public HexagonGrid FieldGrid {get {return fieldGrid;}}
+   
+    public List<FieldUnit> AllUnits {
+        get {
+            List<FieldUnit> allUnits = new List<FieldUnit> ();
+
+            foreach (FieldUnit unit in player1.FieldUnits) {
+                allUnits.Add (unit);
+            }
+
+            foreach (FieldUnit unit in player2.FieldUnits) {
+                allUnits.Add (unit);
+            }
+
+            return allUnits;
+        }
+    }
 
 }

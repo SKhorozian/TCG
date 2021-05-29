@@ -9,6 +9,7 @@ public class UnitCard : Card
     [SerializeField] int health;
     [SerializeField] int actionPoints;
     [SerializeField] int movementSpeed;
+    [SerializeField] int attackRange;
 
     //Card Effects
     [SerializeField] CardEffect[] enteranceEffects;
@@ -25,5 +26,8 @@ public class UnitCard : Card
     public int Health                    {get {return health;}}
     public int MovementSpeed             {get {return movementSpeed;}}
     public int ActionPoints              {get {return actionPoints;}}
+    public int AttackRange               {get {return attackRange;}}
     public CardEffect[] EnteranceEffects {get {return enteranceEffects;}}
+    public CardEffect[] TurnStartEffects {get {return turnStartEffects;}}
+    public CardEffect[] TurnEndEffects   {get {return turnEndEffects;}}
 }

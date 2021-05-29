@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: BigFish
   m_EditorClassIdentifier: 
   cardName: Big Fish
-  description: Menace.
+  description: <i>"Cap'n... there's a... sea beast!"</i>
   color: 1
   cardArt: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
   cost: 7
@@ -21,6 +21,8 @@ MonoBehaviour:
   strength: 800
   health: 700
   actionPoints: 3
+  movementSpeed: 2
+  attackRange: 1
   enteranceEffects: []
   turnStartEffects: []
   turnEndEffects: []

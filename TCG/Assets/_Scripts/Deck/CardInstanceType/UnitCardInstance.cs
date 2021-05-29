@@ -29,6 +29,8 @@ public class UnitCardInstance : CardInstance
     public int Strength         {get {return _UnitCard.Strength + strengthBonus;}}
     public int Health           {get {return _UnitCard.Health + healthBonus;}}
     public int ActionPoints     {get {return _UnitCard.ActionPoints;}}
+    public int MovementSpeed    {get {return _UnitCard.MovementSpeed;}}
+    public int AttackRange      {get {return _UnitCard.AttackRange;}}
 
     public int StrengthBonus    {get {return strengthBonus;}}
     public int HealthBonus      {get {return healthBonus;}}
