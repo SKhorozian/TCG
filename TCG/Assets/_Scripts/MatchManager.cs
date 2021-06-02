@@ -54,8 +54,6 @@ public class MatchManager : NetworkBehaviour
         playerTurn = player1;
         localPlayerTurn = true;
 
-        playerTurn.RampManaPermanent (1, true);
-
         InitializeMatchClientRpc ();
     }
     [ClientRpc]
@@ -78,19 +76,47 @@ public class MatchManager : NetworkBehaviour
     }
 
     //Returns true if the card was played successfully, else return false
-    public bool PlayCard (CardInstance card, Player player, Vector2 hexCellPos) {
+    public bool PlayCard (CardInstance card, Player player, Vector2[] fieldTargets, int[] handTargets, int[] stackTargets) {
         if (!IsServer) return false;
 
         if (!player.Equals(playerTurn)) return false;
         if (player.CurrentMana < card.Cost) return false;
 
-        switch (card.Type) {
+        switch (card.Type) { 
             case CardType.Unit:
-                Debug.Log ("Player " + player.OwnerClientId + " played " + card.CardName + " on cell " + hexCellPos);
+                if (fieldTargets.Length <= 0) return false;
+                if (!(card is UnitCardInstance) ) 
+
+                Debug.Log ("Player " + player.OwnerClientId + " played " + card.CardName + " on cell " + fieldTargets[0]);
                 HexagonCell cell;
-                fieldGrid.Cells.TryGetValue(hexCellPos, out cell);
+                fieldGrid.Cells.TryGetValue(fieldTargets[0], out cell);
                 if (cell.FieldCard) return false; //If the cell is occupied return false
-                SummonUnit (card, player, cell);
+                
+                FieldUnit summonedUnit = SummonUnit (card, player, cell);
+                if (!summonedUnit) return false;
+
+                //Play Effects
+                if ((card as UnitCardInstance)._UnitCard.UnitOnPlayEffect) {
+                    OnPlay playEffect = Instantiate <OnPlay> ((card as UnitCardInstance)._UnitCard.UnitOnPlayEffect);
+
+                    List<ITargetable> targets = new List<ITargetable> ();
+
+                    for (int i = 1; i < fieldTargets.Length; i++) {
+                        HexagonCell celli;
+
+                        if (fieldGrid.Cells.TryGetValue(fieldTargets[i], out celli)) {
+                            if (celli.FieldCard)
+                                targets.Add (celli.FieldCard);
+                        }
+                    }
+                    
+                    if (playEffect.TragetVaildity(targets)) { //If targets are valid, then we proceed to call the play effect. Otherwise, we ignore it.
+                        playEffect.SetTargets (summonedUnit, targets);
+                        playEffect.PlayEffect ();
+                        CallEffects ();
+                    }
+                }
+
                 break;
             default:
                 break;
@@ -99,8 +125,10 @@ public class MatchManager : NetworkBehaviour
         return true;
     }
 
-    void SummonUnit (CardInstance card, Player player, HexagonCell cell) {
-        if (!IsServer) return;
+    FieldUnit SummonUnit (CardInstance card, Player player, HexagonCell cell) {
+        if (!IsServer) return null;
+
+        if (cell.FieldCard) return null; //If the cell is occupied return
 
         GameObject newUnit = Instantiate(fieldUnitPrefab, Vector3.zero, Quaternion.identity);
         newUnit.gameObject.GetComponent<NetworkObject>().SpawnWithOwnership ( player.OwnerClientId, null, true);
@@ -113,6 +141,7 @@ public class MatchManager : NetworkBehaviour
         player.SummonUnit (fieldUnit);
         
         CallEffects ();
+        return fieldUnit;
     }
 
     // void SwitchPriority () {
@@ -144,6 +173,7 @@ public class MatchManager : NetworkBehaviour
 
         unit.Player.MoveUnit (unit, cell);
         unit.ConsumeActionPoint (1);
+        CallEffects ();
     }
 
     public void UnitAttack (FieldUnit attacker, Vector2 cell, ulong netid) {
@@ -162,15 +192,16 @@ public class MatchManager : NetworkBehaviour
                     FieldUnit target = hexCell.FieldCard as FieldUnit;
 
                     if (attacker.Player.FieldUnits.Contains (target)) return; //Return if target unit is a friendly.
-
-                    Damage damage = new Damage (attacker.strength.Value, DamageSource.Attack, attacker.Player);
-                    attacker.Player.DamageTarget (hexCell.FieldCard as FieldUnit, damage);
-
+                    attacker.Strike (target);
+                    
+                    if (target.currActionPoints.Value > 0) target.Strike (attacker); 
                     attacker.ConsumeActionPoint (1);
+
                 }
             }
         }
 
+        CallEffects ();
     }
 
     public void PassTurn (Player player) {

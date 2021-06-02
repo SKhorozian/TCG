@@ -2,7 +2,7 @@ using UnityEngine;
 using MLAPI;
 using MLAPI.NetworkVariable;
 
-public abstract class FieldCard : NetworkBehaviour
+public abstract class FieldCard : NetworkBehaviour, ITargetable
 {
     [SerializeField] protected CardInstance card;
     [SerializeField] protected Player player;

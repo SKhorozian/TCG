@@ -308,12 +308,22 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1139038351480235081, guid: ee3ed2799fccb7744b258472fc6b294b,
+        type: 3}
+      propertyPath: playerController
+      value: 
+      objectReference: {fileID: 499625753408219384}
     - target: {fileID: 1427875293581380333, guid: ee3ed2799fccb7744b258472fc6b294b,
         type: 3}
       propertyPath: focusPosition.x
       value: 500
       objectReference: {fileID: 0}
     - target: {fileID: 1427875293581380333, guid: ee3ed2799fccb7744b258472fc6b294b,
+        type: 3}
+      propertyPath: playerController
+      value: 
+      objectReference: {fileID: 499625753408219384}
+    - target: {fileID: 1498730712380018299, guid: ee3ed2799fccb7744b258472fc6b294b,
         type: 3}
       propertyPath: playerController
       value: 
@@ -328,12 +338,57 @@ PrefabInstance:
       propertyPath: playerController
       value: 
       objectReference: {fileID: 499625753408219384}
+    - target: {fileID: 3587560915727628104, guid: ee3ed2799fccb7744b258472fc6b294b,
+        type: 3}
+      propertyPath: playerController
+      value: 
+      objectReference: {fileID: 499625753408219384}
+    - target: {fileID: 3718847259108617877, guid: ee3ed2799fccb7744b258472fc6b294b,
+        type: 3}
+      propertyPath: playerController
+      value: 
+      objectReference: {fileID: 499625753408219384}
     - target: {fileID: 3721401906890780941, guid: ee3ed2799fccb7744b258472fc6b294b,
         type: 3}
       propertyPath: focusPosition.x
       value: 500
       objectReference: {fileID: 0}
     - target: {fileID: 3721401906890780941, guid: ee3ed2799fccb7744b258472fc6b294b,
+        type: 3}
+      propertyPath: playerController
+      value: 
+      objectReference: {fileID: 499625753408219384}
+    - target: {fileID: 3787074474490416641, guid: ee3ed2799fccb7744b258472fc6b294b,
+        type: 3}
+      propertyPath: playerController
+      value: 
+      objectReference: {fileID: 499625753408219384}
+    - target: {fileID: 4025588173506921680, guid: ee3ed2799fccb7744b258472fc6b294b,
+        type: 3}
+      propertyPath: playerController
+      value: 
+      objectReference: {fileID: 499625753408219384}
+    - target: {fileID: 4438464357894654387, guid: ee3ed2799fccb7744b258472fc6b294b,
+        type: 3}
+      propertyPath: playerController
+      value: 
+      objectReference: {fileID: 499625753408219384}
+    - target: {fileID: 5239482124874769859, guid: ee3ed2799fccb7744b258472fc6b294b,
+        type: 3}
+      propertyPath: playerController
+      value: 
+      objectReference: {fileID: 499625753408219384}
+    - target: {fileID: 5959120599583121699, guid: ee3ed2799fccb7744b258472fc6b294b,
+        type: 3}
+      propertyPath: playerController
+      value: 
+      objectReference: {fileID: 499625753408219384}
+    - target: {fileID: 6799454115915661817, guid: ee3ed2799fccb7744b258472fc6b294b,
+        type: 3}
+      propertyPath: playerController
+      value: 
+      objectReference: {fileID: 499625753408219384}
+    - target: {fileID: 7205096935385672302, guid: ee3ed2799fccb7744b258472fc6b294b,
         type: 3}
       propertyPath: playerController
       value: 

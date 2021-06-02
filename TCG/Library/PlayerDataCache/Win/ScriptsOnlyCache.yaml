@@ -2,7 +2,9 @@ ScriptsOnlyBuild:
   usedScripts:
     Assembly-CSharp.dll:
     - CardDisplay
+    - CardHandController
     - ColossalGolemEffect
+    - DamageUnitOnPlay
     - DrawCardEffect
     - FieldUnit
     - GameManager
@@ -238,29 +240,33 @@ ScriptsOnlyBuild:
     - Class: 114
       Script: {instanceID: 5170}
     - Class: 114
-      Script: {instanceID: 5260}
+      Script: {instanceID: 5246}
     - Class: 114
-      Script: {instanceID: 5308}
+      Script: {instanceID: 5262}
     - Class: 114
-      Script: {instanceID: 5312}
+      Script: {instanceID: 5310}
     - Class: 114
-      Script: {instanceID: 5432}
+      Script: {instanceID: 5314}
     - Class: 114
-      Script: {instanceID: 5692}
+      Script: {instanceID: 5434}
     - Class: 114
-      Script: {instanceID: 5738}
+      Script: {instanceID: 5694}
     - Class: 114
-      Script: {instanceID: 5744}
+      Script: {instanceID: 5740}
     - Class: 114
-      Script: {instanceID: 5784}
+      Script: {instanceID: 5746}
     - Class: 114
-      Script: {instanceID: 5848}
+      Script: {instanceID: 5786}
     - Class: 114
-      Script: {instanceID: 6014}
+      Script: {instanceID: 5850}
     - Class: 114
-      Script: {instanceID: 6118}
+      Script: {instanceID: 6018}
     - Class: 114
-      Script: {instanceID: 6396}
+      Script: {instanceID: 6122}
+    - Class: 114
+      Script: {instanceID: 6372}
+    - Class: 114
+      Script: {instanceID: 6402}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 128
@@ -444,7 +450,7 @@ ScriptsOnlyBuild:
     className: TMP_FontAsset
   - hash:
       serializedVersion: 2
-      Hash: 35fb13ab9afaa127ce14c218ce35b6d2
+      Hash: 1ac19828a11069332eebc4aabd838735
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: PlayerHandDisplay
@@ -702,7 +708,7 @@ ScriptsOnlyBuild:
     className: TMP_SpriteAnimator
   - hash:
       serializedVersion: 2
-      Hash: 921e8b2b49a1014072407f61d3f86d59
+      Hash: b36d3818b4967a8ebed439a893d2053f
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: FieldUnit
@@ -798,7 +804,7 @@ ScriptsOnlyBuild:
     className: Button
   - hash:
       serializedVersion: 2
-      Hash: 3c9140cf9f65fb37d6026cf64d5713e3
+      Hash: 2df93f85bb47aebc9417b44c1d5ba574
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: PlayerController
@@ -1002,7 +1008,7 @@ ScriptsOnlyBuild:
     className: SignalTrack
   - hash:
       serializedVersion: 2
-      Hash: 0a4bf1310c1c93705d580926b7e4ff66
+      Hash: 5f7eeaf73e1a31a7150ad164a0b90efa
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: CardDisplay
@@ -1018,6 +1024,12 @@ ScriptsOnlyBuild:
     assemblyName: Unity.RenderPipelines.Universal.Runtime.dll
     namespaceName: UnityEngine.Rendering.Universal
     className: UniversalAdditionalLightData
+  - hash:
+      serializedVersion: 2
+      Hash: 5edec90a6b6264f1e3dc328c8c1f4a4b
+    assemblyName: Assembly-CSharp.dll
+    namespaceName: 
+    className: CardHandController
   - hash:
       serializedVersion: 2
       Hash: c3d3430df9e3ea95e3e3d587961390fb
@@ -1182,6 +1194,12 @@ ScriptsOnlyBuild:
     className: TMP_ScrollbarEventHandler
   - hash:
       serializedVersion: 2
+      Hash: 71bb6a6b6c8f052f948db64c7dd3ca4f
+    assemblyName: Assembly-CSharp.dll
+    namespaceName: 
+    className: UnitDeath
+  - hash:
+      serializedVersion: 2
       Hash: 8c328a0ffa03c1bcb9332bb39f4f8453
     assemblyName: Unity.RenderPipelines.Core.Runtime.dll
     namespaceName: UnityEngine.Rendering
@@ -1218,12 +1236,6 @@ ScriptsOnlyBuild:
     className: UniversalRenderPipelineEditorResources
   - hash:
       serializedVersion: 2
-      Hash: 71bb6a6b6c8f052f948db64c7dd3ca4f
-    assemblyName: Assembly-CSharp.dll
-    namespaceName: 
-    className: OnPlay
-  - hash:
-      serializedVersion: 2
       Hash: cff09849c630c5fd345b65dd34aba6ea
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
@@ -1240,6 +1252,12 @@ ScriptsOnlyBuild:
     assemblyName: Unity.Timeline.dll
     namespaceName: UnityEngine.Timeline
     className: ActivationPlayableAsset
+  - hash:
+      serializedVersion: 2
+      Hash: bcc86edc45890702cbbeb5e0f5570ce1
+    assemblyName: Assembly-CSharp.dll
+    namespaceName: 
+    className: DamageUnitOnPlay
   - hash:
       serializedVersion: 2
       Hash: 7ab0e790220bdca831fdd886b339039d

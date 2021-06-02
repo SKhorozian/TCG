@@ -19,7 +19,7 @@ MonoBehaviour:
   cost: 7
   cardType: 0
   strength: 800
-  health: 700
+  health: 800
   actionPoints: 3
   movementSpeed: 2
   attackRange: 1

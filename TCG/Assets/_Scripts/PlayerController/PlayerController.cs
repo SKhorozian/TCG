@@ -9,7 +9,15 @@ public class PlayerController : MonoBehaviour
     [SerializeField] TurnButton turnButton;
     
     [SerializeField] FieldUnit focusUnit;
-    [SerializeField] CardDisplay focusCard;
+    [SerializeField] CardHandController focusCard;
+
+
+    [SerializeField] OnPlay currPlay;
+
+    [SerializeField] List<Vector2> fieldTargets; 
+    [SerializeField] List<Vector2> trapTargets;
+    [SerializeField] List<int> handTargets;
+    [SerializeField] List<int> stackTargets;
 
     // Start is called before the first frame update
     void Start()
@@ -26,9 +34,42 @@ public class PlayerController : MonoBehaviour
                 case CardType.Unit:
 
                     if (Input.GetButtonDown ("Fire1")) {
-                        focusCard.PlayCard ();
-                        focusCard.DeFocus ();
-                        focusCard = null;
+                        
+                        /////////////////////
+                        if (fieldTargets.Count == 0) { 
+                            int layerMask = 1 << 6;
+
+                            RaycastHit hit;
+                            Ray ray = Camera.main.ScreenPointToRay (Input.mousePosition);
+
+                            if (Physics.Raycast (ray, out hit, Mathf.Infinity, layerMask)) {
+                                HexagonCell cell = hit.transform.GetComponent<HexagonCell> ();
+                                fieldTargets.Add (cell.Position);
+                            }
+                        } else if (currPlay) {
+                            if (fieldTargets.Count < currPlay.FieldTargetsCount + 1) {
+                                int layerMask = 1 << 6;
+
+                                RaycastHit hit;
+                                Ray ray = Camera.main.ScreenPointToRay (Input.mousePosition);
+
+                                if (Physics.Raycast (ray, out hit, Mathf.Infinity, layerMask)) {
+                                    HexagonCell cell = hit.transform.GetComponent<HexagonCell> ();
+                                    fieldTargets.Add (cell.Position);
+                                }
+                            }
+                        }
+                        /////////////////////
+
+
+                        if (fieldTargets.Count > 0) {
+                            if (!currPlay || ValidateTargets ()) {
+                                focusCard.PlayCard (fieldTargets.ToArray (), handTargets.ToArray (), stackTargets.ToArray ());
+                                focusCard.DeFocus ();
+                                focusCard = null;
+                            }
+                        }
+
                     } else if (Input.GetButtonDown ("Fire2")) {
                         focusCard.DeFocus ();
                         focusCard = null;
@@ -76,20 +117,52 @@ public class PlayerController : MonoBehaviour
 
 
         }
+
+
+
+
     }
+
+    public bool ValidateTargets () {
+
+        if (fieldTargets.Count != currPlay.FieldTargetsCount + 1) return false;
+        if (handTargets.Count != currPlay.HandTargetsCount) return false;
+        if (stackTargets.Count != currPlay.StackTargetsCount) return false;
+        
+        return true;
+    }
+
 
     public void UpdateCardDisplays (CardInstance[] instances) {
         handDisplay.UpdateCardDisplays (instances);
     }
 
-    public void FocusCard (CardDisplay card) {
+    public void FocusCard (CardHandController card) {
         if (focusCard)
             focusCard.DeFocus ();
+
+        currPlay = null;
+        fieldTargets = new List<Vector2> ();
+        handTargets = new List<int> ();
+        stackTargets = new List<int> ();
+        trapTargets = new List<Vector2> ();
+
         focusCard = card;
         focusUnit = null;
+
+        if ( (card.cardInstance.Card is UnitCard) ) {
+            currPlay = (card.cardInstance.Card as UnitCard).UnitOnPlayEffect;
+        }
+
+
     }
 
     public void FocusUnit (FieldUnit unit) {
+        fieldTargets = new List<Vector2> ();
+        handTargets = new List<int> ();
+        stackTargets = new List<int> ();
+        trapTargets = new List<Vector2> ();
+
         focusUnit = unit;
         focusCard = null;
     }

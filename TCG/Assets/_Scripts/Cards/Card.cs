@@ -3,7 +3,7 @@ using UnityEngine;
 public abstract class Card : ScriptableObject
 {
     [SerializeField] string cardName;
-    [SerializeField, TextArea()] string description;
+    [SerializeField, TextArea(minLines: 5, maxLines: 15)] string description;
 
     [SerializeField] CardColor color;
     

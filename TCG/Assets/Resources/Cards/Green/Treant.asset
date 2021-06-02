@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Treant
   m_EditorClassIdentifier: 
   cardName: Treant
-  description: <b>Entrance:</b> Heal your hero for 200.
+  description: 
   color: 3
   cardArt: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
   cost: 4

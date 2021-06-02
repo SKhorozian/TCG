@@ -20,18 +20,8 @@ public class FieldUnit : FieldCard, IDamageable
         ReadPermission = NetworkVariablePermission.Everyone,
         WritePermission = NetworkVariablePermission.ServerOnly
     });
-    
-    public NetworkVariableInt maxHealth = new NetworkVariableInt(new NetworkVariableSettings{
-        ReadPermission = NetworkVariablePermission.Everyone,
-        WritePermission = NetworkVariablePermission.ServerOnly
-    });
 
     public NetworkVariableInt currActionPoints = new NetworkVariableInt(new NetworkVariableSettings{
-        ReadPermission = NetworkVariablePermission.Everyone,
-        WritePermission = NetworkVariablePermission.ServerOnly
-    });
-
-    public NetworkVariableInt maxActionPoints = new NetworkVariableInt(new NetworkVariableSettings{
         ReadPermission = NetworkVariablePermission.Everyone,
         WritePermission = NetworkVariablePermission.ServerOnly
     });
@@ -50,6 +40,7 @@ public class FieldUnit : FieldCard, IDamageable
     [SerializeField] SpriteRenderer icon;
     [SerializeField] TextMeshPro strengthText;
     [SerializeField] TextMeshPro healthText;
+    [SerializeField] TextMeshPro actionPointText;
 
 
     public void SummonUnit (CardInstance card, Player player, HexagonCell cell) {
@@ -76,11 +67,9 @@ public class FieldUnit : FieldCard, IDamageable
         //Initialize stats
         strength.Value = unitCard.Strength;
 
-        maxHealth.Value = unitCard.Health;
-        health.Value = maxHealth.Value;
+        health.Value = unitCard.Health;
 
-        maxActionPoints.Value = unitCard.ActionPoints;
-        currActionPoints.Value = maxActionPoints.Value;
+        currActionPoints.Value = unitCard.ActionPoints;
 
         movementSpeed.Value = unitCard.MovementSpeed;
         attackRange.Value = unitCard.AttackRange;
@@ -142,12 +131,17 @@ public class FieldUnit : FieldCard, IDamageable
         player.MatchManage.UnitAttack (this, cell, netid);
     }
 
+    public void Strike (IDamageable target) {
+        Damage damage = new Damage (strength.Value, DamageSource.Attack, player);
+        player.DamageTarget (target, damage);
+    } 
+
     public void UpdateUnit () {
         transform.position = position.Value;
         strengthText.text = strength.Value.ToString();
         healthText.text = health.Value.ToString();
 
-        if (health.Value < maxHealth.Value) healthText.color = Color.red;
+        if (health.Value < unitCard.Health) healthText.color = Color.red;
         else healthText.color = Color.black;
 
         if (IsServer) UpdateUnitClientRPC ();
@@ -157,24 +151,19 @@ public class FieldUnit : FieldCard, IDamageable
         transform.position = position.Value;
         strengthText.text = strength.Value.ToString();
         healthText.text = health.Value.ToString();
+        actionPointText.text = currActionPoints.Value.ToString();
     }
 
     public void ConsumeActionPoint (int amount) {
         if (!IsServer) return;
         currActionPoints.Value -= amount;
         
-        currActionPoints.Value = Mathf.Clamp (currActionPoints.Value, 0, maxActionPoints.Value);
-    }
-
-    public void Die () {
-        if (!IsServer) return;
-        player.UnitDie (this);
-        NetworkObject.Despawn (true);
+        currActionPoints.Value = Mathf.Clamp (currActionPoints.Value, 0, unitCard.ActionPoints);
     }
 
     public void TurnStart()
     {
-        currActionPoints.Value = maxActionPoints.Value; //Untap
+        currActionPoints.Value = unitCard.ActionPoints; //Untap
     
         foreach (CardEffect effect in unitCard._UnitCard.TurnStartEffects) { //Upkeep
             player.MatchManage.AddEffectToStack (effect, this);
@@ -203,17 +192,16 @@ public class FieldUnit : FieldCard, IDamageable
 
         health.Value -= damageInfo.DamageAmount;
         
-        health.Value = Mathf.Clamp (health.Value, 0, maxHealth.Value);
+        health.Value = Mathf.Clamp (health.Value, 0, unitCard.Health);
 
         if (health.Value <= 0) {
-            Die ();
+            player.UnitToDie (this);
         }
 
         UpdateUnitClientRPC ();
 
         return damageInfo;
     }
-
 
 
     public CardInstance UnitsCard {get {return unitCard;}}

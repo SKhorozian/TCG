@@ -1,4 +1,4 @@
-using System.Collections;
+ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -7,14 +7,7 @@ using MLAPI;
 
 public class CardDisplay : MonoBehaviour
 {
-    [SerializeField] PlayerController playerController;
-
     [Space(10),SerializeField] CardInstance card;
-    [SerializeField] int handNumber;
-
-    [SerializeField] RectTransform rectT;
-    [SerializeField] Vector3 originalPos;
-    [SerializeField] Vector3 focusPosition;
 
     [SerializeField] Image cardColor;
     [SerializeField] Image cardArt;
@@ -27,13 +20,11 @@ public class CardDisplay : MonoBehaviour
 
     [SerializeField] Color[] colors;
 
-    bool isFocus = false;
 
     // Start is called before the first frame update
     void Start()
     {
         UpdateCard();
-        originalPos = rectT.position;
     }
 
     void UpdateCard () {
@@ -51,7 +42,7 @@ public class CardDisplay : MonoBehaviour
 
             switch (card.Type) {
                 case CardType.Unit:
-                    if (card.Card.GetType ().Name.Equals ("UnitCard")) {
+                    if (card.Card as UnitCard) {
                         UnitCardInstance unitCard = (UnitCardInstance)card;
                         strength.text = unitCard.Strength.ToString();
                         health.text = unitCard.Health.ToString();   
@@ -91,53 +82,6 @@ public class CardDisplay : MonoBehaviour
         UpdateCard();
     }
 
-    public void Hover() {
-        //rectT.localPosition = new Vector3 (rectT.localPosition.x,150,0); 
-    }
-
-    public void Lower() {
-        //rectT.localPosition = new Vector3 (rectT.localPosition.x,0,0); 
-    }
-
-    public void StartDrag () {
-        originalPos = rectT.position;
-    }
-
-    public void Drag() {
-        rectT.position = Input.mousePosition;
-    }
-
-    public void Drop() {
-        playerController.FocusCard (this);
-    }
-
-    public void DeFocus () {
-        rectT.position = originalPos;
-    }
-
-    public bool PlayCard () {
-        int layerMask = 1 << 6;
-
-        RaycastHit hit;
-        Ray ray = Camera.main.ScreenPointToRay (Input.mousePosition);
-
-        if (Physics.Raycast (ray, out hit, Mathf.Infinity, layerMask)) {
-            HexagonCell cell = hit.transform.GetComponent<HexagonCell> ();
-
-            //Play the card
-            if (NetworkManager.Singleton.ConnectedClients.TryGetValue(NetworkManager.Singleton.LocalClientId, out var networkedClient))
-            {
-                var player = networkedClient.PlayerObject.GetComponent<Player>();
-                if (player)
-                {
-                    player.PlayCard (handNumber, cell.Position);
-                }
-                return true;
-            }
-        }
-
-        return false;
-    }
 
     public CardInstance cardInstance {get {return card;}}
 }

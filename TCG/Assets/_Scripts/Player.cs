@@ -15,7 +15,7 @@ public class Player : NetworkBehaviour
 
     //All used spells and dead units go here
     [SerializeField] private List<CardInstance> graveyard;
-    [SerializeField] private List<CardInstance> destroyedCards;
+    [SerializeField] private List<CardInstance> banishedCards;
 
     //Controled Field Cards
     [SerializeField] List<FieldUnit> controledUnits;
@@ -29,7 +29,6 @@ public class Player : NetworkBehaviour
 
     [SerializeField] GameObject matchManagerPrefab;
     [SerializeField] MatchManager matchManager;
-
 
 
     //Stats:
@@ -58,8 +57,8 @@ public class Player : NetworkBehaviour
     
         //Initialize Player stats
         heroHealth.Value = 3000;
-        maxMana.Value = 0;
-        currentMana.Value = 0;
+        maxMana.Value = 1;
+        currentMana.Value = 1;
 
         // We tell all the clients that the game has started
         StartGameClientRPC();
@@ -92,20 +91,20 @@ public class Player : NetworkBehaviour
 
     }
 
-    public void PlayCard (int c, Vector2 cell) {
+    public void PlayCard (int c, Vector2[] fieldTargets, int[] handTargets, int[] stackTargets) {
         if (IsServer) {
-            if (matchManager.PlayCard (playerHand[c], this, cell)) {
+            if (matchManager.PlayCard (playerHand[c], this, fieldTargets, handTargets, stackTargets)) {
                 playerHand.RemoveAt(c);
             }
             UpdatePlayerHand();
         } else {
-            PlayCardRequestServerRPC(c, cell);
+            PlayCardRequestServerRPC(c, fieldTargets, handTargets, stackTargets);
         }
     }
 
     [ServerRpc]
-    void PlayCardRequestServerRPC (int c, Vector2 cell) {
-        PlayCard(c, cell);
+    void PlayCardRequestServerRPC (int c, Vector2[] fieldTargets, int[] handTargets, int[] stackTargets) {
+        PlayCard(c, fieldTargets, handTargets, stackTargets);
     }
 
 
@@ -253,7 +252,7 @@ public class Player : NetworkBehaviour
 
         Draw (1);
 
-        RampManaPermanent (2, true);
+        RampManaPermanent (1, true);
         currentMana.Value = maxMana.Value;
 
         foreach (FieldUnit unit in controledUnits) {
@@ -314,9 +313,20 @@ public class Player : NetworkBehaviour
 
     }
 
+    //Add death to the stack
+    public void UnitToDie (FieldUnit unit) {
+        if (!IsServer) return;
+
+        matchManager.AddEffectToStack(new UnitDeath (), unit);
+
+    }
+
+    //Final Death effect
     public void UnitDie (FieldUnit unit) {
         if (!IsServer) return;
 
+
+        unit.NetworkObject.Despawn (true);
         unit.Cell.FieldCard = null;
 
         FieldUnits.Remove (unit);

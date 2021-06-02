@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class PlayerHandDisplay : MonoBehaviour
 {
-    [SerializeField] List<CardDisplay> cardDisplays;
+    [SerializeField] List<CardHandController> cardDisplays;
     [SerializeField] GridLayoutGroup gridLayoutGroup;
     [SerializeField] PlayerController playerController;
 

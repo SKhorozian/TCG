@@ -30,4 +30,5 @@ public class UnitCard : Card
     public CardEffect[] EnteranceEffects {get {return enteranceEffects;}}
     public CardEffect[] TurnStartEffects {get {return turnStartEffects;}}
     public CardEffect[] TurnEndEffects   {get {return turnEndEffects;}}
+    public OnPlay UnitOnPlayEffect       {get {return unitOnPlay;}}
 }
