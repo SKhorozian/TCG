@@ -12,9 +12,16 @@ public abstract class FieldCard : NetworkBehaviour, ITargetable
         ReadPermission = NetworkVariablePermission.Everyone,
         WritePermission = NetworkVariablePermission.ServerOnly
     });
+
     [SerializeField] protected HexagonCell cell;
+    [SerializeField] protected SpriteRenderer icon;
+
 
     public CardInstance Card {get {return card;}}
     public Player Player {get {return player;}}
     public HexagonCell Cell {get {return cell;} set {if (IsServer) cell = value;}}
+
+    public abstract void TurnStart ();
+    public abstract void TurnEnd ();
+
 }

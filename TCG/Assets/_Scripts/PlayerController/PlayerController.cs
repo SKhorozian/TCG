@@ -76,6 +76,32 @@ public class PlayerController : MonoBehaviour
                     }
                     
                     break;
+                case CardType.Structure:
+                
+                    if (Input.GetButtonDown ("Fire1")) {
+                        if (fieldTargets.Count == 0) { 
+                            int layerMask = 1 << 6;
+
+                            RaycastHit hit;
+                            Ray ray = Camera.main.ScreenPointToRay (Input.mousePosition);
+
+                            if (Physics.Raycast (ray, out hit, Mathf.Infinity, layerMask)) {
+                                HexagonCell cell = hit.transform.GetComponent<HexagonCell> ();
+                                fieldTargets.Add (cell.Position);
+                            }
+                        }
+
+                        if (fieldTargets.Count > 0) {
+                            focusCard.PlayCard (fieldTargets.ToArray (), handTargets.ToArray (), stackTargets.ToArray ());
+                            focusCard.DeFocus ();
+                            focusCard = null;
+                        }
+                    } else if (Input.GetButtonDown ("Fire2")) {
+                        focusCard.DeFocus ();
+                        focusCard = null;
+                    }
+
+                    break;
                 default:
                     focusCard.DeFocus ();
                     focusCard = null;

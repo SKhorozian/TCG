@@ -6,6 +6,7 @@ using UnityEngine;
 public class DamageUnitOnPlay : OnPlay
 {
     [SerializeField] int damage;
+    [SerializeField] bool friendlyFire;
 
     public override void PlayEffect()
     {
@@ -20,7 +21,8 @@ public class DamageUnitOnPlay : OnPlay
         if (targets.Count != 1) return false;
         if (targets[0] == null) return false;
         if (!(targets[0] is FieldUnit)) return false;
-        //if ((targets[0] as FieldUnit).Player.Equals (playUnit.Player)) return false;
+
+        if (!friendlyFire && (targets[0] as FieldUnit).OwnerClientId.Equals (playUnit.OwnerClientId)) return false;
 
         return true;
     }

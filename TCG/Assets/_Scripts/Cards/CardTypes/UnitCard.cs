@@ -12,7 +12,7 @@ public class UnitCard : Card
     [SerializeField] int attackRange;
 
     //Card Effects
-    [SerializeField] CardEffect[] enteranceEffects;
+    [SerializeField] CardEffect[] entranceEffects;
     [SerializeField] CardEffect[] turnStartEffects;
     [SerializeField] CardEffect[] turnEndEffects;
     
@@ -20,14 +20,14 @@ public class UnitCard : Card
     [SerializeField] OnPlay unitOnPlay;
 
     //Keywords
-    [SerializeField] CardKeywords keywords;
+    [SerializeField] UnitCardStaticKeywords staticKeywords;
 
     public int Strength                  {get {return strength;}}
     public int Health                    {get {return health;}}
     public int MovementSpeed             {get {return movementSpeed;}}
     public int ActionPoints              {get {return actionPoints;}}
     public int AttackRange               {get {return attackRange;}}
-    public CardEffect[] EnteranceEffects {get {return enteranceEffects;}}
+    public CardEffect[] EntranceEffects {get {return entranceEffects;}}
     public CardEffect[] TurnStartEffects {get {return turnStartEffects;}}
     public CardEffect[] TurnEndEffects   {get {return turnEndEffects;}}
     public OnPlay UnitOnPlayEffect       {get {return unitOnPlay;}}

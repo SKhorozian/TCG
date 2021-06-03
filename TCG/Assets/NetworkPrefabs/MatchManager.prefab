@@ -48,13 +48,13 @@ MonoBehaviour:
   player2: {fileID: 0}
   turnNumber:
     m_InternalValue: 0
-  priority: {fileID: 0}
-  localHasPriority: 0
+  playerTurn: {fileID: 0}
+  localPlayerTurn: 0
   fieldGridPrefab: {fileID: 5371025064331293941, guid: 488bcb811049ba14aa6ea08d8cd84856,
     type: 3}
-  lastActionWasPass:
-    m_InternalValue: 0
   fieldUnitPrefab: {fileID: 8712853119005858904, guid: f468f1fac0bfcb74aa02665f48170586,
+    type: 3}
+  fieldStructurePrefab: {fileID: 6552503158929496860, guid: 0f6788a41f6de1b4c98493d01076f520,
     type: 3}
 --- !u!114 &-5689984643960073062
 MonoBehaviour:

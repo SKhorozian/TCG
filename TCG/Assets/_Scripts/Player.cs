@@ -14,11 +14,12 @@ public class Player : NetworkBehaviour
     [SerializeField] private GameDeck playerDeck;
 
     //All used spells and dead units go here
-    [SerializeField] private List<CardInstance> graveyard;
-    [SerializeField] private List<CardInstance> banishedCards;
+    [SerializeField] private List<CardInstance> graveyard = new List<CardInstance> ();
+    [SerializeField] private List<CardInstance> banishedCards = new List<CardInstance> ();
 
     //Controled Field Cards
     [SerializeField] List<FieldUnit> controledUnits;
+    [SerializeField] List<FieldStructure> controledStructures;
 
     //UI
     [SerializeField] GameObject playerControllerPrefab;
@@ -166,6 +167,12 @@ public class Player : NetworkBehaviour
                 case CardType.Unit:
                     instances[i] = new UnitCardInstance (Resources.Load<Card> (cardLocations[i]));
                     break;
+                case CardType.Structure:
+                    instances[i] = new StructureCardInstance (Resources.Load<Card> (cardLocations[i]));
+                    break;
+                case CardType.Spell:
+                    instances[i] = new SpellCardInstance (Resources.Load<Card> (cardLocations[i]));
+                    break;
             }
 
             
@@ -245,6 +252,10 @@ public class Player : NetworkBehaviour
             unit.TurnEnd ();
         }
 
+        foreach (FieldStructure structure in controledStructures) {
+            structure.TurnEnd ();
+        }
+
     }
 
     public void StartTurn (int turnNumber) {
@@ -257,6 +268,10 @@ public class Player : NetworkBehaviour
 
         foreach (FieldUnit unit in controledUnits) {
             unit.TurnStart ();
+        }
+
+        foreach (FieldStructure structure in controledStructures) {
+            structure.TurnStart ();
         }
 
         matchManager.CallEffects ();
@@ -316,6 +331,7 @@ public class Player : NetworkBehaviour
     //Add death to the stack
     public void UnitToDie (FieldUnit unit) {
         if (!IsServer) return;
+        if (!controledUnits.Contains (unit)) return;
 
         matchManager.AddEffectToStack(new UnitDeath (), unit);
 
@@ -324,15 +340,49 @@ public class Player : NetworkBehaviour
     //Final Death effect
     public void UnitDie (FieldUnit unit) {
         if (!IsServer) return;
+        if (!controledUnits.Contains (unit)) return;
 
+        graveyard.Add (unit.UnitsCard);
+
+        FieldUnits.Remove (unit);
 
         unit.NetworkObject.Despawn (true);
         unit.Cell.FieldCard = null;
 
-        FieldUnits.Remove (unit);
     }
 
     #endregion 
+
+
+    #region Structure
+
+    public void SummonStructure (FieldStructure structure) {
+        if (!IsServer) return;
+
+        controledStructures.Add (structure);
+    }
+
+    //Add demolition to the stack
+    public void StructureToDemolish (FieldStructure structure) {
+        if (!IsServer) return;
+        if (!controledStructures.Contains (structure)) return;
+
+        matchManager.AddEffectToStack (new StructureDemolition (), structure);
+    }
+
+    public void StructureDemolish (FieldStructure structure) {
+        if (!IsServer) return;
+        if (!controledStructures.Contains (structure)) return;
+
+        graveyard.Add (structure.StructursCard);
+
+        FieldStructures.Remove (structure);
+
+        structure.NetworkObject.Despawn (true);
+        structure.Cell.FieldCard = null;
+    }
+
+    #endregion
 
 
     //Player Stats
@@ -387,6 +437,7 @@ public class Player : NetworkBehaviour
         }
     }
 
-    public List<FieldUnit> FieldUnits {get {return controledUnits;}}
+    public List<FieldUnit> FieldUnits               {get {return controledUnits;}}
+    public List<FieldStructure> FieldStructures     {get {return controledStructures;}}
 
 }

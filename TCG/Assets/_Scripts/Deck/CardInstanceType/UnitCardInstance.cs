@@ -13,8 +13,8 @@ public class UnitCardInstance : CardInstance
     public UnitCardInstance (Card card) {
         this.card = card;
 
-        if (card.GetType().Name.Equals ("UnitCard")) {
-            unitCard = (UnitCard)card;
+        if (card is UnitCard) {
+            unitCard = card as UnitCard;
         } else {
             throw new System.Exception ("CardType doesn't match the card's subclass");
         }

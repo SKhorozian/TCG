@@ -23,9 +23,9 @@ MonoBehaviour:
   actionPoints: 2
   movementSpeed: 2
   attackRange: 1
-  enteranceEffects:
+  entranceEffects:
   - {fileID: 11400000, guid: adaf157e4d9281644900c4a9c7b244bb, type: 2}
   turnStartEffects: []
   turnEndEffects: []
   unitOnPlay: {fileID: 0}
-  keywords: 0
+  staticKeywords: 0

@@ -24,6 +24,7 @@ public class MatchManager : NetworkBehaviour
     HexagonGrid fieldGrid;
 
     [SerializeField] GameObject fieldUnitPrefab;
+    [SerializeField] GameObject fieldStructurePrefab;
 
     [SerializeField] Stack<CardEffect> effectStack = new Stack<CardEffect> ();
 
@@ -85,20 +86,22 @@ public class MatchManager : NetworkBehaviour
         switch (card.Type) { 
             case CardType.Unit:
                 if (fieldTargets.Length <= 0) return false;
-                if (!(card is UnitCardInstance) ) 
+                if (!(card is UnitCardInstance)) return false;
 
                 Debug.Log ("Player " + player.OwnerClientId + " played " + card.CardName + " on cell " + fieldTargets[0]);
                 HexagonCell cell;
                 fieldGrid.Cells.TryGetValue(fieldTargets[0], out cell);
                 if (cell.FieldCard) return false; //If the cell is occupied return false
-                
+
+                //Spend Mana
+                player.SpendMana (card.Cost);
+
                 FieldUnit summonedUnit = SummonUnit (card, player, cell);
-                if (!summonedUnit) return false;
 
                 //Play Effects
                 if ((card as UnitCardInstance)._UnitCard.UnitOnPlayEffect) {
                     OnPlay playEffect = Instantiate <OnPlay> ((card as UnitCardInstance)._UnitCard.UnitOnPlayEffect);
-
+                    playEffect.Unit = summonedUnit;
                     List<ITargetable> targets = new List<ITargetable> ();
 
                     for (int i = 1; i < fieldTargets.Length; i++) {
@@ -109,13 +112,31 @@ public class MatchManager : NetworkBehaviour
                                 targets.Add (celli.FieldCard);
                         }
                     }
-                    
-                    if (playEffect.TragetVaildity(targets)) { //If targets are valid, then we proceed to call the play effect. Otherwise, we ignore it.
-                        playEffect.SetTargets (summonedUnit, targets);
+            
+                    if (playEffect.TragetVaildity(targets) && summonedUnit) { //If targets are valid, then we proceed to call the play effect. Otherwise, we ignore it.
+                        playEffect.SetTargets (targets);
                         playEffect.PlayEffect ();
                         CallEffects ();
                     }
                 }
+
+                break;
+            case CardType.Structure:
+                if (fieldTargets.Length <= 0) return false;
+                if (!(card is StructureCardInstance)) return false;
+
+                Debug.Log ("Player " + player.OwnerClientId + " played " + card.CardName + " on cell " + fieldTargets[0]);
+
+                HexagonCell cellS;
+                fieldGrid.Cells.TryGetValue(fieldTargets[0], out cellS);
+                if (cellS.FieldCard) return false; //If the cell is occupied return false
+
+                //Spend Mana
+                player.SpendMana (card.Cost);
+
+                FieldStructure summonedStructure = SummonStructure (card, player, cellS);
+
+                //TODO play effects
 
                 break;
             default:
@@ -125,6 +146,28 @@ public class MatchManager : NetworkBehaviour
         return true;
     }
 
+    FieldStructure SummonStructure (CardInstance card, Player player, HexagonCell cell) {
+        if (!IsServer) return null;
+
+        if (cell.FieldCard) return null; //If the cell is occupied return
+
+        GameObject newStructure = Instantiate(fieldStructurePrefab, Vector3.zero, Quaternion.identity);
+        newStructure.gameObject.GetComponent<NetworkObject> ().SpawnWithOwnership (player.OwnerClientId, null, true);
+
+        FieldStructure fieldStructure = newStructure.GetComponent <FieldStructure> ();
+
+        fieldStructure.position.Value = cell.gameObject.transform.position;
+        fieldStructure.SummonStructure (card, player, cell);
+
+        cell.FieldCard = fieldStructure;
+
+        player.SummonStructure (fieldStructure);
+
+        CallEffects ();
+        return fieldStructure;        
+
+    }
+
     FieldUnit SummonUnit (CardInstance card, Player player, HexagonCell cell) {
         if (!IsServer) return null;
 
@@ -132,7 +175,9 @@ public class MatchManager : NetworkBehaviour
 
         GameObject newUnit = Instantiate(fieldUnitPrefab, Vector3.zero, Quaternion.identity);
         newUnit.gameObject.GetComponent<NetworkObject>().SpawnWithOwnership ( player.OwnerClientId, null, true);
+
         FieldUnit fieldUnit = newUnit.GetComponent<FieldUnit> ();
+
         fieldUnit.position.Value = cell.gameObject.transform.position;
         fieldUnit.SummonUnit (card, player, cell);
 

@@ -21,6 +21,7 @@ public class Deck
                         gameDeck.Deck.Add (new SpellCardInstance (c.Card));
                         break;
                     case CardType.Structure:
+                        gameDeck.Deck.Add (new StructureCardInstance (c.Card));
                         break;
                     case CardType.Trap:
                         break;

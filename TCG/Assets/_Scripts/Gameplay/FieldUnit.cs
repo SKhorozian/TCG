@@ -37,7 +37,6 @@ public class FieldUnit : FieldCard, IDamageable
     });
 
 
-    [SerializeField] SpriteRenderer icon;
     [SerializeField] TextMeshPro strengthText;
     [SerializeField] TextMeshPro healthText;
     [SerializeField] TextMeshPro actionPointText;
@@ -60,9 +59,6 @@ public class FieldUnit : FieldCard, IDamageable
         this.player = player; 
         
         this.cell = cell;
-        
-        //Spend Mana
-        player.SpendMana (unitCard.Cost);
 
         //Initialize stats
         strength.Value = unitCard.Strength;
@@ -75,7 +71,7 @@ public class FieldUnit : FieldCard, IDamageable
         attackRange.Value = unitCard.AttackRange;
 
         //Call Enterance Effects:
-        foreach (CardEffect effect in unitCard._UnitCard.EnteranceEffects) {
+        foreach (CardEffect effect in unitCard._UnitCard.EntranceEffects) {
             player.MatchManage.AddEffectToStack (effect, this);
         }
 
@@ -84,7 +80,7 @@ public class FieldUnit : FieldCard, IDamageable
 
     [ClientRpc] 
     void SummonUnitClientRPC (string cardLocation, ulong playerOwnerID) {
-        if (!IsServer) { //If we're the client rotate the object to match the client's camera
+        if (!IsServer) { //If we're the client rotate, the object to match the client's camera
             transform.Rotate (new Vector3 (0,180,0));
             card = new UnitCardInstance (Resources.Load<Card> (cardLocation));
         } 
@@ -141,9 +137,6 @@ public class FieldUnit : FieldCard, IDamageable
         strengthText.text = strength.Value.ToString();
         healthText.text = health.Value.ToString();
 
-        if (health.Value < unitCard.Health) healthText.color = Color.red;
-        else healthText.color = Color.black;
-
         if (IsServer) UpdateUnitClientRPC ();
     }
     [ClientRpc]
@@ -161,7 +154,7 @@ public class FieldUnit : FieldCard, IDamageable
         currActionPoints.Value = Mathf.Clamp (currActionPoints.Value, 0, unitCard.ActionPoints);
     }
 
-    public void TurnStart()
+    public override void TurnStart()
     {
         currActionPoints.Value = unitCard.ActionPoints; //Untap
     
@@ -171,7 +164,7 @@ public class FieldUnit : FieldCard, IDamageable
     
     }
 
-    public void TurnEnd () {
+    public override void TurnEnd () {
 
         foreach (CardEffect effect in unitCard._UnitCard.TurnEndEffects) { //End Turn
             player.MatchManage.AddEffectToStack (effect, this);
@@ -204,6 +197,7 @@ public class FieldUnit : FieldCard, IDamageable
     }
 
 
+    public new CardInstance Card {get {return unitCard;}}
     public CardInstance UnitsCard {get {return unitCard;}}
 
 }

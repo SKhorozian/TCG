@@ -20,9 +20,9 @@ MonoBehaviour:
   cardType: 0
   strength: 300
   health: 100
-  actionPoints: 2
+  actionPoints: 1
   movementSpeed: 1
-  attackRange: 2
+  attackRange: 3
   enteranceEffects: []
   turnStartEffects: []
   turnEndEffects: []

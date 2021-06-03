@@ -14,18 +14,14 @@ public abstract class OnPlay : ScriptableObject
 
     public abstract bool TragetVaildity (List<ITargetable> targets); //Checks if targets are valid
 
-    public void SetTargets (FieldUnit unit, List<ITargetable> targets) {
-        if (TragetVaildity (targets)) {
-            this.targets = targets;
-        }
-
-        playUnit = unit;
+    public void SetTargets (List<ITargetable> targets) {
+        this.targets = targets;
     }
 
     public abstract void PlayEffect ();
 
     public List<ITargetable> Targets {get {return targets;}}
-    public FieldUnit Unit {get {return playUnit;}}
+    public FieldUnit Unit {get {return playUnit;} set {playUnit = value;}}
 
     public int FieldTargetsCount         {get {return fieldTargetsCount;}}
     public int HandTargetsCount          {get {return handTargetsCount;}}

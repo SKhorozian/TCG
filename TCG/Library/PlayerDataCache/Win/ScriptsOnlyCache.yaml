@@ -6,8 +6,10 @@ ScriptsOnlyBuild:
     - ColossalGolemEffect
     - DamageUnitOnPlay
     - DrawCardEffect
+    - FieldStructure
     - FieldUnit
     - GameManager
+    - HealAllCardEffect
     - HexagonCell
     - HexagonGrid
     - ManaRampEffect
@@ -17,6 +19,8 @@ ScriptsOnlyBuild:
     - PlayerController
     - PlayerHandDisplay
     - PlayerStatsDisplay
+    - StrikeEachOtherOnPlayEffect
+    - StructureCard
     - TurnButton
     - UnitCard
     Unity.Multiplayer.MLAPI.Runtime.dll:
@@ -208,65 +212,73 @@ ScriptsOnlyBuild:
     - Class: 114
       Script: {instanceID: 3954}
     - Class: 114
-      Script: {instanceID: 3996}
+      Script: {instanceID: 3980}
     - Class: 114
-      Script: {instanceID: 4056}
+      Script: {instanceID: 3998}
     - Class: 114
-      Script: {instanceID: 4124}
+      Script: {instanceID: 4058}
     - Class: 114
-      Script: {instanceID: 4164}
+      Script: {instanceID: 4126}
     - Class: 114
-      Script: {instanceID: 4196}
+      Script: {instanceID: 4166}
     - Class: 114
-      Script: {instanceID: 4282}
+      Script: {instanceID: 4198}
     - Class: 114
-      Script: {instanceID: 4286}
+      Script: {instanceID: 4284}
     - Class: 114
-      Script: {instanceID: 4360}
+      Script: {instanceID: 4288}
     - Class: 114
-      Script: {instanceID: 4472}
+      Script: {instanceID: 4362}
     - Class: 114
-      Script: {instanceID: 4494}
+      Script: {instanceID: 4474}
     - Class: 114
-      Script: {instanceID: 4578}
+      Script: {instanceID: 4496}
     - Class: 114
-      Script: {instanceID: 4646}
+      Script: {instanceID: 4580}
     - Class: 114
-      Script: {instanceID: 4720}
+      Script: {instanceID: 4648}
     - Class: 114
-      Script: {instanceID: 4778}
+      Script: {instanceID: 4722}
     - Class: 114
-      Script: {instanceID: 4828}
+      Script: {instanceID: 4780}
     - Class: 114
-      Script: {instanceID: 5170}
+      Script: {instanceID: 4830}
     - Class: 114
-      Script: {instanceID: 5246}
+      Script: {instanceID: 5172}
     - Class: 114
-      Script: {instanceID: 5262}
+      Script: {instanceID: 5248}
     - Class: 114
-      Script: {instanceID: 5310}
+      Script: {instanceID: 5264}
     - Class: 114
-      Script: {instanceID: 5314}
+      Script: {instanceID: 5312}
     - Class: 114
-      Script: {instanceID: 5434}
+      Script: {instanceID: 5316}
     - Class: 114
-      Script: {instanceID: 5694}
+      Script: {instanceID: 5436}
     - Class: 114
-      Script: {instanceID: 5740}
+      Script: {instanceID: 5696}
     - Class: 114
-      Script: {instanceID: 5746}
+      Script: {instanceID: 5742}
     - Class: 114
-      Script: {instanceID: 5786}
+      Script: {instanceID: 5748}
     - Class: 114
-      Script: {instanceID: 5850}
+      Script: {instanceID: 5788}
     - Class: 114
-      Script: {instanceID: 6018}
+      Script: {instanceID: 5852}
     - Class: 114
-      Script: {instanceID: 6122}
+      Script: {instanceID: 6020}
     - Class: 114
-      Script: {instanceID: 6372}
+      Script: {instanceID: 6124}
     - Class: 114
-      Script: {instanceID: 6402}
+      Script: {instanceID: 6374}
+    - Class: 114
+      Script: {instanceID: 6404}
+    - Class: 114
+      Script: {instanceID: 24030}
+    - Class: 114
+      Script: {instanceID: 24044}
+    - Class: 114
+      Script: {instanceID: 72268}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 128
@@ -318,7 +330,7 @@ ScriptsOnlyBuild:
     className: Mask
   - hash:
       serializedVersion: 2
-      Hash: 4868bca60e7833be712dcf079b635f0f
+      Hash: f6c06424484abf9e3d31c7caac6c19a6
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: MatchManager
@@ -354,7 +366,7 @@ ScriptsOnlyBuild:
     className: TMP_InputField
   - hash:
       serializedVersion: 2
-      Hash: 41e5817d08764d95c6ce8b68bd12d0bb
+      Hash: 7720fc18850c5409a21dc6f83d39e903
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: UnitCard
@@ -708,7 +720,7 @@ ScriptsOnlyBuild:
     className: TMP_SpriteAnimator
   - hash:
       serializedVersion: 2
-      Hash: b36d3818b4967a8ebed439a893d2053f
+      Hash: d14207d1acfda4f8e2b365a1e989ef5f
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: FieldUnit
@@ -802,6 +814,12 @@ ScriptsOnlyBuild:
     assemblyName: UnityEngine.UI.dll
     namespaceName: UnityEngine.UI
     className: Button
+  - hash:
+      serializedVersion: 2
+      Hash: 8a131214c06fbaee2997e729f089bc71
+    assemblyName: Assembly-CSharp.dll
+    namespaceName: 
+    className: StrikeEachOtherOnPlayEffect
   - hash:
       serializedVersion: 2
       Hash: 2df93f85bb47aebc9417b44c1d5ba574
@@ -1008,7 +1026,7 @@ ScriptsOnlyBuild:
     className: SignalTrack
   - hash:
       serializedVersion: 2
-      Hash: 5f7eeaf73e1a31a7150ad164a0b90efa
+      Hash: 140f2ec03910ecbf7bc1b516dda9072e
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: CardDisplay
@@ -1152,7 +1170,7 @@ ScriptsOnlyBuild:
     className: DebugUIHandlerEnumHistory
   - hash:
       serializedVersion: 2
-      Hash: d2ced3e190128cd64ec1b7888db08e5b
+      Hash: 91c67126b8dc57404653013e7a489648
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: Player
@@ -1254,7 +1272,7 @@ ScriptsOnlyBuild:
     className: ActivationPlayableAsset
   - hash:
       serializedVersion: 2
-      Hash: bcc86edc45890702cbbeb5e0f5570ce1
+      Hash: b32e65f9787b78f076ec44d54b31235c
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: DamageUnitOnPlay
@@ -1270,6 +1288,30 @@ ScriptsOnlyBuild:
     assemblyName: UnityEngine.UI.dll
     namespaceName: UnityEngine.EventSystems
     className: TouchInputModule
+  - hash:
+      serializedVersion: 2
+      Hash: 9ef405d79daad4360d0224447d4d58e6
+    assemblyName: Assembly-CSharp.dll
+    namespaceName: 
+    className: FieldStructure
+  - hash:
+      serializedVersion: 2
+      Hash: 9c576f4e390720126163ef64f53a3bb2
+    assemblyName: Assembly-CSharp.dll
+    namespaceName: 
+    className: StructureCard
+  - hash:
+      serializedVersion: 2
+      Hash: cd9fe52b0643301c60fc4a69d639725e
+    assemblyName: Assembly-CSharp.dll
+    namespaceName: 
+    className: HealAllCardEffect
+  - hash:
+      serializedVersion: 2
+      Hash: 71bb6a6b6c8f052f948db64c7dd3ca4f
+    assemblyName: Assembly-CSharp.dll
+    namespaceName: 
+    className: StructureDemolition
   platform: 5
   scenePathNames:
   - Assets/Scenes/Scene.unity
