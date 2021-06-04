@@ -22,13 +22,17 @@ public class UnitCard : Card
     //Keywords
     [SerializeField] UnitCardStaticKeywords staticKeywords;
 
+    //Actions
+    [SerializeField] List<Action> actions;
+
     public int Strength                  {get {return strength;}}
     public int Health                    {get {return health;}}
     public int MovementSpeed             {get {return movementSpeed;}}
     public int ActionPoints              {get {return actionPoints;}}
     public int AttackRange               {get {return attackRange;}}
-    public CardEffect[] EntranceEffects {get {return entranceEffects;}}
+    public CardEffect[] EntranceEffects  {get {return entranceEffects;}}
     public CardEffect[] TurnStartEffects {get {return turnStartEffects;}}
     public CardEffect[] TurnEndEffects   {get {return turnEndEffects;}}
     public OnPlay UnitOnPlayEffect       {get {return unitOnPlay;}}
+    public List<Action> Actions          {get {return actions;}}
 }

@@ -12,6 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b4f47fee3e9ef534d90d9e0c7abc06ae, type: 3}
   m_Name: RelentlessOrcPlayEffect
   m_EditorClassIdentifier: 
+  speed: 0
+  goesOnStack: 1
   fieldTargetsCount: 1
   handTargetsCount: 0
   stackTargetsCount: 0

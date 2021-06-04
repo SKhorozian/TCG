@@ -101,7 +101,7 @@ public class MatchManager : NetworkBehaviour
                 //Play Effects
                 if ((card as UnitCardInstance)._UnitCard.UnitOnPlayEffect) {
                     OnPlay playEffect = Instantiate <OnPlay> ((card as UnitCardInstance)._UnitCard.UnitOnPlayEffect);
-                    playEffect.Unit = summonedUnit;
+                    playEffect.FieldCard = summonedUnit;
                     List<ITargetable> targets = new List<ITargetable> ();
 
                     for (int i = 1; i < fieldTargets.Length; i++) {
@@ -115,7 +115,7 @@ public class MatchManager : NetworkBehaviour
             
                     if (playEffect.TragetVaildity(targets) && summonedUnit) { //If targets are valid, then we proceed to call the play effect. Otherwise, we ignore it.
                         playEffect.SetTargets (targets);
-                        playEffect.PlayEffect ();
+                        playEffect.DoEffect ();
                         CallEffects ();
                     }
                 }

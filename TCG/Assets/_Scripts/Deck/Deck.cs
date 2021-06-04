@@ -6,6 +6,7 @@ using UnityEngine;
 [System.Serializable]
 public class Deck
 {
+    [SerializeField] HeroCard hero;
     [SerializeField] List<DeckCard> deck;
 
     public GameDeck InitializeDeck () {

@@ -2,5 +2,6 @@ public enum CardType {
     Unit,
     Spell,
     Trap,
-    Structure
+    Structure,
+    Hero
 }

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 
-public class HexagonCell : MonoBehaviour
+public class HexagonCell : MonoBehaviour, ITargetable
 {
     Vector2 position;
     [SerializeField] FieldCard fieldCard;
