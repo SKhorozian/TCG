@@ -45,6 +45,7 @@ public class Deck
         deck = new List<DeckCard> (); 
     }
 
+    public HeroCard HeroCard {get {return hero;}}
 
 
 }

@@ -13,13 +13,16 @@ public class Player : NetworkBehaviour
     [SerializeField] private Deck startDeck;
     [SerializeField] private GameDeck playerDeck;
 
+    [SerializeField] FieldHero playerHero;
+
     //All used spells and dead units go here
-    [SerializeField] private List<CardInstance> graveyard = new List<CardInstance> ();
-    [SerializeField] private List<CardInstance> banishedCards = new List<CardInstance> ();
+    [SerializeField] private List<CardInstance> graveyard = new List<CardInstance> ();  //This is for dead units and demolished structures.
+    [SerializeField] private List<CardInstance> junkyard = new List<CardInstance> ();   //This is for used spells and discarded cards.
+    [SerializeField] private List<CardInstance> banishyard = new List<CardInstance> (); //This is for banished cards.
 
     //Controled Field Cards
-    [SerializeField] List<FieldUnit> controledUnits;
-    [SerializeField] List<FieldStructure> controledStructures;
+    [SerializeField] List<FieldUnit> controledUnits;            //All units under this player's control.
+    [SerializeField] List<FieldStructure> controledStructures;  //All structures under this player's control.
 
     //UI
     [SerializeField] GameObject playerControllerPrefab;
@@ -353,7 +356,6 @@ public class Player : NetworkBehaviour
 
     #endregion 
 
-
     #region Structure
 
     public void SummonStructure (FieldStructure structure) {
@@ -381,6 +383,16 @@ public class Player : NetworkBehaviour
         structure.NetworkObject.Despawn (true);
         structure.Cell.FieldCard = null;
     }
+
+    #endregion
+
+    #region Hero
+
+    public void SummonHero (FieldHero fieldHero) {
+        if (!IsServer) return;
+        playerHero = fieldHero;
+    }
+
 
     #endregion
 
@@ -437,7 +449,12 @@ public class Player : NetworkBehaviour
         }
     }
 
+    public GameDeck CurrentDeck                     {get {return playerDeck;}}
+    public Deck StartDeck                           {get {return startDeck;}}
+
     public List<FieldUnit> FieldUnits               {get {return controledUnits;}}
     public List<FieldStructure> FieldStructures     {get {return controledStructures;}}
+    public FieldHero FieldHero                      {get {return playerHero;}}
+    
 
 }

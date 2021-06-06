@@ -23,6 +23,7 @@ public class MatchManager : NetworkBehaviour
     [SerializeField] GameObject fieldGridPrefab;
     HexagonGrid fieldGrid;
 
+    [SerializeField] GameObject fieldHeroPrefab;
     [SerializeField] GameObject fieldUnitPrefab;
     [SerializeField] GameObject fieldStructurePrefab;
 
@@ -74,7 +75,56 @@ public class MatchManager : NetworkBehaviour
             Camera.main.transform.position = (new Vector3 (0,7,5));
             Camera.main.transform.rotation = Quaternion.Euler (new Vector3 (60,-180,0));
         }
+
+        if (IsServer) SummonHeros (); 
     }
+
+    //Summon the heroes as Field Cards
+    public void SummonHeros () {
+        if (!IsServer) return;
+        
+        //Player 1:
+        GameObject player1Hero = NetworkManager.Instantiate (fieldHeroPrefab, Vector3.zero, Quaternion.identity);
+        player1Hero.gameObject.GetComponent<NetworkObject> ().SpawnWithOwnership (player1.OwnerClientId, null, true);
+
+        HexagonCell cell1;
+
+        if (fieldGrid.Cells.TryGetValue (new Vector2 (5, 17), out cell1)) {
+            HeroCardInstance heroCardInstance = new HeroCardInstance (player1.StartDeck.HeroCard);
+            FieldHero fieldHero = player1Hero.GetComponent<FieldHero> ();
+            fieldHero.SummonHero (heroCardInstance, player1, cell1);
+
+            fieldHero.position.Value = cell1.gameObject.transform.position;
+            cell1.FieldCard = fieldHero;
+            
+            player1.SummonHero (fieldHero);
+        } else {
+            throw new System.Exception ("Invalid Hex Cell for player 1's hero!");
+        }
+
+        //Player 2:
+        GameObject player2Hero = NetworkManager.Instantiate (fieldHeroPrefab, Vector3.zero, Quaternion.identity);
+        player2Hero.gameObject.GetComponent<NetworkObject> ().SpawnWithOwnership (player2.OwnerClientId, null, true);
+
+        HexagonCell cell2;
+
+        if (fieldGrid.Cells.TryGetValue (new Vector2 (5, 1), out cell2)) {
+            HeroCardInstance heroCardInstance = new HeroCardInstance (player2.StartDeck.HeroCard);
+            FieldHero fieldHero = player2Hero.GetComponent<FieldHero> ();
+            fieldHero.SummonHero (heroCardInstance, player2, cell1);
+
+            fieldHero.position.Value = cell2.gameObject.transform.position;
+            cell2.FieldCard = fieldHero;
+
+            player2.SummonHero (fieldHero);
+        } else {
+            throw new System.Exception ("Invalid Hex Cell for player 2's hero!");
+        }
+
+        CallEffects ();
+
+    }
+
 
     //Returns true if the card was played successfully, else return false
     public bool PlayCard (CardInstance card, Player player, Vector2[] fieldTargets, int[] handTargets, int[] stackTargets) {
@@ -242,6 +292,16 @@ public class MatchManager : NetworkBehaviour
                     if (target.currActionPoints.Value > 0) target.Strike (attacker); 
                     attacker.ConsumeActionPoint (1);
 
+                } else if (hexCell.FieldCard is FieldHero) {
+
+                    FieldHero target = hexCell.FieldCard as FieldHero;
+
+                    if (attacker.Player.FieldHero.Equals (target)) return; //Return if target hero is a friendly.
+                    attacker.Strike (target);
+                    
+                    attacker.ConsumeActionPoint (1);
+                } else {
+                    return;
                 }
             }
         }

@@ -62,6 +62,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   startDeck:
+    hero: {fileID: 11400000, guid: 1d21d192733755c47bca7aa700162953, type: 2}
     deck:
     - card: {fileID: 11400000, guid: 4a5d8e55584d2264dbda6a55f2a5ed83, type: 2}
       copies: 3
@@ -75,6 +76,7 @@ MonoBehaviour:
       copies: 3
     - card: {fileID: 11400000, guid: 6583c7c0a283bd1479d88e65aaad8ae0, type: 2}
       copies: 3
+  playerHero: {fileID: 0}
   controledUnits: []
   controledStructures: []
   playerControllerPrefab: {fileID: 499625753408219366, guid: 5eefb5a580c14ab488e2e2859f87e251,

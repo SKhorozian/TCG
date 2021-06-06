@@ -6,6 +6,7 @@ ScriptsOnlyBuild:
     - ColossalGolemEffect
     - DamageUnitOnPlay
     - DrawCardEffect
+    - FieldHero
     - FieldStructure
     - FieldUnit
     - GameManager
@@ -205,83 +206,85 @@ ScriptsOnlyBuild:
     - Class: 114
       Script: {instanceID: 3662}
     - Class: 114
-      Script: {instanceID: 3776}
-    - Class: 114
-      Script: {instanceID: 3790}
+      Script: {instanceID: 3778}
     - Class: 114
       Script: {instanceID: 3792}
     - Class: 114
-      Script: {instanceID: 3940}
+      Script: {instanceID: 3794}
     - Class: 114
-      Script: {instanceID: 3960}
+      Script: {instanceID: 3942}
     - Class: 114
-      Script: {instanceID: 3986}
+      Script: {instanceID: 3962}
     - Class: 114
-      Script: {instanceID: 4004}
+      Script: {instanceID: 3988}
     - Class: 114
-      Script: {instanceID: 4064}
+      Script: {instanceID: 4006}
     - Class: 114
-      Script: {instanceID: 4132}
+      Script: {instanceID: 4066}
     - Class: 114
-      Script: {instanceID: 4174}
+      Script: {instanceID: 4134}
     - Class: 114
-      Script: {instanceID: 4206}
+      Script: {instanceID: 4176}
     - Class: 114
-      Script: {instanceID: 4292}
+      Script: {instanceID: 4208}
     - Class: 114
-      Script: {instanceID: 4296}
+      Script: {instanceID: 4294}
     - Class: 114
-      Script: {instanceID: 4372}
+      Script: {instanceID: 4298}
     - Class: 114
-      Script: {instanceID: 4484}
+      Script: {instanceID: 4374}
     - Class: 114
-      Script: {instanceID: 4506}
+      Script: {instanceID: 4486}
     - Class: 114
-      Script: {instanceID: 4590}
+      Script: {instanceID: 4508}
     - Class: 114
-      Script: {instanceID: 4658}
+      Script: {instanceID: 4592}
     - Class: 114
-      Script: {instanceID: 4732}
+      Script: {instanceID: 4660}
     - Class: 114
-      Script: {instanceID: 4790}
+      Script: {instanceID: 4734}
     - Class: 114
-      Script: {instanceID: 4840}
+      Script: {instanceID: 4792}
     - Class: 114
-      Script: {instanceID: 4912}
+      Script: {instanceID: 4842}
     - Class: 114
-      Script: {instanceID: 5184}
+      Script: {instanceID: 4914}
     - Class: 114
-      Script: {instanceID: 5260}
+      Script: {instanceID: 5186}
     - Class: 114
-      Script: {instanceID: 5276}
+      Script: {instanceID: 5262}
     - Class: 114
-      Script: {instanceID: 5324}
+      Script: {instanceID: 5278}
     - Class: 114
-      Script: {instanceID: 5328}
+      Script: {instanceID: 5326}
     - Class: 114
-      Script: {instanceID: 5448}
+      Script: {instanceID: 5330}
     - Class: 114
-      Script: {instanceID: 5488}
+      Script: {instanceID: 5450}
     - Class: 114
-      Script: {instanceID: 5710}
+      Script: {instanceID: 5490}
     - Class: 114
-      Script: {instanceID: 5756}
+      Script: {instanceID: 5712}
     - Class: 114
-      Script: {instanceID: 5762}
+      Script: {instanceID: 5758}
     - Class: 114
-      Script: {instanceID: 5802}
+      Script: {instanceID: 5764}
     - Class: 114
-      Script: {instanceID: 5806}
+      Script: {instanceID: 5804}
     - Class: 114
-      Script: {instanceID: 5868}
+      Script: {instanceID: 5808}
     - Class: 114
-      Script: {instanceID: 6034}
+      Script: {instanceID: 5870}
     - Class: 114
-      Script: {instanceID: 6140}
+      Script: {instanceID: 6036}
     - Class: 114
-      Script: {instanceID: 6390}
+      Script: {instanceID: 6142}
     - Class: 114
-      Script: {instanceID: 6420}
+      Script: {instanceID: 6392}
+    - Class: 114
+      Script: {instanceID: 6422}
+    - Class: 114
+      Script: {instanceID: 21846}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 128
@@ -333,7 +336,7 @@ ScriptsOnlyBuild:
     className: Mask
   - hash:
       serializedVersion: 2
-      Hash: f6c06424484abf9e3d31c7caac6c19a6
+      Hash: 5d27ccb79c83388963080363a9ff211e
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: MatchManager
@@ -757,6 +760,12 @@ ScriptsOnlyBuild:
     assemblyName: Unity.RenderPipelines.Core.Runtime.dll
     namespaceName: UnityEngine.Rendering.UI
     className: DebugUIHandlerBitField
+  - hash:
+      serializedVersion: 2
+      Hash: 43fd2a6aa388216806981e84edd10f9a
+    assemblyName: Assembly-CSharp.dll
+    namespaceName: 
+    className: MovementAction
   - hash:
       serializedVersion: 2
       Hash: 2cfa0393b5123bd14aa7b550fd8912e4
@@ -1197,7 +1206,7 @@ ScriptsOnlyBuild:
     className: DebugUIHandlerEnumHistory
   - hash:
       serializedVersion: 2
-      Hash: a7791fa5bab20e665d6cbd4dba8846bf
+      Hash: e564bed6c9765d81c2494989e372de8d
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: Player
@@ -1321,6 +1330,12 @@ ScriptsOnlyBuild:
     assemblyName: UnityEngine.UI.dll
     namespaceName: UnityEngine.EventSystems
     className: TouchInputModule
+  - hash:
+      serializedVersion: 2
+      Hash: d1bbb8ebdcbedc545683c9abec546998
+    assemblyName: Assembly-CSharp.dll
+    namespaceName: 
+    className: FieldHero
   platform: 5
   scenePathNames:
   - Assets/Scenes/Scene.unity

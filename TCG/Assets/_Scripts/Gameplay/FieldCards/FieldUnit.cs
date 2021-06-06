@@ -103,7 +103,7 @@ public class FieldUnit : FieldCard, IDamageable
         if (IsServer) {
             HexagonCell hexagonCell;
             if (player.MatchManage.FieldGrid.Cells.TryGetValue (cell, out hexagonCell)) {
-                if (hexagonCell.FieldCard) {if (hexagonCell.FieldCard is FieldUnit) Attack (cell, netid);} //If the hex cell is ocupied and the occupant is a unit, attack it.
+                if (hexagonCell.FieldCard) {if (hexagonCell.FieldCard is IDamageable) Attack (cell, netid);} //If the hex cell is ocupied and the occupant is an IDamagable, attack it.
                 else MoveUnit (cell, netid); //else just move there
             }
         } else {

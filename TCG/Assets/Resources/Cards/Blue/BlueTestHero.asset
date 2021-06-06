@@ -15,7 +15,7 @@ MonoBehaviour:
   cardName: Blue Test Hero
   description: 
   color: 1
-  cardArt: {fileID: 0}
+  cardArt: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
   cost: 0
   cardType: 4
   gameStartEffects: []

@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Mermaid
   m_EditorClassIdentifier: 
   cardName: Mermaid
-  description: <b>Entrance:</b> <color="yellow"><b>Ramp</b></color> 1.
+  description: <b>Entrance:</b> <color="Yellow"><b>Crystalize</b></color> 1.
   color: 1
   cardArt: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
   cost: 3
@@ -21,7 +21,7 @@ MonoBehaviour:
   strength: 100
   health: 300
   actionPoints: 2
-  movementSpeed: 2
+  movementSpeed: 1
   attackRange: 1
   entranceEffects:
   - {fileID: 11400000, guid: adaf157e4d9281644900c4a9c7b244bb, type: 2}
@@ -29,3 +29,4 @@ MonoBehaviour:
   turnEndEffects: []
   unitOnPlay: {fileID: 0}
   staticKeywords: 0
+  actions: []

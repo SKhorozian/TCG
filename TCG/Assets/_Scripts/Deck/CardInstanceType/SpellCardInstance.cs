@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class SpellCardInstance : CardInstance
 {
-    protected SpellCard spellCard;
+    SpellCard spellCard;
 
     public SpellCardInstance (Card card) {
         this.card = card;
