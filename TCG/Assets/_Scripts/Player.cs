@@ -296,14 +296,19 @@ public class Player : NetworkBehaviour
     }
 
     
-    public Damage DamageTarget (IDamageable target, Damage damage) { //Deal damage to target.
+    public Damage DamageTarget (IDamageable target, Damage damage, FieldCard source) { //Deal damage to target.
         target.TakeDamage (damage);
         return damage;
     }
 
+    public Heal HealTarget (IDamageable target, Heal heal, FieldCard source) {
+        target.TakeHeal (heal);
+        return heal;
+    }
+
     #endregion
 
-    #region Unit Stuff 
+    #region Unit 
 
     public void SummonUnit (FieldUnit unit) {
         if (!IsServer) return;
@@ -311,23 +316,19 @@ public class Player : NetworkBehaviour
         controledUnits.Add (unit);
     }
 
-    public void MoveUnit (FieldUnit unit, Vector2 cell) {
+    public void MoveUnit (FieldUnit unit, HexagonCell cell) {
         if (!IsServer) return;
 
-        HexagonCell hexCell;
+        if (cell.FieldCard != null) return;
 
-        if (matchManager.FieldGrid.Cells.TryGetValue (cell, out hexCell)) {
-            if (hexCell.FieldCard != null) return;
+        unit.Cell.FieldCard = null;
 
-            unit.Cell.FieldCard = null;
+        cell.FieldCard = unit;
+        unit.Cell = cell;
 
-            hexCell.FieldCard = unit;
-            unit.Cell = hexCell;
+        unit.position.Value = cell.transform.position;
 
-            unit.position.Value = hexCell.transform.position;
-
-            unit.UpdateUnit ();
-        } 
+        unit.UpdateUnit ();
 
     }
 
@@ -336,8 +337,7 @@ public class Player : NetworkBehaviour
         if (!IsServer) return;
         if (!controledUnits.Contains (unit)) return;
 
-        matchManager.AddEffectToStack(new UnitDeath (), unit);
-
+        matchManager.AddEffectToStack(new UnitDeath (unit));
     }
 
     //Final Death effect
@@ -369,7 +369,7 @@ public class Player : NetworkBehaviour
         if (!IsServer) return;
         if (!controledStructures.Contains (structure)) return;
 
-        matchManager.AddEffectToStack (new StructureDemolition (), structure);
+        matchManager.AddEffectToStack (new StructureDemolition (structure));
     }
 
     public void StructureDemolish (FieldStructure structure) {

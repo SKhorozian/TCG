@@ -13,21 +13,17 @@ MonoBehaviour:
   m_Name: Relentless Orc
   m_EditorClassIdentifier: 
   cardName: Relentless Orc
-  description: '<b>Play:</b> This unit and target enemy unit attack each other.
-
-    <i>SMASH!</i>'
+  cost: 5
+  description: <b>Play:</b> This unit and target enemy unit strike each other.
   color: 0
   cardArt: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
-  cost: 5
   cardType: 0
+  onPlayEffect: {fileID: 11400000, guid: 4670b24eff1010448b5110326bd4c280, type: 2}
   strength: 400
   health: 500
-  actionPoints: 1
+  actionPoints: 2
   movementSpeed: 1
   attackRange: 1
-  entranceEffects: []
-  turnStartEffects: []
-  turnEndEffects: []
-  unitOnPlay: {fileID: 11400000, guid: 4670b24eff1010448b5110326bd4c280, type: 2}
-  staticKeywords: 0
+  cardEffects: []
+  staticKeywords: 2
   actions: []

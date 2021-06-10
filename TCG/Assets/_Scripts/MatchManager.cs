@@ -149,8 +149,8 @@ public class MatchManager : NetworkBehaviour
                 FieldUnit summonedUnit = SummonUnit (card, player, cell);
 
                 //Play Effects
-                if ((card as UnitCardInstance)._UnitCard.UnitOnPlayEffect) {
-                    OnPlay playEffect = Instantiate <OnPlay> ((card as UnitCardInstance)._UnitCard.UnitOnPlayEffect);
+                if ((card as UnitCardInstance).UnitCard.OnPlayEffect) {
+                    OnPlay playEffect = Instantiate <OnPlay> ((card as UnitCardInstance).UnitCard.OnPlayEffect);
                     playEffect.FieldCard = summonedUnit;
                     List<ITargetable> targets = new List<ITargetable> ();
 
@@ -261,17 +261,33 @@ public class MatchManager : NetworkBehaviour
     // }
 
     public void MoveUnit (FieldUnit unit, Vector2 cell, ulong netid) {
+        if (!IsServer) return;
+
         if (playerTurn.OwnerClientId != netid) return;
         if (unit.OwnerClientId != netid) return;
-        if (HexagonMetrics.GetDistantce (unit.Cell.Position, cell) > unit.movementSpeed.Value) return;
-        if (unit.currActionPoints.Value <= 0) return;
 
-        unit.Player.MoveUnit (unit, cell);
-        unit.ConsumeActionPoint (1);
-        CallEffects ();
+        MovementAction moveAction = new MovementAction ();
+        moveAction.FieldCard = unit;
+
+        HexagonCell hexagonCell;
+        if (fieldGrid.Cells.TryGetValue (cell, out hexagonCell)) {
+
+            List<ITargetable> targets = new List<ITargetable> ();
+            targets.Add (hexagonCell);
+
+            if (moveAction.TragetVaildity (targets)) {
+                moveAction.SetTargets (targets);
+                moveAction.DoEffect ();
+
+                CallEffects ();
+            }
+        }
+
+ 
     }
 
     public void UnitAttack (FieldUnit attacker, Vector2 cell, ulong netid) {
+        if (!IsServer) return;
 
         if (playerTurn.OwnerClientId != netid) return;
         if (attacker.OwnerClientId != netid) return;
@@ -334,11 +350,8 @@ public class MatchManager : NetworkBehaviour
     }
 
 
-    public void AddEffectToStack (CardEffect effect, FieldCard fieldCard) {
-        CardEffect _effect = Instantiate<CardEffect> (effect);
-        _effect.FieldCard = fieldCard;
-
-        effectStack.Push (_effect);
+    public void AddEffectToStack (CardEffect effect) {
+        effectStack.Push (effect);
     }
 
     public void CallEffects () {
@@ -374,6 +387,9 @@ public class MatchManager : NetworkBehaviour
             return localPlayerTurn;
         }
     }
+
+    public Player Player1 {get {return player1;}}
+    public Player Player2 {get {return player2;}}
 
     public HexagonGrid FieldGrid {get {return fieldGrid;}}
    

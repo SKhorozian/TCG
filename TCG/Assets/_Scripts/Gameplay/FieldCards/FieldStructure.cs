@@ -16,6 +16,7 @@ public class FieldStructure : FieldCard
 
         this.card = card;
 
+        //Check if this is a structure first
         if (card.Card is StructureCard)
             structureCard = card as StructureCardInstance;
         else {
@@ -26,8 +27,18 @@ public class FieldStructure : FieldCard
 
         this.cell = cell;
 
-        foreach (CardEffect effect in structureCard._StructureCard.EnteranceEffects) {
-            player.MatchManage.AddEffectToStack (effect, this);
+        //Set Card Effects
+        effectTriggers = new CardEffectTrigger [structureCard.StructureCard.CardEffects.Length];
+        for (int i = 0; i < structureCard.StructureCard.CardEffects.Length; i++) {
+            effectTriggers[i] = Instantiate<CardEffectTrigger> (structureCard.StructureCard.CardEffects[i]);
+            effectTriggers[i].FieldCard = this;
+        }
+
+        //Call Enterance Effects:
+        foreach (CardEffectTrigger effect in effectTriggers) {
+            if (effect.Trigger.HasFlag (EffectTrigger.Entrance)) {
+                player.MatchManage.AddEffectToStack (effect.GetCardEffect());
+            }
         }
 
         SummonStructureClientRPC (card.CardLocation, player.OwnerClientId);
@@ -63,15 +74,21 @@ public class FieldStructure : FieldCard
 
     public override void TurnStart()
     {
-        foreach (CardEffect effect in structureCard._StructureCard.TurnStartEffects) { //Upkeep
-            player.MatchManage.AddEffectToStack (effect, this);
+        //Call Enterance Effects:
+        foreach (CardEffectTrigger effect in effectTriggers) {
+            if (effect.Trigger.HasFlag (EffectTrigger.TurnStart)) {
+                player.MatchManage.AddEffectToStack (effect.GetCardEffect());
+            }
         }
     }
 
     public override void TurnEnd()
     {
-        foreach (CardEffect effect in structureCard._StructureCard.TurnEndEffects) { //End Turn
-            player.MatchManage.AddEffectToStack (effect, this);
+        //Call Enterance Effects:
+        foreach (CardEffectTrigger effect in effectTriggers) {
+            if (effect.Trigger.HasFlag (EffectTrigger.TurnEnd)) {
+                player.MatchManage.AddEffectToStack (effect.GetCardEffect());
+            }
         }
     }
 

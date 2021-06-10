@@ -6,17 +6,11 @@ using UnityEngine;
 public class HeroCard : Card
 {
     //Card Effects
-    [SerializeField] CardEffect[] gameStartEffects;
-    [SerializeField] CardEffect[] turnStartEffects;
-    [SerializeField] CardEffect[] turnEndEffects;
+    [SerializeField] CardEffectTrigger[] cardEffects;
 
     //Actions
     [SerializeField] List<Action> actions;
 
-    public CardEffect[] GameStartEffects {get {return gameStartEffects;}}
-    public CardEffect[] TurnStartEffects {get {return turnStartEffects;}}
-    public CardEffect[] TurnEndEffects   {get {return turnEndEffects;}}
-    public List<Action> Actions          {get {return actions;}}
-
+    public CardEffectTrigger[] CardEffects {get {return cardEffects;}}
 
 }

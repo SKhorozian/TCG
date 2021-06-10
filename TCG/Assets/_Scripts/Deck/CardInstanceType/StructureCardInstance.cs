@@ -16,6 +16,6 @@ public class StructureCardInstance : CardInstance
         }
     }
 
-    public StructureCard _StructureCard    {get {return structureCard;}}
+    public StructureCard StructureCard    {get {return structureCard;}}
 
 }

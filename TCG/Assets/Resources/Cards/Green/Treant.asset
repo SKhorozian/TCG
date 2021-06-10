@@ -13,19 +13,17 @@ MonoBehaviour:
   m_Name: Treant
   m_EditorClassIdentifier: 
   cardName: Treant
+  cost: 3
   description: 
   color: 3
   cardArt: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
-  cost: 4
   cardType: 0
+  onPlayEffect: {fileID: 0}
   strength: 300
   health: 500
   actionPoints: 1
   movementSpeed: 0
   attackRange: 1
-  entranceEffects: []
-  turnStartEffects:
-  - {fileID: 11400000, guid: 20ce21811e2c46f48850c496dade1e3b, type: 2}
-  turnEndEffects: []
-  unitOnPlay: {fileID: 0}
+  cardEffects: []
   staticKeywords: 0
+  actions: []

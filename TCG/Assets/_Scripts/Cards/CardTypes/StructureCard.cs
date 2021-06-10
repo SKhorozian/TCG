@@ -6,14 +6,10 @@ using UnityEngine;
 public class StructureCard : Card
 {
     //Card Effects
-    [SerializeField] CardEffect[] entranceEffects;
-    [SerializeField] CardEffect[] turnStartEffects;
-    [SerializeField] CardEffect[] turnEndEffects;
-
+    [SerializeField] CardEffectTrigger[] cardEffects;
     //Keywords
     [SerializeField] StructureCardStaticKeywords staticKeywords;
 
-    public CardEffect[] EnteranceEffects {get {return entranceEffects;}}
-    public CardEffect[] TurnStartEffects {get {return turnStartEffects;}}
-    public CardEffect[] TurnEndEffects   {get {return turnEndEffects;}}
+    public CardEffectTrigger[] CardEffects {get {return cardEffects;}}
+
 }

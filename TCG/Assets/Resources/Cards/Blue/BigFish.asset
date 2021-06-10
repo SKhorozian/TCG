@@ -13,18 +13,17 @@ MonoBehaviour:
   m_Name: BigFish
   m_EditorClassIdentifier: 
   cardName: Big Fish
-  description: <i>"Cap'n... there's a... sea beast!"</i>
+  cost: 7
+  description: 
   color: 1
   cardArt: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
-  cost: 7
   cardType: 0
   strength: 800
   health: 800
   actionPoints: 3
   movementSpeed: 2
   attackRange: 1
-  enteranceEffects: []
-  turnStartEffects: []
-  turnEndEffects: []
+  cardEffects: []
   unitOnPlay: {fileID: 0}
-  keywords: 2
+  staticKeywords: 0
+  actions: []

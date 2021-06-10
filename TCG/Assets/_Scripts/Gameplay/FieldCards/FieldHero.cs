@@ -17,7 +17,6 @@ public class FieldHero : FieldCard, IDamageable, ITargetable
         WritePermission = NetworkVariablePermission.ServerOnly
     });
 
-
     public void SummonHero (CardInstance card, Player player, HexagonCell cell) {
         if (!IsServer) return;
 
@@ -25,7 +24,7 @@ public class FieldHero : FieldCard, IDamageable, ITargetable
 
         this.card = card;
 
-        //Check if this is a unit first.
+        //Check if this is a hero first.
         if (card is HeroCardInstance)
             heroCard = card as HeroCardInstance;
         else {
@@ -39,9 +38,7 @@ public class FieldHero : FieldCard, IDamageable, ITargetable
         health.Value = 3000;
 
         //Call Enterance Effects:
-        foreach (CardEffect effect in heroCard.HeroCard.GameStartEffects) {
-            player.MatchManage.AddEffectToStack (effect, this);
-        }
+
 
         SummonHeroClientRPC (card.CardLocation, player.OwnerClientId);
     }
@@ -110,5 +107,18 @@ public class FieldHero : FieldCard, IDamageable, ITargetable
         UpdateHeroClientRPC ();
 
         return damageInfo;
+    }
+
+    public Heal TakeHeal(Heal healInfo)
+    {
+        if (!IsServer) return null;
+
+        health.Value += healInfo.HealAmount;
+        
+        health.Value = Mathf.Clamp (health.Value, 0, 3000);
+
+        UpdateHeroClientRPC ();
+
+        return healInfo;
     }
 }

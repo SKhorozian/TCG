@@ -6,7 +6,7 @@ public abstract class Action : Targetor
 {
     [SerializeField, TextArea (minLines: 4, maxLines: 8)] string description;
 
-    protected FieldCard playCard;
+    protected FieldCard fieldCard;
 
-    public FieldCard FieldCard {get {return playCard;} set {playCard = value;}}
+    public FieldCard FieldCard {get {return fieldCard;} set {fieldCard = value;}}
 }

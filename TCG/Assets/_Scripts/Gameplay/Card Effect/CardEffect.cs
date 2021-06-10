@@ -1,10 +1,13 @@
 using UnityEngine;
 
-[System.Serializable]
-public abstract class CardEffect : ScriptableObject
+public abstract class CardEffect
 {
     protected FieldCard fieldCard;
 
+    public CardEffect (FieldCard fieldCard) {
+        this.fieldCard = fieldCard;
+    }
+
     public abstract void DoEffect ();
-    public FieldCard FieldCard {get {return fieldCard;} set {fieldCard = value;}}
+    public FieldCard FieldCard {get {return fieldCard;}}
 }

@@ -3,19 +3,15 @@ ScriptsOnlyBuild:
     Assembly-CSharp.dll:
     - CardDisplay
     - CardHandController
-    - ColossalGolemEffect
     - DamageUnitOnPlay
-    - DrawCardEffect
     - FieldHero
     - FieldStructure
     - FieldUnit
+    - FishEntranceEffect
     - GameManager
-    - HealAllCardEffect
     - HeroCard
     - HexagonCell
     - HexagonGrid
-    - ManaRampEffect
-    - ManaRefillEffect
     - MatchManager
     - Player
     - PlayerController
@@ -23,6 +19,7 @@ ScriptsOnlyBuild:
     - PlayerStatsDisplay
     - StrikeEachOtherOnPlayEffect
     - StructureCard
+    - TreeEffect
     - TurnButton
     - UnitCard
     Unity.Multiplayer.MLAPI.Runtime.dll:
@@ -150,8 +147,6 @@ ScriptsOnlyBuild:
     - Class: 114
       Script: {instanceID: 1872}
     - Class: 114
-      Script: {instanceID: 1934}
-    - Class: 114
       Script: {instanceID: 1938}
     - Class: 114
       Script: {instanceID: 1960}
@@ -164,127 +159,123 @@ ScriptsOnlyBuild:
     - Class: 114
       Script: {instanceID: 2082}
     - Class: 114
-      Script: {instanceID: 2380}
+      Script: {instanceID: 2118}
     - Class: 114
       Script: {instanceID: 2382}
     - Class: 114
-      Script: {instanceID: 2408}
+      Script: {instanceID: 2384}
     - Class: 114
-      Script: {instanceID: 2480}
+      Script: {instanceID: 2410}
     - Class: 114
-      Script: {instanceID: 2550}
+      Script: {instanceID: 2482}
     - Class: 114
-      Script: {instanceID: 2720}
+      Script: {instanceID: 2552}
     - Class: 114
-      Script: {instanceID: 2826}
+      Script: {instanceID: 2724}
     - Class: 114
-      Script: {instanceID: 2856}
+      Script: {instanceID: 2830}
     - Class: 114
-      Script: {instanceID: 3006}
+      Script: {instanceID: 2860}
     - Class: 114
-      Script: {instanceID: 3142}
+      Script: {instanceID: 3010}
     - Class: 114
-      Script: {instanceID: 3198}
+      Script: {instanceID: 3202}
     - Class: 114
-      Script: {instanceID: 3250}
+      Script: {instanceID: 3254}
     - Class: 114
-      Script: {instanceID: 3260}
+      Script: {instanceID: 3264}
     - Class: 114
-      Script: {instanceID: 3350}
+      Script: {instanceID: 3378}
     - Class: 114
-      Script: {instanceID: 3374}
+      Script: {instanceID: 3386}
     - Class: 114
-      Script: {instanceID: 3382}
+      Script: {instanceID: 3534}
     - Class: 114
-      Script: {instanceID: 3530}
+      Script: {instanceID: 3594}
     - Class: 114
-      Script: {instanceID: 3590}
+      Script: {instanceID: 3604}
     - Class: 114
-      Script: {instanceID: 3600}
+      Script: {instanceID: 3642}
     - Class: 114
-      Script: {instanceID: 3638}
+      Script: {instanceID: 3666}
     - Class: 114
-      Script: {instanceID: 3662}
+      Script: {instanceID: 3782}
     - Class: 114
-      Script: {instanceID: 3778}
+      Script: {instanceID: 3796}
     - Class: 114
-      Script: {instanceID: 3792}
+      Script: {instanceID: 3798}
     - Class: 114
-      Script: {instanceID: 3794}
+      Script: {instanceID: 3946}
     - Class: 114
-      Script: {instanceID: 3942}
+      Script: {instanceID: 3966}
     - Class: 114
-      Script: {instanceID: 3962}
+      Script: {instanceID: 3992}
     - Class: 114
-      Script: {instanceID: 3988}
+      Script: {instanceID: 4010}
     - Class: 114
-      Script: {instanceID: 4006}
+      Script: {instanceID: 4070}
     - Class: 114
-      Script: {instanceID: 4066}
+      Script: {instanceID: 4138}
     - Class: 114
-      Script: {instanceID: 4134}
+      Script: {instanceID: 4180}
     - Class: 114
-      Script: {instanceID: 4176}
-    - Class: 114
-      Script: {instanceID: 4208}
-    - Class: 114
-      Script: {instanceID: 4294}
+      Script: {instanceID: 4212}
     - Class: 114
       Script: {instanceID: 4298}
     - Class: 114
-      Script: {instanceID: 4374}
+      Script: {instanceID: 4302}
     - Class: 114
-      Script: {instanceID: 4486}
+      Script: {instanceID: 4378}
     - Class: 114
-      Script: {instanceID: 4508}
+      Script: {instanceID: 4490}
     - Class: 114
-      Script: {instanceID: 4592}
+      Script: {instanceID: 4512}
     - Class: 114
-      Script: {instanceID: 4660}
+      Script: {instanceID: 4596}
     - Class: 114
-      Script: {instanceID: 4734}
+      Script: {instanceID: 4664}
     - Class: 114
-      Script: {instanceID: 4792}
+      Script: {instanceID: 4738}
     - Class: 114
-      Script: {instanceID: 4842}
+      Script: {instanceID: 4796}
     - Class: 114
-      Script: {instanceID: 4914}
+      Script: {instanceID: 4846}
     - Class: 114
-      Script: {instanceID: 5186}
+      Script: {instanceID: 4918}
     - Class: 114
-      Script: {instanceID: 5262}
+      Script: {instanceID: 5190}
     - Class: 114
-      Script: {instanceID: 5278}
+      Script: {instanceID: 5266}
     - Class: 114
-      Script: {instanceID: 5326}
+      Script: {instanceID: 5282}
     - Class: 114
       Script: {instanceID: 5330}
     - Class: 114
-      Script: {instanceID: 5450}
+      Script: {instanceID: 5334}
     - Class: 114
-      Script: {instanceID: 5490}
+      Script: {instanceID: 5454}
     - Class: 114
-      Script: {instanceID: 5712}
+      Script: {instanceID: 5494}
     - Class: 114
-      Script: {instanceID: 5758}
+      Script: {instanceID: 5716}
     - Class: 114
-      Script: {instanceID: 5764}
+      Script: {instanceID: 5762}
     - Class: 114
-      Script: {instanceID: 5804}
+      Script: {instanceID: 5768}
     - Class: 114
       Script: {instanceID: 5808}
     - Class: 114
-      Script: {instanceID: 5870}
-    - Class: 114
-      Script: {instanceID: 6036}
+      Script: {instanceID: 5872}
     - Class: 114
       Script: {instanceID: 6142}
     - Class: 114
-      Script: {instanceID: 6392}
+      Script: {instanceID: 6270}
     - Class: 114
-      Script: {instanceID: 6422}
+      Script: {instanceID: 6394}
     - Class: 114
-      Script: {instanceID: 21846}
+      Script: {instanceID: 6424}
+    - Class: 114
+      Script: {instanceID: 21964}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 128
@@ -372,7 +363,7 @@ ScriptsOnlyBuild:
     className: TMP_InputField
   - hash:
       serializedVersion: 2
-      Hash: 4e7d104f0a8767b9aba7c8c521ce213f
+      Hash: 71696f520052a7873c23c7975a80c30d
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: UnitCard
@@ -412,12 +403,6 @@ ScriptsOnlyBuild:
     assemblyName: UnityEngine.UI.dll
     namespaceName: UnityEngine.UI
     className: Selectable
-  - hash:
-      serializedVersion: 2
-      Hash: 2a0d6496b8f705cc0ad4f277a5272d3d
-    assemblyName: Assembly-CSharp.dll
-    namespaceName: 
-    className: ManaRampEffect
   - hash:
       serializedVersion: 2
       Hash: 50fd2c1e86ddfa7914693e22c4a48e22
@@ -486,10 +471,10 @@ ScriptsOnlyBuild:
     className: ChannelMixer
   - hash:
       serializedVersion: 2
-      Hash: 71bb6a6b6c8f052f948db64c7dd3ca4f
+      Hash: 823baa1cfa4ada4cf0b784b7ecd47a3c
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
-    className: StructureDemolition
+    className: FishEntranceEffect
   - hash:
       serializedVersion: 2
       Hash: 9f0d2156cb2876cc856eb040bfe23e76
@@ -624,12 +609,6 @@ ScriptsOnlyBuild:
     className: CanvasScaler
   - hash:
       serializedVersion: 2
-      Hash: 6eb6a9c88750e6d0ec44f33c6a6583ce
-    assemblyName: Assembly-CSharp.dll
-    namespaceName: 
-    className: DrawCardEffect
-  - hash:
-      serializedVersion: 2
       Hash: cf9f5cf2c3145a37ac07f00e50e460f9
     assemblyName: UnityEngine.UI.dll
     namespaceName: UnityEngine.UI
@@ -670,12 +649,6 @@ ScriptsOnlyBuild:
     assemblyName: Unity.TextMeshPro.dll
     namespaceName: TMPro
     className: TextMeshProUGUI
-  - hash:
-      serializedVersion: 2
-      Hash: bfb76bfa6ef60d4e4c5588e54dc020cf
-    assemblyName: Assembly-CSharp.dll
-    namespaceName: 
-    className: ManaRefillEffect
   - hash:
       serializedVersion: 2
       Hash: 1f0602e7bad1e0a9cba31ce292eee8bb
@@ -732,7 +705,7 @@ ScriptsOnlyBuild:
     className: TMP_SpriteAnimator
   - hash:
       serializedVersion: 2
-      Hash: d14207d1acfda4f8e2b365a1e989ef5f
+      Hash: e30b15f365e61abb1b99b73d12776050
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: FieldUnit
@@ -774,7 +747,7 @@ ScriptsOnlyBuild:
     className: ShadowCaster2D
   - hash:
       serializedVersion: 2
-      Hash: 9ef405d79daad4360d0224447d4d58e6
+      Hash: bcb763e01341610711a361368a18ec45
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: FieldStructure
@@ -1044,7 +1017,7 @@ ScriptsOnlyBuild:
     className: ActivationTrack
   - hash:
       serializedVersion: 2
-      Hash: 07e08de33b02ccccc31c591b65eb762e
+      Hash: 297f0f680a1983247d9fe1ba75252ffa
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: HeroCard
@@ -1158,7 +1131,7 @@ ScriptsOnlyBuild:
     className: TMP_Settings
   - hash:
       serializedVersion: 2
-      Hash: 9c576f4e390720126163ef64f53a3bb2
+      Hash: 28638dfbec6606099ba49abe5012c98a
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: StructureCard
@@ -1224,12 +1197,6 @@ ScriptsOnlyBuild:
     className: NetworkObject
   - hash:
       serializedVersion: 2
-      Hash: cd9fe52b0643301c60fc4a69d639725e
-    assemblyName: Assembly-CSharp.dll
-    namespaceName: 
-    className: HealAllCardEffect
-  - hash:
-      serializedVersion: 2
       Hash: 71bb6a6b6c8f052f948db64c7dd3ca4f
     assemblyName: Unity.RenderPipelines.Universal.Runtime.dll
     namespaceName: UnityEngine.Experimental.Rendering.Universal
@@ -1254,22 +1221,10 @@ ScriptsOnlyBuild:
     className: TMP_ScrollbarEventHandler
   - hash:
       serializedVersion: 2
-      Hash: 71bb6a6b6c8f052f948db64c7dd3ca4f
-    assemblyName: Assembly-CSharp.dll
-    namespaceName: 
-    className: UnitDeath
-  - hash:
-      serializedVersion: 2
       Hash: 8c328a0ffa03c1bcb9332bb39f4f8453
     assemblyName: Unity.RenderPipelines.Core.Runtime.dll
     namespaceName: UnityEngine.Rendering
     className: Volume
-  - hash:
-      serializedVersion: 2
-      Hash: 71bb6a6b6c8f052f948db64c7dd3ca4f
-    assemblyName: Assembly-CSharp.dll
-    namespaceName: 
-    className: ColossalGolemEffect
   - hash:
       serializedVersion: 2
       Hash: 08705cef837f5d18a4c86b19b1ccf347
@@ -1296,7 +1251,13 @@ ScriptsOnlyBuild:
     className: UniversalRenderPipelineEditorResources
   - hash:
       serializedVersion: 2
-      Hash: cff09849c630c5fd345b65dd34aba6ea
+      Hash: b6edb58aaa9af1f7d4c35779e3c7bf77
+    assemblyName: Assembly-CSharp.dll
+    namespaceName: 
+    className: FieldHero
+  - hash:
+      serializedVersion: 2
+      Hash: cbe638dfce727fe546200d1051e279bb
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: SpellCard
@@ -1332,10 +1293,22 @@ ScriptsOnlyBuild:
     className: TouchInputModule
   - hash:
       serializedVersion: 2
-      Hash: d1bbb8ebdcbedc545683c9abec546998
+      Hash: 823baa1cfa4ada4cf0b784b7ecd47a3c
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
-    className: FieldHero
+    className: MermaidEntranceEffect
+  - hash:
+      serializedVersion: 2
+      Hash: 823baa1cfa4ada4cf0b784b7ecd47a3c
+    assemblyName: Assembly-CSharp.dll
+    namespaceName: 
+    className: FishermanEntranceEffect
+  - hash:
+      serializedVersion: 2
+      Hash: 823baa1cfa4ada4cf0b784b7ecd47a3c
+    assemblyName: Assembly-CSharp.dll
+    namespaceName: 
+    className: TreeEffect
   platform: 5
   scenePathNames:
   - Assets/Scenes/Scene.unity

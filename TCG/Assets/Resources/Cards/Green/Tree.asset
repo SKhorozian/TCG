@@ -13,15 +13,13 @@ MonoBehaviour:
   m_Name: Tree
   m_EditorClassIdentifier: 
   cardName: Tree
+  cost: 2
   description: <b>Entrance</b> and <b>Turn Start:</b> Heal friendly units and your
-    Hero for 100.
+    player for 100.
   color: 3
   cardArt: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
-  cost: 3
   cardType: 3
-  entranceEffects:
-  - {fileID: 11400000, guid: 466ec5d3e5bcf9b4a96643dd1ef41ec7, type: 2}
-  turnStartEffects:
-  - {fileID: 11400000, guid: 466ec5d3e5bcf9b4a96643dd1ef41ec7, type: 2}
-  turnEndEffects: []
+  onPlayEffect: {fileID: 0}
+  cardEffects:
+  - {fileID: 11400000, guid: 87b3c2e2fadabd24cb35f3badf6b122d, type: 2}
   staticKeywords: 0

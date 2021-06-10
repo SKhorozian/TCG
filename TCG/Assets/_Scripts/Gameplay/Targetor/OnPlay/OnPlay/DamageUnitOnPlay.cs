@@ -10,11 +10,9 @@ public class DamageUnitOnPlay : OnPlay
 
     public override void DoEffect()
     {
-        if (targets[0] is FieldUnit) {
-            FieldUnit target = targets[0] as FieldUnit;
+        FieldUnit target = targets[0] as FieldUnit;
 
-            playCard.Player.DamageTarget (target, new Damage (damage, DamageSource.SingleTargetSpell, playCard.Player));
-        }
+        playCard.Player.DamageTarget (target, new Damage (damage, DamageSource.SingleTargetSpell, playCard.Player), FieldCard);
     }
 
     public override bool TragetVaildity(List<ITargetable> targets)

@@ -16,10 +16,15 @@ public abstract class FieldCard : NetworkBehaviour, ITargetable
     [SerializeField] protected HexagonCell cell;
     [SerializeField] protected SpriteRenderer icon;
 
+    [SerializeField] protected CardEffectTrigger[] effectTriggers;
+    [SerializeField] protected Action[] actions;
+
 
     public CardInstance Card {get {return card;}}
     public Player Player {get {return player;}}
     public HexagonCell Cell {get {return cell;} set {if (IsServer) cell = value;}}
+    
+    public CardEffectTrigger[] EffectTriggers {get {return effectTriggers;}}
 
     public abstract void TurnStart ();
     public abstract void TurnEnd ();

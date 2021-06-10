@@ -1,9 +1,10 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
 public class StructureDemolition : CardEffect
 {
+    public StructureDemolition(FieldCard fieldCard) : base(fieldCard)
+    {
+
+    }
+
     public override void DoEffect()
     {
         if (!(fieldCard is FieldStructure)) return;     

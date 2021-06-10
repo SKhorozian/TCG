@@ -70,9 +70,18 @@ public class FieldUnit : FieldCard, IDamageable
         movementSpeed.Value = unitCard.MovementSpeed;
         attackRange.Value = unitCard.AttackRange;
 
+        //Set Card Effects
+        effectTriggers = new CardEffectTrigger [unitCard.UnitCard.CardEffects.Length];
+        for (int i = 0; i < unitCard.UnitCard.CardEffects.Length; i++) {
+            effectTriggers[i] = Instantiate<CardEffectTrigger> (unitCard.UnitCard.CardEffects[i]);
+            effectTriggers[i].FieldCard = this;
+        }
+
         //Call Enterance Effects:
-        foreach (CardEffect effect in unitCard._UnitCard.EntranceEffects) {
-            player.MatchManage.AddEffectToStack (effect, this);
+        foreach (CardEffectTrigger effect in effectTriggers) {
+            if (effect.Trigger.HasFlag (EffectTrigger.Entrance)) {
+                player.MatchManage.AddEffectToStack (effect.GetCardEffect());
+            }
         }
 
         SummonUnitClientRPC (card.CardLocation, player.OwnerClientId);
@@ -129,7 +138,7 @@ public class FieldUnit : FieldCard, IDamageable
 
     public void Strike (IDamageable target) {
         Damage damage = new Damage (strength.Value, DamageSource.Attack, player);
-        player.DamageTarget (target, damage);
+        player.DamageTarget (target, damage, this);
     } 
 
     public void UpdateUnit () {
@@ -158,16 +167,22 @@ public class FieldUnit : FieldCard, IDamageable
     {
         currActionPoints.Value = unitCard.ActionPoints; //Untap
     
-        foreach (CardEffect effect in unitCard._UnitCard.TurnStartEffects) { //Upkeep
-            player.MatchManage.AddEffectToStack (effect, this);
+        //Call Enterance Effects:
+        foreach (CardEffectTrigger effect in effectTriggers) {
+            if (effect.Trigger.HasFlag (EffectTrigger.TurnStart)) {
+                player.MatchManage.AddEffectToStack (effect.GetCardEffect());
+            }
         }
     
     }
 
     public override void TurnEnd () {
 
-        foreach (CardEffect effect in unitCard._UnitCard.TurnEndEffects) { //End Turn
-            player.MatchManage.AddEffectToStack (effect, this);
+        //Call Enterance Effects:
+        foreach (CardEffectTrigger effect in effectTriggers) {
+            if (effect.Trigger.HasFlag (EffectTrigger.TurnEnd)) {
+                player.MatchManage.AddEffectToStack (effect.GetCardEffect());
+            }
         }
 
     }
@@ -189,6 +204,20 @@ public class FieldUnit : FieldCard, IDamageable
 
         if (health.Value <= 0) {
             player.UnitToDie (this);
+
+            //Call OnDestroy Effects
+            foreach (CardEffectTrigger effect in effectTriggers) {
+                if (effect.Trigger.HasFlag (EffectTrigger.OnDestroy)) {
+                    player.MatchManage.AddEffectToStack (effect.GetCardEffect());
+                }
+            }
+        } else {
+            //Call Damage Survive effects
+            foreach (CardEffectTrigger effect in effectTriggers) {
+                if (effect.Trigger.HasFlag (EffectTrigger.DamageTaken)) {
+                    player.MatchManage.AddEffectToStack (effect.GetCardEffect());
+                }
+            }
         }
 
         UpdateUnitClientRPC ();
@@ -196,6 +225,17 @@ public class FieldUnit : FieldCard, IDamageable
         return damageInfo;
     }
 
+    public Heal TakeHeal(Heal healInfo)
+    {
+        if (!IsServer) return null;
+
+        health.Value += healInfo.HealAmount;
+        health.Value = Mathf.Clamp (health.Value, 0, unitCard.Health);
+
+        UpdateUnitClientRPC ();
+
+        return healInfo;
+    }
 
     public new CardInstance Card {get {return unitCard;}}
     public CardInstance UnitsCard {get {return unitCard;}}

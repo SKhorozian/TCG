@@ -24,13 +24,13 @@ public class UnitCardInstance : CardInstance
         this.costChange = 0;
     }
 
-    public UnitCard _UnitCard    {get {return unitCard;}}
+    public UnitCard UnitCard    {get {return unitCard;}}
 
-    public int Strength         {get {return _UnitCard.Strength + strengthBonus;}}
-    public int Health           {get {return _UnitCard.Health + healthBonus;}}
-    public int ActionPoints     {get {return _UnitCard.ActionPoints;}}
-    public int MovementSpeed    {get {return _UnitCard.MovementSpeed;}}
-    public int AttackRange      {get {return _UnitCard.AttackRange;}}
+    public int Strength         {get {return UnitCard.Strength + strengthBonus;}}
+    public int Health           {get {return UnitCard.Health + healthBonus;}}
+    public int ActionPoints     {get {return UnitCard.ActionPoints;}}
+    public int MovementSpeed    {get {return UnitCard.MovementSpeed;}}
+    public int AttackRange      {get {return UnitCard.AttackRange;}}
 
     public int StrengthBonus    {get {return strengthBonus;}}
     public int HealthBonus      {get {return healthBonus;}}

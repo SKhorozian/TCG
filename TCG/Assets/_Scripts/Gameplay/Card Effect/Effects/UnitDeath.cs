@@ -1,9 +1,9 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
 public class UnitDeath : CardEffect
 {
+    public UnitDeath(FieldCard fieldCard) : base(fieldCard)
+    {
+    }
+
     public override void DoEffect()
     {
         if (!(fieldCard is FieldUnit)) return;     

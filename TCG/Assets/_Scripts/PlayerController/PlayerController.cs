@@ -177,7 +177,7 @@ public class PlayerController : MonoBehaviour
         focusUnit = null;
 
         if ( (card.cardInstance.Card is UnitCard) ) {
-            currPlay = (card.cardInstance.Card as UnitCard).UnitOnPlayEffect;
+            currPlay = (card.cardInstance.Card as UnitCard).OnPlayEffect;
         }
 
 

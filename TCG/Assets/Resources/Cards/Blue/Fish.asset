@@ -13,21 +13,18 @@ MonoBehaviour:
   m_Name: Fish
   m_EditorClassIdentifier: 
   cardName: Fish
-  description: '<b>Entrance:</b> Refill 1 Mana.
-
-    <i>Just a fish.</i>'
+  cost: 1
+  description: <b>Entrance:</b> Refill 1 Mana.
   color: 1
   cardArt: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
-  cost: 1
   cardType: 0
-  strength: 50
+  onPlayEffect: {fileID: 0}
+  strength: 100
   health: 100
   actionPoints: 1
   movementSpeed: 1
   attackRange: 1
-  entranceEffects:
-  - {fileID: 11400000, guid: 6872f7aabb7838041b05113f582ba783, type: 2}
-  turnStartEffects: []
-  turnEndEffects: []
-  unitOnPlay: {fileID: 0}
+  cardEffects:
+  - {fileID: 11400000, guid: 1ea4459fafa06b34ea6e985d4279e7c1, type: 2}
   staticKeywords: 0
+  actions: []

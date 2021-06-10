@@ -2,12 +2,18 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu (fileName = "New ManaRamp Effect", menuName = "Card Effects/Create New ManaRamp Effect"), System.Serializable]
 public class ManaRampEffect : CardEffect
 {
-    [SerializeField] int manaRampAmount;
-    [SerializeField] bool refillsMana;
-    [SerializeField] bool isPermanent;
+    int manaRampAmount;
+    bool refillsMana;
+    bool isPermanent;
+
+    public ManaRampEffect(FieldCard fieldCard, int manaRampAmount, bool refillsMana, bool isPermanent) : base(fieldCard)
+    {
+        this.manaRampAmount = manaRampAmount;
+        this.refillsMana = refillsMana;
+        this.isPermanent = isPermanent;
+    }
 
     public override void DoEffect()
     {
