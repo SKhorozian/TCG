@@ -16,8 +16,7 @@ public class Damage
 }
 
 public enum DamageSource {
-    SingleTargetSpell,
-    AoESpell,
+    Spell,
     Effect,
     Friendly,
     Attack

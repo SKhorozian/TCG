@@ -22,14 +22,21 @@ public class UnitCard : Card
     [SerializeField] UnitCardStaticKeywords staticKeywords;
 
     [Space (20)]
+    //Play Effect
+    [SerializeField] OnPlay onPlayEffect;
+
+    [Space (20)]
     //Actions
     [SerializeField] List<Action> actions;
+    
 
-    public int Strength                     {get {return strength;}}
-    public int Health                       {get {return health;}}
-    public int MovementSpeed                {get {return movementSpeed;}}
-    public int ActionPoints                 {get {return actionPoints;}}
-    public int AttackRange                  {get {return attackRange;}}
-    public CardEffectTrigger[] CardEffects  {get {return cardEffects;}}
-    public List<Action> Actions             {get {return actions;}}
+    public int Strength                             {get {return strength;}}
+    public int Health                               {get {return health;}}
+    public int MovementSpeed                        {get {return movementSpeed;}}
+    public int ActionPoints                         {get {return actionPoints;}}
+    public int AttackRange                          {get {return attackRange;}}
+    public UnitCardStaticKeywords StaticKeywords    {get {return staticKeywords;}}
+    public CardEffectTrigger[] CardEffects          {get {return cardEffects;}}
+    public OnPlay OnPlayEffect                      {get {return onPlayEffect;}}
+    public List<Action> Actions                     {get {return actions;}}
 }

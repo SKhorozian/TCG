@@ -3,22 +3,29 @@ ScriptsOnlyBuild:
     Assembly-CSharp.dll:
     - CardDisplay
     - CardHandController
+    - DamageTargetSpell
     - DamageUnitOnPlay
+    - DrawCardSpell
     - FieldHero
     - FieldStructure
     - FieldUnit
     - FishEntranceEffect
+    - FishermanEntranceEffect
     - GameManager
     - HeroCard
     - HexagonCell
     - HexagonGrid
+    - KillTargetSpell
     - MatchManager
+    - MermaidEntranceEffect
     - Player
     - PlayerController
     - PlayerHandDisplay
     - PlayerStatsDisplay
+    - SpellCard
     - StrikeEachOtherOnPlayEffect
     - StructureCard
+    - TreantEntranceEffect
     - TreeEffect
     - TurnButton
     - UnitCard
@@ -139,143 +146,157 @@ ScriptsOnlyBuild:
     - Class: 114
       Script: {instanceID: 1620}
     - Class: 114
-      Script: {instanceID: 1624}
+      Script: {instanceID: 1626}
     - Class: 114
-      Script: {instanceID: 1630}
+      Script: {instanceID: 1632}
     - Class: 114
-      Script: {instanceID: 1800}
+      Script: {instanceID: 1802}
     - Class: 114
-      Script: {instanceID: 1872}
+      Script: {instanceID: 1874}
     - Class: 114
-      Script: {instanceID: 1938}
+      Script: {instanceID: 1940}
     - Class: 114
-      Script: {instanceID: 1960}
+      Script: {instanceID: 1962}
     - Class: 114
-      Script: {instanceID: 1992}
+      Script: {instanceID: 1994}
     - Class: 114
-      Script: {instanceID: 2074}
-    - Class: 114
-      Script: {instanceID: 2080}
+      Script: {instanceID: 2076}
     - Class: 114
       Script: {instanceID: 2082}
     - Class: 114
-      Script: {instanceID: 2118}
+      Script: {instanceID: 2084}
     - Class: 114
-      Script: {instanceID: 2382}
+      Script: {instanceID: 2120}
     - Class: 114
       Script: {instanceID: 2384}
     - Class: 114
-      Script: {instanceID: 2410}
+      Script: {instanceID: 2386}
     - Class: 114
-      Script: {instanceID: 2482}
+      Script: {instanceID: 2412}
     - Class: 114
-      Script: {instanceID: 2552}
+      Script: {instanceID: 2484}
     - Class: 114
-      Script: {instanceID: 2724}
+      Script: {instanceID: 2554}
     - Class: 114
-      Script: {instanceID: 2830}
+      Script: {instanceID: 2624}
     - Class: 114
-      Script: {instanceID: 2860}
+      Script: {instanceID: 2728}
     - Class: 114
-      Script: {instanceID: 3010}
+      Script: {instanceID: 2834}
     - Class: 114
-      Script: {instanceID: 3202}
+      Script: {instanceID: 2864}
     - Class: 114
-      Script: {instanceID: 3254}
+      Script: {instanceID: 3014}
     - Class: 114
-      Script: {instanceID: 3264}
+      Script: {instanceID: 3206}
     - Class: 114
-      Script: {instanceID: 3378}
+      Script: {instanceID: 3258}
     - Class: 114
-      Script: {instanceID: 3386}
+      Script: {instanceID: 3268}
     - Class: 114
-      Script: {instanceID: 3534}
+      Script: {instanceID: 3382}
     - Class: 114
-      Script: {instanceID: 3594}
+      Script: {instanceID: 3390}
     - Class: 114
-      Script: {instanceID: 3604}
+      Script: {instanceID: 3538}
     - Class: 114
-      Script: {instanceID: 3642}
+      Script: {instanceID: 3598}
     - Class: 114
-      Script: {instanceID: 3666}
+      Script: {instanceID: 3610}
     - Class: 114
-      Script: {instanceID: 3782}
+      Script: {instanceID: 3648}
     - Class: 114
-      Script: {instanceID: 3796}
+      Script: {instanceID: 3672}
     - Class: 114
-      Script: {instanceID: 3798}
+      Script: {instanceID: 3788}
     - Class: 114
-      Script: {instanceID: 3946}
+      Script: {instanceID: 3802}
     - Class: 114
-      Script: {instanceID: 3966}
+      Script: {instanceID: 3804}
     - Class: 114
-      Script: {instanceID: 3992}
+      Script: {instanceID: 3954}
     - Class: 114
-      Script: {instanceID: 4010}
+      Script: {instanceID: 3974}
     - Class: 114
-      Script: {instanceID: 4070}
+      Script: {instanceID: 4000}
     - Class: 114
-      Script: {instanceID: 4138}
+      Script: {instanceID: 4018}
     - Class: 114
-      Script: {instanceID: 4180}
+      Script: {instanceID: 4078}
     - Class: 114
-      Script: {instanceID: 4212}
+      Script: {instanceID: 4146}
     - Class: 114
-      Script: {instanceID: 4298}
+      Script: {instanceID: 4188}
     - Class: 114
-      Script: {instanceID: 4302}
+      Script: {instanceID: 4220}
     - Class: 114
-      Script: {instanceID: 4378}
+      Script: {instanceID: 4280}
     - Class: 114
-      Script: {instanceID: 4490}
+      Script: {instanceID: 4308}
     - Class: 114
-      Script: {instanceID: 4512}
+      Script: {instanceID: 4312}
     - Class: 114
-      Script: {instanceID: 4596}
+      Script: {instanceID: 4388}
     - Class: 114
-      Script: {instanceID: 4664}
+      Script: {instanceID: 4500}
     - Class: 114
-      Script: {instanceID: 4738}
+      Script: {instanceID: 4522}
     - Class: 114
-      Script: {instanceID: 4796}
+      Script: {instanceID: 4606}
     - Class: 114
-      Script: {instanceID: 4846}
+      Script: {instanceID: 4674}
     - Class: 114
-      Script: {instanceID: 4918}
+      Script: {instanceID: 4748}
     - Class: 114
-      Script: {instanceID: 5190}
+      Script: {instanceID: 4806}
     - Class: 114
-      Script: {instanceID: 5266}
+      Script: {instanceID: 4856}
     - Class: 114
-      Script: {instanceID: 5282}
+      Script: {instanceID: 4928}
     - Class: 114
-      Script: {instanceID: 5330}
+      Script: {instanceID: 5200}
     - Class: 114
-      Script: {instanceID: 5334}
+      Script: {instanceID: 5276}
     - Class: 114
-      Script: {instanceID: 5454}
+      Script: {instanceID: 5292}
     - Class: 114
-      Script: {instanceID: 5494}
+      Script: {instanceID: 5340}
     - Class: 114
-      Script: {instanceID: 5716}
+      Script: {instanceID: 5344}
     - Class: 114
-      Script: {instanceID: 5762}
+      Script: {instanceID: 5464}
     - Class: 114
-      Script: {instanceID: 5768}
+      Script: {instanceID: 5504}
     - Class: 114
-      Script: {instanceID: 5808}
+      Script: {instanceID: 5720}
     - Class: 114
-      Script: {instanceID: 5872}
+      Script: {instanceID: 5728}
     - Class: 114
-      Script: {instanceID: 6142}
+      Script: {instanceID: 5774}
     - Class: 114
-      Script: {instanceID: 6270}
+      Script: {instanceID: 5780}
     - Class: 114
-      Script: {instanceID: 6394}
+      Script: {instanceID: 5820}
     - Class: 114
-      Script: {instanceID: 6424}
+      Script: {instanceID: 5884}
     - Class: 114
-      Script: {instanceID: 21964}
+      Script: {instanceID: 6154}
+    - Class: 114
+      Script: {instanceID: 6282}
+    - Class: 114
+      Script: {instanceID: 6294}
+    - Class: 114
+      Script: {instanceID: 6406}
+    - Class: 114
+      Script: {instanceID: 6436}
+    - Class: 114
+      Script: {instanceID: 24506}
+    - Class: 114
+      Script: {instanceID: 26136}
+    - Class: 114
+      Script: {instanceID: 26152}
+    - Class: 114
+      Script: {instanceID: 26930}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 128
@@ -363,7 +384,7 @@ ScriptsOnlyBuild:
     className: TMP_InputField
   - hash:
       serializedVersion: 2
-      Hash: 71696f520052a7873c23c7975a80c30d
+      Hash: 29af00d9fc02196591f8ad3af05c3104
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: UnitCard
@@ -541,6 +562,12 @@ ScriptsOnlyBuild:
     assemblyName: UnityEngine.TestRunner.dll
     namespaceName: UnityEngine.TestTools.TestRunner
     className: PlaymodeTestsController
+  - hash:
+      serializedVersion: 2
+      Hash: 823baa1cfa4ada4cf0b784b7ecd47a3c
+    assemblyName: Assembly-CSharp.dll
+    namespaceName: 
+    className: TreeEffect
   - hash:
       serializedVersion: 2
       Hash: 63bdc2cf3273aa9bf650350f19d2af61
@@ -819,7 +846,7 @@ ScriptsOnlyBuild:
     className: StrikeEachOtherOnPlayEffect
   - hash:
       serializedVersion: 2
-      Hash: 2df93f85bb47aebc9417b44c1d5ba574
+      Hash: 4a28d98c6415722a526b2e3a9f95f16b
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: PlayerController
@@ -859,6 +886,12 @@ ScriptsOnlyBuild:
     assemblyName: UnityEngine.UI.dll
     namespaceName: UnityEngine.UI
     className: ContentSizeFitter
+  - hash:
+      serializedVersion: 2
+      Hash: 823baa1cfa4ada4cf0b784b7ecd47a3c
+    assemblyName: Assembly-CSharp.dll
+    namespaceName: 
+    className: FishermanEntranceEffect
   - hash:
       serializedVersion: 2
       Hash: caa533b001ae39b864ba8425019e2268
@@ -1017,7 +1050,7 @@ ScriptsOnlyBuild:
     className: ActivationTrack
   - hash:
       serializedVersion: 2
-      Hash: 297f0f680a1983247d9fe1ba75252ffa
+      Hash: 054f514f259056b4fe1e00f6208eb8e6
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: HeroCard
@@ -1131,7 +1164,7 @@ ScriptsOnlyBuild:
     className: TMP_Settings
   - hash:
       serializedVersion: 2
-      Hash: 28638dfbec6606099ba49abe5012c98a
+      Hash: 2c721f0271c6fa1896deb3731bc9fcdc
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: StructureCard
@@ -1165,6 +1198,12 @@ ScriptsOnlyBuild:
     assemblyName: Unity.RenderPipelines.Universal.Runtime.dll
     namespaceName: UnityEngine.Experimental.Rendering.Universal
     className: Renderer2DData
+  - hash:
+      serializedVersion: 2
+      Hash: 823baa1cfa4ada4cf0b784b7ecd47a3c
+    assemblyName: Assembly-CSharp.dll
+    namespaceName: 
+    className: MermaidEntranceEffect
   - hash:
       serializedVersion: 2
       Hash: 6980e81ddc615a861309d2d659cc3760
@@ -1257,7 +1296,7 @@ ScriptsOnlyBuild:
     className: FieldHero
   - hash:
       serializedVersion: 2
-      Hash: cbe638dfce727fe546200d1051e279bb
+      Hash: df830d76fd8cb03b2fe4cf249408d4a0
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: SpellCard
@@ -1296,19 +1335,25 @@ ScriptsOnlyBuild:
       Hash: 823baa1cfa4ada4cf0b784b7ecd47a3c
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
-    className: MermaidEntranceEffect
+    className: TreantEntranceEffect
   - hash:
       serializedVersion: 2
-      Hash: 823baa1cfa4ada4cf0b784b7ecd47a3c
+      Hash: b17208f9eb3ca657f73dda9bc557f996
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
-    className: FishermanEntranceEffect
+    className: DamageTargetSpell
   - hash:
       serializedVersion: 2
-      Hash: 823baa1cfa4ada4cf0b784b7ecd47a3c
+      Hash: a5cb36f6f0b7708ae3526d63d4e168c1
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
-    className: TreeEffect
+    className: KillTargetSpell
+  - hash:
+      serializedVersion: 2
+      Hash: fcec40b37a81371ff48690d0b9512b63
+    assemblyName: Assembly-CSharp.dll
+    namespaceName: 
+    className: DrawCardSpell
   platform: 5
   scenePathNames:
   - Assets/Scenes/Scene.unity

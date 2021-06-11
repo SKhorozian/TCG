@@ -99,5 +99,5 @@ public class FieldStructure : FieldCard
     }
 
     public new CardInstance Card {get {return structureCard;}}
-    public CardInstance StructursCard {get {return structureCard;}}
+    public StructureCardInstance StructursCard {get {return structureCard;}}
 }

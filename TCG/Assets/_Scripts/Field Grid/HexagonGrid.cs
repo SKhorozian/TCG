@@ -14,7 +14,7 @@ public class HexagonGrid : MonoBehaviour
 
     public void InitializeGrid() {
 
-        for (int z = 0; z < height; z++) {
+        for (int z = 1; z < height; z++) {
             int i = 0;
             for (int x = GetHexLow(z); x < GetHexHigh(z); x++) {
                 CreateCell (z, x, i++);

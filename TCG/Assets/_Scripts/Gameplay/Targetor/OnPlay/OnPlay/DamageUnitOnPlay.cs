@@ -12,7 +12,7 @@ public class DamageUnitOnPlay : OnPlay
     {
         FieldUnit target = targets[0] as FieldUnit;
 
-        playCard.Player.DamageTarget (target, new Damage (damage, DamageSource.SingleTargetSpell, playCard.Player), FieldCard);
+        playCard.Player.DamageTarget (target, new Damage (damage, DamageSource.Spell, playCard.Player), FieldCard);
     }
 
     public override bool TragetVaildity(List<ITargetable> targets)

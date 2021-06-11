@@ -36,11 +36,6 @@ public class Player : NetworkBehaviour
 
 
     //Stats:
-    //Health
-    NetworkVariableInt heroHealth = new NetworkVariableInt(new NetworkVariableSettings{
-        ReadPermission = NetworkVariablePermission.Everyone,
-        WritePermission = NetworkVariablePermission.ServerOnly
-    });
 
     //Mana
     NetworkVariableInt maxMana = new NetworkVariableInt(new NetworkVariableSettings{
@@ -60,7 +55,6 @@ public class Player : NetworkBehaviour
 
     
         //Initialize Player stats
-        heroHealth.Value = 3000;
         maxMana.Value = 1;
         currentMana.Value = 1;
 
@@ -88,10 +82,10 @@ public class Player : NetworkBehaviour
         {
             playerController = Instantiate(playerControllerPrefab, canvas.transform).GetComponent<PlayerController> ();
 
-            playerStats.GetComponent<RectTransform> ().anchoredPosition = new Vector3 (-200, -950, 0);
+            playerStats.GetComponent<RectTransform> ().anchoredPosition = new Vector3 (-200, -1005, 0);
         } 
 
-        playerStats.UpdateDisplay(heroHealth.Value, currentMana.Value, maxMana.Value);
+        playerStats.UpdateDisplay(currentMana.Value, maxMana.Value);
 
     }
 
@@ -221,13 +215,15 @@ public class Player : NetworkBehaviour
         ShuffleDeck();
     }
 
-    void UpdatePlayerStats () {
-        playerStats.UpdateDisplay(heroHealth.Value, currentMana.Value, maxMana.Value);
+    [ClientRpc]
+    void UpdatePlayerStatsClientRPC () {
+        if (IsClient && playerStats) 
+            playerStats.UpdateDisplay(currentMana.Value, maxMana.Value);
     }
 
     void Update () {
         if (IsClient && playerStats) 
-            playerStats.UpdateDisplay(heroHealth.Value, currentMana.Value, maxMana.Value);
+            playerStats.UpdateDisplay(currentMana.Value, maxMana.Value);
     }
 
     void OnDestroy () {
@@ -301,7 +297,17 @@ public class Player : NetworkBehaviour
         return damage;
     }
 
+    public Damage DamageTarget (IDamageable target, Damage damage, SpellCardInstance source) { //Deal damage to target.
+        target.TakeDamage (damage);
+        return damage;
+    }
+
     public Heal HealTarget (IDamageable target, Heal heal, FieldCard source) {
+        target.TakeHeal (heal);
+        return heal;
+    }
+
+    public Heal HealTarget (IDamageable target, Heal heal, SpellCardInstance source) {
         target.TakeHeal (heal);
         return heal;
     }
@@ -404,6 +410,7 @@ public class Player : NetworkBehaviour
         currentMana.Value -= cost;
 
         currentMana.Value = Mathf.Clamp (currentMana.Value, 0, maxMana.Value);
+        UpdatePlayerStatsClientRPC ();
     }
 
     public void RefillMana (int refillAmount) {
@@ -411,6 +418,7 @@ public class Player : NetworkBehaviour
         currentMana.Value += refillAmount;
 
         currentMana.Value = Mathf.Clamp (currentMana.Value, 0, maxMana.Value);
+        UpdatePlayerStatsClientRPC ();
     }
 
     public void RampManaPermanent (int rampAmount, bool fillsMana) {
@@ -420,6 +428,7 @@ public class Player : NetworkBehaviour
         if (fillsMana) {
             RefillMana (rampAmount);
         }
+        UpdatePlayerStatsClientRPC ();
     }
 
 

@@ -14,11 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cardName: Relentless Orc
   cost: 5
-  description: <b>Play:</b> This unit and target enemy unit strike each other.
+  description: <b>Play:</b> This and target enemy unit strike each other.
   color: 0
   cardArt: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
   cardType: 0
-  onPlayEffect: {fileID: 11400000, guid: 4670b24eff1010448b5110326bd4c280, type: 2}
   strength: 400
   health: 500
   actionPoints: 2
@@ -26,4 +25,5 @@ MonoBehaviour:
   attackRange: 1
   cardEffects: []
   staticKeywords: 2
+  onPlayEffect: {fileID: 11400000, guid: 4670b24eff1010448b5110326bd4c280, type: 2}
   actions: []

@@ -8,7 +8,7 @@ public enum UnitCardStaticKeywords
     Stealth = (1 << 2),
     Scout = (1 << 3),
     Lifesap = (1 << 4),
-    Savage = (1 << 5),
+    Aftershock = (1 << 5),
     Resonance = (1 << 6),
     A = (1 << 7),
     Undying = (1 << 8),

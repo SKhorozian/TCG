@@ -12,7 +12,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] CardHandController focusCard;
 
 
-    [SerializeField] OnPlay currPlay;
+    [SerializeField] Targetor currPlay;
 
     [SerializeField] List<Vector2> fieldTargets; 
     [SerializeField] List<Vector2> trapTargets;
@@ -63,7 +63,7 @@ public class PlayerController : MonoBehaviour
 
 
                         if (fieldTargets.Count > 0) {
-                            if (!currPlay || ValidateTargets ()) {
+                            if (!currPlay || ValidateTargetsUnit ()) {
                                 focusCard.PlayCard (fieldTargets.ToArray (), handTargets.ToArray (), stackTargets.ToArray ());
                                 focusCard.DeFocus ();
                                 focusCard = null;
@@ -96,6 +96,33 @@ public class PlayerController : MonoBehaviour
                             focusCard.DeFocus ();
                             focusCard = null;
                         }
+                    } else if (Input.GetButtonDown ("Fire2")) {
+                        focusCard.DeFocus ();
+                        focusCard = null;
+                    }
+
+                    break;
+                case CardType.Spell:
+        
+                    if (!currPlay || ValidateTargetsSpell ()) {
+                        focusCard.PlayCard (fieldTargets.ToArray (), handTargets.ToArray (), stackTargets.ToArray ());
+                        focusCard.DeFocus ();
+                        focusCard = null;
+                    }
+
+                    if (Input.GetButtonDown ("Fire1")) {
+                        if (fieldTargets.Count == 0) { 
+                            int layerMask = 1 << 6;
+
+                            RaycastHit hit;
+                            Ray ray = Camera.main.ScreenPointToRay (Input.mousePosition);
+
+                            if (Physics.Raycast (ray, out hit, Mathf.Infinity, layerMask)) {
+                                HexagonCell cell = hit.transform.GetComponent<HexagonCell> ();
+                                fieldTargets.Add (cell.Position);
+                            }
+                        }
+
                     } else if (Input.GetButtonDown ("Fire2")) {
                         focusCard.DeFocus ();
                         focusCard = null;
@@ -149,7 +176,7 @@ public class PlayerController : MonoBehaviour
 
     }
 
-    public bool ValidateTargets () {
+    public bool ValidateTargetsUnit () {
 
         if (fieldTargets.Count != currPlay.FieldTargetsCount + 1) return false;
         if (handTargets.Count != currPlay.HandTargetsCount) return false;
@@ -158,6 +185,14 @@ public class PlayerController : MonoBehaviour
         return true;
     }
 
+    public bool ValidateTargetsSpell () {
+
+        if (fieldTargets.Count != currPlay.FieldTargetsCount) return false;
+        if (handTargets.Count != currPlay.HandTargetsCount) return false;
+        if (stackTargets.Count != currPlay.StackTargetsCount) return false;
+        
+        return true;
+    }
 
     public void UpdateCardDisplays (CardInstance[] instances) {
         handDisplay.UpdateCardDisplays (instances);
@@ -176,10 +211,13 @@ public class PlayerController : MonoBehaviour
         focusCard = card;
         focusUnit = null;
 
-        if ( (card.cardInstance.Card is UnitCard) ) {
+        if ( card.cardInstance.Card is UnitCard ) {
             currPlay = (card.cardInstance.Card as UnitCard).OnPlayEffect;
-        }
-
+        } else if (card.cardInstance.Card is StructureCard) {
+            currPlay = (card.cardInstance.Card as StructureCard).OnPlayEffect;
+        } else if (card.cardInstance.Card is SpellCard) {
+            currPlay = (card.cardInstance.Card as SpellCard).Spell;
+        } 
 
     }
 

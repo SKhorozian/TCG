@@ -137,6 +137,7 @@ public class FieldUnit : FieldCard, IDamageable
     }
 
     public void Strike (IDamageable target) {
+        if (strength.Value <= 0) return; //If this unit has no strength, it cannot strike.
         Damage damage = new Damage (strength.Value, DamageSource.Attack, player);
         player.DamageTarget (target, damage, this);
     } 
@@ -238,6 +239,6 @@ public class FieldUnit : FieldCard, IDamageable
     }
 
     public new CardInstance Card {get {return unitCard;}}
-    public CardInstance UnitsCard {get {return unitCard;}}
+    public UnitCardInstance UnitsCard {get {return unitCard;}}
 
 }

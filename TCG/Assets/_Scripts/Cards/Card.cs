@@ -13,10 +13,7 @@ public abstract class Card : ScriptableObject
     [SerializeField] Sprite cardArt;
 
     [SerializeField] CardType cardType;
-    
-    [Space (20)]
-    //Play Effect
-    [SerializeField] OnPlay onPlayEffect;
+
 
     //Getters
     public string CardName      {get {return cardName;}}
@@ -25,8 +22,6 @@ public abstract class Card : ScriptableObject
     public int Cost             {get {return cost;}}
     public CardColor Color      {get {return color;}}
     public CardType Type        {get {return cardType;}}        
-    public OnPlay OnPlayEffect  {get {return onPlayEffect;}}
-
 
     public override string ToString () {
         return cardName + " | Description: " + description;

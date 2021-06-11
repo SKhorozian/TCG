@@ -13,19 +13,18 @@ MonoBehaviour:
   m_Name: Fisherman
   m_EditorClassIdentifier: 
   cardName: Fisherman
+  cost: 2
   description: <b>Entrance:</b> Draw 1.
   color: 1
   cardArt: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
-  cost: 2
   cardType: 0
+  onPlayEffect: {fileID: 0}
   strength: 150
   health: 150
   actionPoints: 2
   movementSpeed: 1
   attackRange: 1
-  entranceEffects:
-  - {fileID: 11400000, guid: 63aff9cb766df3648868940df589fa9b, type: 2}
-  turnStartEffects: []
-  turnEndEffects: []
-  unitOnPlay: {fileID: 0}
+  cardEffects:
+  - {fileID: 11400000, guid: 64a9b372fc7ad954b9d470874e07f75d, type: 2}
   staticKeywords: 0
+  actions: []

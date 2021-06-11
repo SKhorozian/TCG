@@ -11,8 +11,7 @@ public class PlayerStatsDisplay : MonoBehaviour
 
     [SerializeField] Image[] manaIcons;
 
-    public void UpdateDisplay (int health, int mana, int maxMana) {
-        healthNumber.text = health.ToString();
+    public void UpdateDisplay (int mana, int maxMana) {
         manaNumber.text = mana.ToString() + "/" +maxMana.ToString();
 
         for (int i = 0; i < 10; i++) {

@@ -18,12 +18,12 @@ MonoBehaviour:
   color: 1
   cardArt: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
   cardType: 0
+  onPlayEffect: {fileID: 0}
   strength: 800
   health: 800
   actionPoints: 3
   movementSpeed: 2
   attackRange: 1
   cardEffects: []
-  unitOnPlay: {fileID: 0}
-  staticKeywords: 0
+  staticKeywords: 34
   actions: []

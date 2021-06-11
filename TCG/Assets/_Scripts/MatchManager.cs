@@ -138,7 +138,6 @@ public class MatchManager : NetworkBehaviour
                 if (fieldTargets.Length <= 0) return false;
                 if (!(card is UnitCardInstance)) return false;
 
-                Debug.Log ("Player " + player.OwnerClientId + " played " + card.CardName + " on cell " + fieldTargets[0]);
                 HexagonCell cell;
                 fieldGrid.Cells.TryGetValue(fieldTargets[0], out cell);
                 if (cell.FieldCard) return false; //If the cell is occupied return false
@@ -170,12 +169,12 @@ public class MatchManager : NetworkBehaviour
                     }
                 }
 
+                Debug.Log ("Player " + player.OwnerClientId + " played " + card.CardName + " on cell " + fieldTargets[0]);
                 break;
             case CardType.Structure:
                 if (fieldTargets.Length <= 0) return false;
                 if (!(card is StructureCardInstance)) return false;
 
-                Debug.Log ("Player " + player.OwnerClientId + " played " + card.CardName + " on cell " + fieldTargets[0]);
 
                 HexagonCell cellS;
                 fieldGrid.Cells.TryGetValue(fieldTargets[0], out cellS);
@@ -188,6 +187,41 @@ public class MatchManager : NetworkBehaviour
 
                 //TODO play effects
 
+
+                Debug.Log ("Player " + player.OwnerClientId + " played " + card.CardName + " on cell " + fieldTargets[0]);
+                break;
+            case CardType.Spell:
+                if (!(card is SpellCardInstance)) return false;
+
+                //Spell Effects
+                if ((card as SpellCardInstance)._SpellCard.Spell) {
+                    Spell spell = Instantiate <Spell> ((card as SpellCardInstance)._SpellCard.Spell);
+                    
+                    spell.SpellCard = card as SpellCardInstance;
+                    spell.Player = player;
+
+                    List<ITargetable> targets = new List<ITargetable> ();
+
+                    for (int i = 0; i < fieldTargets.Length; i++) {
+                        HexagonCell celli;
+
+                        if (fieldGrid.Cells.TryGetValue(fieldTargets[i], out celli)) {
+                            if (celli.FieldCard)
+                                targets.Add (celli.FieldCard);
+                        }
+                    }
+            
+                    if (spell.TragetVaildity(targets)) { //If targets are valid, then we proceed to call the spell effect. Otherwise, the spell doesn't go off.
+                        spell.SetTargets (targets);
+                        spell.DoEffect ();
+                        CallEffects ();
+                    } else {Debug.Log("Spell failed targeting"); return false;};
+                }
+
+                //Spend Mana
+                player.SpendMana (card.Cost);
+
+                Debug.Log ("Player " + player.OwnerClientId + " casted " + card.CardName);
                 break;
             default:
                 break;
@@ -302,10 +336,12 @@ public class MatchManager : NetworkBehaviour
 
                     FieldUnit target = hexCell.FieldCard as FieldUnit;
 
-                    if (attacker.Player.FieldUnits.Contains (target)) return; //Return if target unit is a friendly.
+                    if (!CheckCanAttack (attacker, target)) return;
+
                     attacker.Strike (target);
+                    //The target strikes back if it has an action point and is within its range
+                    if (target.currActionPoints.Value > 0 && (HexagonMetrics.GetDistantce (attacker.Cell.Position, target.Cell.Position) <= target.attackRange.Value)) target.Strike (attacker); 
                     
-                    if (target.currActionPoints.Value > 0) target.Strike (attacker); 
                     attacker.ConsumeActionPoint (1);
 
                 } else if (hexCell.FieldCard is FieldHero) {
@@ -323,6 +359,14 @@ public class MatchManager : NetworkBehaviour
         }
 
         CallEffects ();
+    }
+
+    public bool CheckCanAttack (FieldUnit attacker, FieldUnit target) { //Returns true if this card fits all the conditions to attack a target
+        if (attacker.Player.FieldUnits.Contains (target)) return false; //Return if target unit is a friendly.
+        if (target.UnitsCard.UnitCard.StaticKeywords.HasFlag (UnitCardStaticKeywords.Menacing) && attacker.strength.Value < target.strength.Value) return false;
+        if (target.UnitsCard.UnitCard.StaticKeywords.HasFlag (UnitCardStaticKeywords.Stealth) && !attacker.UnitsCard.UnitCard.StaticKeywords.HasFlag (UnitCardStaticKeywords.Scout)) return false;
+
+        return true;
     }
 
     public void PassTurn (Player player) {
