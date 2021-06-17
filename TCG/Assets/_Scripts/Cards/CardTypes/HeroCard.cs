@@ -9,7 +9,7 @@ public class HeroCard : Card
     [SerializeField] CardEffectTrigger[] cardEffects;
 
     //Actions
-    [SerializeField] List<Action> actions;
+    [SerializeField] List<ActionAbility> actions;
 
     public CardEffectTrigger[] CardEffects {get {return cardEffects;}}
 

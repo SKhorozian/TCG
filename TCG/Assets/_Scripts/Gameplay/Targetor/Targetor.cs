@@ -9,11 +9,21 @@ public abstract class Targetor : ScriptableObject
 
     protected List<ITargetable> targets;
 
-    [SerializeField] protected int fieldTargetsCount;
-    [SerializeField] protected int handTargetsCount;
-    [SerializeField] protected int stackTargetsCount;
+    [SerializeField] protected TargetType[] targetTypes;
 
-    public abstract bool TragetVaildity (List<ITargetable> targets); //Checks if targets are valid
+    [SerializeField, TextArea (minLines: 4, maxLines: 8)] string description;
+
+    public bool TragetVaildity (List<ITargetable> targets, Player player) {
+        if (targets.Count != targetTypes.Length) {Debug.Log ("Target length doesn't match"); return false;}
+
+        foreach (ITargetable target in targets) {
+            if (target == null) {Debug.Log ("Target is null"); return false;}
+            if (!TragetVaildity (targets.IndexOf (target), target, player)) {Debug.Log ("Target " + targets.IndexOf (target) + " is invalid"); return false;}; 
+        } 
+
+        return true;
+    }
+    public abstract bool TragetVaildity (int targetNumber, ITargetable target, Player player); //Checks if target is valid
 
     public void SetTargets (List<ITargetable> targets) {
         this.targets = targets;
@@ -23,9 +33,10 @@ public abstract class Targetor : ScriptableObject
 
     public List<ITargetable> Targets {get {return targets;}}
 
-    public TargetorPriority Speed           {get {return speed;}}
+    public TargetorPriority Speed        {get {return speed;}}
     public bool GoesOnStack              {get {return goesOnStack;}}
-    public int FieldTargetsCount         {get {return fieldTargetsCount;}}
-    public int HandTargetsCount          {get {return handTargetsCount;}}
-    public int StackTargetsCount         {get {return stackTargetsCount;}}
+
+    public TargetType[] TargetTypes      {get {return targetTypes;}}
+
+    public string Description            {get {return description;}}
 }

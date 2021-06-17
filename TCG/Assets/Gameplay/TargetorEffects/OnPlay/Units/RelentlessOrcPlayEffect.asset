@@ -14,7 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed: 0
   goesOnStack: 1
-  fieldTargetsCount: 1
-  handTargetsCount: 0
-  stackTargetsCount: 0
-  friendlyFire: 0
+  targetTypes: 01000000
+  description: Relentless Orc and target enemy Strike each other.

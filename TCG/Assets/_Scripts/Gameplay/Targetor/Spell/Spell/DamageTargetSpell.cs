@@ -13,15 +13,17 @@ public class DamageTargetSpell : Spell
         IDamageable target = targets[0] as IDamageable;
         player.DamageTarget (target, new Damage (damageAmount, DamageSource.Spell, player), spellCardInstance);
     }
-
-    public override bool TragetVaildity(List<ITargetable> targets)
+    
+    public override bool TragetVaildity(int targetNumber, ITargetable target, Player player)
     {
-        if (targets.Count != 1) return false;
-        if (targets[0] == null) return false;
-        if (!(targets[0] is IDamageable)) return false;
-
-        if (!friendlyFire && (targets[0] as FieldUnit).OwnerClientId.Equals (player.OwnerClientId)) return false;
-
-        return true;
+        switch (targetNumber) {
+            case 0: {
+                if (!(target is IDamageable)) {Debug.Log ("Target is not damageable"); return false;}
+                if (!friendlyFire && (target as FieldCard).IsOwner) {Debug.Log ("Friendly fire is off!"); return false;}
+                return true;
+            }
+            default:
+                return false;
+        }
     }
 }

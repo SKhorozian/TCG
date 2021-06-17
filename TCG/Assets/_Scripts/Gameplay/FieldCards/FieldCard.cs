@@ -17,7 +17,7 @@ public abstract class FieldCard : NetworkBehaviour, ITargetable
     [SerializeField] protected SpriteRenderer icon;
 
     [SerializeField] protected CardEffectTrigger[] effectTriggers;
-    [SerializeField] protected Action[] actions;
+    [SerializeField] protected ActionAbility[] actions;
 
 
     public CardInstance Card {get {return card;}}

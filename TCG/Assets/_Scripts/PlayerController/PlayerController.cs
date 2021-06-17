@@ -5,6 +5,8 @@ using MLAPI;
 
 public class PlayerController : MonoBehaviour
 {
+    [SerializeField] Player player;
+
     [SerializeField] PlayerHandDisplay handDisplay;
     [SerializeField] TurnButton turnButton;
     
@@ -12,17 +14,23 @@ public class PlayerController : MonoBehaviour
     [SerializeField] CardHandController focusCard;
 
 
-    [SerializeField] Targetor currPlay;
+    [SerializeField] Targetor targetor;
+    [SerializeField] ExtraCost extraCost;
 
-    [SerializeField] List<Vector2> fieldTargets; 
-    [SerializeField] List<Vector2> trapTargets;
-    [SerializeField] List<int> handTargets;
-    [SerializeField] List<int> stackTargets;
+    [Space (10), SerializeField] Vector2 placement;
+    [SerializeField] Vector2[] targets;
+    [SerializeField] Vector2[] extraCostTargets;
+
+    [SerializeField] int selectedTargets;
+    [SerializeField] int selectedExtraCostTargets;
 
     // Start is called before the first frame update
     void Start()
     {
-        
+        if (NetworkManager.Singleton.ConnectedClients.TryGetValue(NetworkManager.Singleton.LocalClientId, out var networkedClient))
+        {
+            player = networkedClient.PlayerObject.GetComponent<Player>();
+        }
     }
 
     // Update is called once per frame
@@ -30,110 +38,24 @@ public class PlayerController : MonoBehaviour
     {
         if (focusCard) {
             focusUnit = null;
-            switch (focusCard.cardInstance.Type) {
-                case CardType.Unit:
 
-                    if (Input.GetButtonDown ("Fire1")) {
-                        
-                        /////////////////////
-                        if (fieldTargets.Count == 0) { 
-                            int layerMask = 1 << 6;
+            //If targeting is fulfilled then play the card
+            PlayCard (); 
 
-                            RaycastHit hit;
-                            Ray ray = Camera.main.ScreenPointToRay (Input.mousePosition);
-
-                            if (Physics.Raycast (ray, out hit, Mathf.Infinity, layerMask)) {
-                                HexagonCell cell = hit.transform.GetComponent<HexagonCell> ();
-                                fieldTargets.Add (cell.Position);
-                            }
-                        } else if (currPlay) {
-                            if (fieldTargets.Count < currPlay.FieldTargetsCount + 1) {
-                                int layerMask = 1 << 6;
-
-                                RaycastHit hit;
-                                Ray ray = Camera.main.ScreenPointToRay (Input.mousePosition);
-
-                                if (Physics.Raycast (ray, out hit, Mathf.Infinity, layerMask)) {
-                                    HexagonCell cell = hit.transform.GetComponent<HexagonCell> ();
-                                    fieldTargets.Add (cell.Position);
-                                }
-                            }
-                        }
-                        /////////////////////
-
-
-                        if (fieldTargets.Count > 0) {
-                            if (!currPlay || ValidateTargetsUnit ()) {
-                                focusCard.PlayCard (fieldTargets.ToArray (), handTargets.ToArray (), stackTargets.ToArray ());
-                                focusCard.DeFocus ();
-                                focusCard = null;
-                            }
-                        }
-
-                    } else if (Input.GetButtonDown ("Fire2")) {
-                        focusCard.DeFocus ();
-                        focusCard = null;
-                    }
-                    
-                    break;
-                case CardType.Structure:
-                
-                    if (Input.GetButtonDown ("Fire1")) {
-                        if (fieldTargets.Count == 0) { 
-                            int layerMask = 1 << 6;
-
-                            RaycastHit hit;
-                            Ray ray = Camera.main.ScreenPointToRay (Input.mousePosition);
-
-                            if (Physics.Raycast (ray, out hit, Mathf.Infinity, layerMask)) {
-                                HexagonCell cell = hit.transform.GetComponent<HexagonCell> ();
-                                fieldTargets.Add (cell.Position);
-                            }
-                        }
-
-                        if (fieldTargets.Count > 0) {
-                            focusCard.PlayCard (fieldTargets.ToArray (), handTargets.ToArray (), stackTargets.ToArray ());
-                            focusCard.DeFocus ();
-                            focusCard = null;
-                        }
-                    } else if (Input.GetButtonDown ("Fire2")) {
-                        focusCard.DeFocus ();
-                        focusCard = null;
-                    }
-
-                    break;
-                case CardType.Spell:
-        
-                    if (!currPlay || ValidateTargetsSpell ()) {
-                        focusCard.PlayCard (fieldTargets.ToArray (), handTargets.ToArray (), stackTargets.ToArray ());
-                        focusCard.DeFocus ();
-                        focusCard = null;
-                    }
-
-                    if (Input.GetButtonDown ("Fire1")) {
-                        if (fieldTargets.Count == 0) { 
-                            int layerMask = 1 << 6;
-
-                            RaycastHit hit;
-                            Ray ray = Camera.main.ScreenPointToRay (Input.mousePosition);
-
-                            if (Physics.Raycast (ray, out hit, Mathf.Infinity, layerMask)) {
-                                HexagonCell cell = hit.transform.GetComponent<HexagonCell> ();
-                                fieldTargets.Add (cell.Position);
-                            }
-                        }
-
-                    } else if (Input.GetButtonDown ("Fire2")) {
-                        focusCard.DeFocus ();
-                        focusCard = null;
-                    }
-
-                    break;
-                default:
-                    focusCard.DeFocus ();
-                    focusCard = null;
-                    break;
+            //Targeting done here
+            if (Input.GetButtonDown ("Fire1")) {  
+                if ((focusCard.cardInstance.Type == CardType.Unit || focusCard.cardInstance.Type == CardType.Structure) && placement.Equals (Vector2.zero)) { //If it is a unit or structure, we need to ask for its placement.
+                    TargetPlacement ();
+                } else if (extraCost) {
+                    ExtraCostTargeting ();
+                } else if (targetor) {
+                    TargetorTargeting ();
+                }
+            } else if (Input.GetButtonDown ("Fire2")) { //If we right click, defocus the card.
+                focusCard.DeFocus ();
+                focusCard = null;
             }
+
         } else if (focusUnit) {
 
             if (Input.GetButtonDown ("Fire1")) {
@@ -171,27 +93,148 @@ public class PlayerController : MonoBehaviour
 
         }
 
-
-
-
     }
 
-    public bool ValidateTargetsUnit () {
+    void TargetPlacement () {
+        int layerMask = 1 << 6;
 
-        if (fieldTargets.Count != currPlay.FieldTargetsCount + 1) return false;
-        if (handTargets.Count != currPlay.HandTargetsCount) return false;
-        if (stackTargets.Count != currPlay.StackTargetsCount) return false;
-        
-        return true;
+        RaycastHit hit;
+        Ray ray = Camera.main.ScreenPointToRay (Input.mousePosition);
+
+        if (Physics.Raycast (ray, out hit, Mathf.Infinity, layerMask)) {
+            HexagonCell cell = hit.transform.GetComponent<HexagonCell> ();
+            placement = cell.Position;
+        }
     }
 
-    public bool ValidateTargetsSpell () {
+    void TargetorTargeting () {
+        if (selectedTargets < targetor.TargetTypes.Length) {
+            switch (targetor.TargetTypes[selectedTargets]) {
+                case TargetType.Hex: {
+                    int layerMask = 1 << 6;
 
-        if (fieldTargets.Count != currPlay.FieldTargetsCount) return false;
-        if (handTargets.Count != currPlay.HandTargetsCount) return false;
-        if (stackTargets.Count != currPlay.StackTargetsCount) return false;
+                    RaycastHit hit;
+                    Ray ray = Camera.main.ScreenPointToRay (Input.mousePosition);
+
+                    if (Physics.Raycast (ray, out hit, Mathf.Infinity, layerMask)) {
+                        HexagonCell cell = hit.transform.GetComponent<HexagonCell> ();
+                        if (targetor.TragetVaildity(selectedTargets, cell, player)) {
+                            targets [selectedTargets] = cell.Position;
+                            selectedTargets++;
+                        }
+                    }
+                }
+                    break;
+                case TargetType.FieldCard: {
+                    int layerMask = 1 << 7;
+
+                    RaycastHit hit;
+                    Ray ray = Camera.main.ScreenPointToRay (Input.mousePosition);
+
+                    if (Physics.Raycast (ray, out hit, Mathf.Infinity, layerMask)) { 
+                        FieldCard fieldCard = hit.transform.GetComponent<FieldCard> ();
+
+                        if (targetor.TragetVaildity(selectedTargets, fieldCard, player)) {
+                            int layerMaskC = 1 << 6;
+
+                            RaycastHit hitC;
+                            Ray rayC = Camera.main.ScreenPointToRay (Input.mousePosition);
+
+                            if (Physics.Raycast (rayC, out hitC, Mathf.Infinity, layerMaskC)) {
+                                HexagonCell cell = hitC.transform.GetComponent<HexagonCell> ();
+                                targets [selectedTargets] = cell.Position;
+                                selectedTargets++;
+                            }
+                        }
+                    }
+                }
+                    break;
+                case TargetType.Hand: {
+                    //Wait for the player to click on a card in hand
+                }
+                    break;
+                case TargetType.Trap: {
+
+                }
+                    break;
+                case TargetType.Stack: {
+
+                }
+                    break;
+            }
+        }
+    }
+
+    void ExtraCostTargeting () {
+        if (selectedExtraCostTargets < extraCost.TargetTypes.Length) {
+            switch (extraCost.TargetTypes[selectedExtraCostTargets]) {
+                case TargetType.Hex: {
+                    int layerMask = 1 << 6;
+
+                    RaycastHit hit;
+                    Ray ray = Camera.main.ScreenPointToRay (Input.mousePosition);
+
+                    if (Physics.Raycast (ray, out hit, Mathf.Infinity, layerMask)) {
+                        HexagonCell cell = hit.transform.GetComponent<HexagonCell> ();
+                        if (extraCost.TragetVaildity(selectedExtraCostTargets, cell, player)) {
+                            extraCostTargets [selectedExtraCostTargets] = cell.Position;
+                            selectedExtraCostTargets++;
+                        }
+                    }
+                }
+                    break;
+                case TargetType.FieldCard: {
+                    int layerMask = 1 << 7;
+
+                    RaycastHit hit;
+                    Ray ray = Camera.main.ScreenPointToRay (Input.mousePosition);
+
+                    if (Physics.Raycast (ray, out hit, Mathf.Infinity, layerMask)) { 
+                        FieldCard fieldCard = hit.transform.GetComponent<FieldCard> ();
+
+                        if (extraCost.TragetVaildity(selectedExtraCostTargets, fieldCard, player)) {
+                            int layerMaskC = 1 << 6;
+
+                            RaycastHit hitC;
+                            Ray rayC = Camera.main.ScreenPointToRay (Input.mousePosition);
+
+                            if (Physics.Raycast (rayC, out hitC, Mathf.Infinity, layerMaskC)) {
+                                HexagonCell cell = hitC.transform.GetComponent<HexagonCell> ();
+                                extraCostTargets [selectedExtraCostTargets] = cell.Position;
+                                selectedExtraCostTargets++;
+                            }
+                        }
+                    }
+                }
+                    break;
+                case TargetType.Hand: {
+                    //Wait for the player to click on a card in hand
+                }
+                    break;
+                case TargetType.Trap: {
+
+                }
+                    break;
+                case TargetType.Stack: {
+
+                }
+                    break;
+            }
+        }
+    }
+
+    void PlayCard () {
+        if ((focusCard.cardInstance.Type == CardType.Unit || focusCard.cardInstance.Type == CardType.Structure) && placement.Equals (Vector2.zero)) return;
+
+        if (extraCost)
+            if (extraCost.TargetTypes.Length != selectedExtraCostTargets) return;
+
+        if (targetor)
+            if (targetor.TargetTypes.Length != selectedTargets) return;
         
-        return true;
+        focusCard.PlayCard (placement, targets, extraCostTargets);
+        focusCard.DeFocus ();
+        focusCard = null;
     }
 
     public void UpdateCardDisplays (CardInstance[] instances) {
@@ -202,45 +245,46 @@ public class PlayerController : MonoBehaviour
         if (focusCard)
             focusCard.DeFocus ();
 
-        currPlay = null;
-        fieldTargets = new List<Vector2> ();
-        handTargets = new List<int> ();
-        stackTargets = new List<int> ();
-        trapTargets = new List<Vector2> ();
+        targetor = null;
+        extraCost = null;
+
+        targets = null;
+        selectedTargets = 0;
+        extraCostTargets = null;
+        selectedExtraCostTargets = 0;
+        placement = Vector2.zero;
 
         focusCard = card;
         focusUnit = null;
 
+        extraCost = card.cardInstance.Card.ExtraCost;
+
         if ( card.cardInstance.Card is UnitCard ) {
-            currPlay = (card.cardInstance.Card as UnitCard).OnPlayEffect;
+            targetor = (card.cardInstance.Card as UnitCard).OnPlayEffect;
         } else if (card.cardInstance.Card is StructureCard) {
-            currPlay = (card.cardInstance.Card as StructureCard).OnPlayEffect;
+            targetor = (card.cardInstance.Card as StructureCard).OnPlayEffect;
         } else if (card.cardInstance.Card is SpellCard) {
-            currPlay = (card.cardInstance.Card as SpellCard).Spell;
+            targetor = (card.cardInstance.Card as SpellCard).Spell;
         } 
 
+        if (targetor)
+            targets = new Vector2[targetor.TargetTypes.Length];
+
+        if (extraCost)
+            extraCostTargets = new Vector2[extraCost.TargetTypes.Length];
     }
 
     public void FocusUnit (FieldUnit unit) {
-        fieldTargets = new List<Vector2> ();
-        handTargets = new List<int> ();
-        stackTargets = new List<int> ();
-        trapTargets = new List<Vector2> ();
+        targets = null;
+        selectedTargets = 0;
+        placement = Vector2.zero;
 
         focusUnit = unit;
         focusCard = null;
     }
 
-    public void OnDrawGizmos () {
-        if (focusUnit) {
-            Gizmos.color = Color.blue;
-            Gizmos.DrawWireSphere (focusUnit.position.Value, focusUnit.movementSpeed.Value);
+    public void TargetCard (int cardNumber, CardInstance cardInstance) {
 
-            Gizmos.color = Color.red;
-            Gizmos.DrawWireSphere (focusUnit.position.Value, focusUnit.attackRange.Value);
-
-        } else if (focusCard) {
-
-        }
     }
+
 }

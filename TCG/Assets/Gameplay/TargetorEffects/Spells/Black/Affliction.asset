@@ -14,7 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed: 0
   goesOnStack: 0
-  fieldTargetsCount: 1
-  handTargetsCount: 0
-  stackTargetsCount: 0
-  friendlyFire: 1
+  targetTypes: 01000000
+  description: Kill target unit.

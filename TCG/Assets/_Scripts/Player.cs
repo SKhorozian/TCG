@@ -82,27 +82,27 @@ public class Player : NetworkBehaviour
         {
             playerController = Instantiate(playerControllerPrefab, canvas.transform).GetComponent<PlayerController> ();
 
-            playerStats.GetComponent<RectTransform> ().anchoredPosition = new Vector3 (-200, -1005, 0);
+            playerStats.GetComponent<RectTransform> ().anchoredPosition = new Vector3 (-200, -1000, 0);
         } 
 
         playerStats.UpdateDisplay(currentMana.Value, maxMana.Value);
 
     }
 
-    public void PlayCard (int c, Vector2[] fieldTargets, int[] handTargets, int[] stackTargets) {
+    public void PlayCard (int c, Vector2 placement, Vector2[] targets, Vector2[] extraCostTargets) {
         if (IsServer) {
-            if (matchManager.PlayCard (playerHand[c], this, fieldTargets, handTargets, stackTargets)) {
+            if (matchManager.PlayCard (playerHand[c], this, placement, targets, extraCostTargets)) {
                 playerHand.RemoveAt(c);
             }
             UpdatePlayerHand();
         } else {
-            PlayCardRequestServerRPC(c, fieldTargets, handTargets, stackTargets);
+            PlayCardRequestServerRPC(c, placement, targets, extraCostTargets);
         }
     }
 
     [ServerRpc]
-    void PlayCardRequestServerRPC (int c, Vector2[] fieldTargets, int[] handTargets, int[] stackTargets) {
-        PlayCard(c, fieldTargets, handTargets, stackTargets);
+    void PlayCardRequestServerRPC (int c, Vector2 placement, Vector2[] targets, Vector2[] extraCostTargets) {
+        PlayCard(c, placement, targets, extraCostTargets);
     }
 
 

@@ -14,7 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed: 0
   goesOnStack: 0
-  fieldTargetsCount: 0
-  handTargetsCount: 0
-  stackTargetsCount: 0
+  targetTypes: 
+  description: Draw 2.
   drawAmount: 2

@@ -54,6 +54,10 @@ MonoBehaviour:
   turnButton: {fileID: 1670769208087247081}
   focusUnit: {fileID: 0}
   focusCard: {fileID: 0}
+  targetor: {fileID: 0}
+  placement: {x: 0, y: 0}
+  targets: []
+  selectedTargets: 0
 --- !u!1001 &499625752503355464
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -154,7 +158,7 @@ PrefabInstance:
     - target: {fileID: 5394092101069080695, guid: 2fa09fec442ab654da851029ea336293,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0
+      value: -275
       objectReference: {fileID: 0}
     - target: {fileID: 5394092101069080695, guid: 2fa09fec442ab654da851029ea336293,
         type: 3}

@@ -14,6 +14,7 @@ public abstract class Card : ScriptableObject
 
     [SerializeField] CardType cardType;
 
+    [Space (10), SerializeField] ExtraCost extraCost;
 
     //Getters
     public string CardName      {get {return cardName;}}
@@ -22,6 +23,7 @@ public abstract class Card : ScriptableObject
     public int Cost             {get {return cost;}}
     public CardColor Color      {get {return color;}}
     public CardType Type        {get {return cardType;}}        
+    public ExtraCost ExtraCost  {get {return extraCost;}}
 
     public override string ToString () {
         return cardName + " | Description: " + description;

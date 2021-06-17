@@ -88,6 +88,7 @@ public class HexagonGrid : MonoBehaviour
 
         Vector2Int cellPos = new Vector2Int (z, (i + GetHexLow (z)) * 2 + ((z % 2 == 0)? 0 : 1));
         cells.Add(cellPos, cell);
+
         cell.transform.name = "Cell: " + cellPos.ToString();
         cell.SetCoordinates (cellPos);
 

@@ -27,7 +27,9 @@ public class MatchManager : NetworkBehaviour
     [SerializeField] GameObject fieldUnitPrefab;
     [SerializeField] GameObject fieldStructurePrefab;
 
-    [SerializeField] Stack<CardEffect> effectStack = new Stack<CardEffect> ();
+    Stack<CardEffect> effectStack = new Stack<CardEffect> ();
+
+    FieldState fieldState;
 
     // Start is called before the first frame update
     void Start()
@@ -50,6 +52,9 @@ public class MatchManager : NetworkBehaviour
 
         player1.MatchManage = this;
         player2.MatchManage = this;
+
+        fieldState = new FieldState ();
+        fieldState.ChangeState(CurrentFieldState.FreePlay); //Later on offer both players mulligans
 
         turnNumber.Value = 1;
 
@@ -127,19 +132,32 @@ public class MatchManager : NetworkBehaviour
 
 
     //Returns true if the card was played successfully, else return false
-    public bool PlayCard (CardInstance card, Player player, Vector2[] fieldTargets, int[] handTargets, int[] stackTargets) {
+    public bool PlayCard (CardInstance card, Player player, Vector2 placement, Vector2[] targets, Vector2[] extraCostTargets) {
         if (!IsServer) return false;
 
         if (!player.Equals(playerTurn)) return false;
         if (player.CurrentMana < card.Cost) return false;
 
+        //Extra Cost
+        if (card.Card.ExtraCost) {
+            ExtraCost extraCost = Instantiate <ExtraCost> (card.Card.ExtraCost);
+            
+            List<ITargetable> newTargets = Targeting.ConvertTargets (extraCost.TargetTypes, extraCostTargets, player);
+
+            if (extraCost.TragetVaildity(newTargets, player)) { //If targets are valid, then we proceed to play the card. Otherwise, we return.
+                extraCost.SetTargets (newTargets);
+                extraCost.DoEffect ();
+                CallEffects ();
+            } else {Debug.Log("Extra Cost failed targeting"); return false;};
+        }
+
         switch (card.Type) { 
-            case CardType.Unit:
-                if (fieldTargets.Length <= 0) return false;
+            case CardType.Unit: {
+                if (placement == null) return false;
                 if (!(card is UnitCardInstance)) return false;
 
                 HexagonCell cell;
-                fieldGrid.Cells.TryGetValue(fieldTargets[0], out cell);
+                if (!fieldGrid.Cells.TryGetValue(placement, out cell)) {Debug.Log ("Placement invalid"); return false;};
                 if (cell.FieldCard) return false; //If the cell is occupied return false
 
                 //Spend Mana
@@ -149,47 +167,50 @@ public class MatchManager : NetworkBehaviour
 
                 //Play Effects
                 if ((card as UnitCardInstance).UnitCard.OnPlayEffect) {
-                    OnPlay playEffect = Instantiate <OnPlay> ((card as UnitCardInstance).UnitCard.OnPlayEffect);
+                    PlayAbility playEffect = Instantiate <PlayAbility> ((card as UnitCardInstance).UnitCard.OnPlayEffect);
                     playEffect.FieldCard = summonedUnit;
-                    List<ITargetable> targets = new List<ITargetable> ();
-
-                    for (int i = 1; i < fieldTargets.Length; i++) {
-                        HexagonCell celli;
-
-                        if (fieldGrid.Cells.TryGetValue(fieldTargets[i], out celli)) {
-                            if (celli.FieldCard)
-                                targets.Add (celli.FieldCard);
-                        }
-                    }
             
-                    if (playEffect.TragetVaildity(targets) && summonedUnit) { //If targets are valid, then we proceed to call the play effect. Otherwise, we ignore it.
-                        playEffect.SetTargets (targets);
+                    List<ITargetable> newTargets = Targeting.ConvertTargets (playEffect.TargetTypes, targets, player);
+
+                    if (playEffect.TragetVaildity(newTargets, player) && summonedUnit) { //If targets are valid, then we proceed to call the play effect. Otherwise, we ignore it.
+                        playEffect.SetTargets (newTargets);
                         playEffect.DoEffect ();
                         CallEffects ();
-                    }
+                    } else {Debug.Log("Play Effect failed targeting");};
                 }
 
-                Debug.Log ("Player " + player.OwnerClientId + " played " + card.CardName + " on cell " + fieldTargets[0]);
-                break;
-            case CardType.Structure:
-                if (fieldTargets.Length <= 0) return false;
+                Debug.Log ("Player " + player.OwnerClientId + " played " + card.CardName + " on cell " + placement);
+            } break;
+            case CardType.Structure: {
+                if (placement == null) return false;
                 if (!(card is StructureCardInstance)) return false;
 
-
-                HexagonCell cellS;
-                fieldGrid.Cells.TryGetValue(fieldTargets[0], out cellS);
-                if (cellS.FieldCard) return false; //If the cell is occupied return false
+                HexagonCell cell;
+                if (fieldGrid.Cells.TryGetValue(placement, out cell)) {Debug.Log ("Placement invalid"); return false;};
+                if (cell.FieldCard) return false; //If the cell is occupied return false
 
                 //Spend Mana
                 player.SpendMana (card.Cost);
 
-                FieldStructure summonedStructure = SummonStructure (card, player, cellS);
+                FieldStructure summonedStructure = SummonStructure (card, player, cell);
 
-                //TODO play effects
+                //Play Effects
+                if ((card as StructureCardInstance).StructureCard.OnPlayEffect) {
+                    PlayAbility playEffect = Instantiate <PlayAbility> ((card as StructureCardInstance).StructureCard.OnPlayEffect);
+                    playEffect.FieldCard = summonedStructure;
+            
+                    List<ITargetable> newTargets = Targeting.ConvertTargets (playEffect.TargetTypes, targets, player);
+
+                    if (playEffect.TragetVaildity(newTargets, player) && summonedStructure) { //If targets are valid, then we proceed to call the play effect. Otherwise, we ignore it.
+                        playEffect.SetTargets (newTargets);
+                        playEffect.DoEffect ();
+                        CallEffects ();
+                    } else {Debug.Log("Play Effect failed targeting");};
+                }
 
 
-                Debug.Log ("Player " + player.OwnerClientId + " played " + card.CardName + " on cell " + fieldTargets[0]);
-                break;
+                Debug.Log ("Player " + player.OwnerClientId + " played " + card.CardName + " on cell " + placement);
+            } break;
             case CardType.Spell:
                 if (!(card is SpellCardInstance)) return false;
 
@@ -199,20 +220,11 @@ public class MatchManager : NetworkBehaviour
                     
                     spell.SpellCard = card as SpellCardInstance;
                     spell.Player = player;
-
-                    List<ITargetable> targets = new List<ITargetable> ();
-
-                    for (int i = 0; i < fieldTargets.Length; i++) {
-                        HexagonCell celli;
-
-                        if (fieldGrid.Cells.TryGetValue(fieldTargets[i], out celli)) {
-                            if (celli.FieldCard)
-                                targets.Add (celli.FieldCard);
-                        }
-                    }
             
-                    if (spell.TragetVaildity(targets)) { //If targets are valid, then we proceed to call the spell effect. Otherwise, the spell doesn't go off.
-                        spell.SetTargets (targets);
+                    List<ITargetable> newTargets = Targeting.ConvertTargets (spell.TargetTypes, targets, player);
+
+                    if (spell.TragetVaildity(newTargets, player)) { //If targets are valid, then we proceed to call the spell effect. Otherwise, the spell doesn't go off.
+                        spell.SetTargets (newTargets);
                         spell.DoEffect ();
                         CallEffects ();
                     } else {Debug.Log("Spell failed targeting"); return false;};
@@ -309,7 +321,7 @@ public class MatchManager : NetworkBehaviour
             List<ITargetable> targets = new List<ITargetable> ();
             targets.Add (hexagonCell);
 
-            if (moveAction.TragetVaildity (targets)) {
+            if (moveAction.TragetVaildity (targets, unit.Player)) {
                 moveAction.SetTargets (targets);
                 moveAction.DoEffect ();
 

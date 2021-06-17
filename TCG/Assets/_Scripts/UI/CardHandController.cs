@@ -23,12 +23,8 @@ public class CardHandController : MonoBehaviour
         cardDisplay.SetCard (cardInstance);
     }
 
-    public void Hover() {
-        //rectT.localPosition = new Vector3 (rectT.localPosition.x,150,0); 
-    }
-
-    public void Lower() {
-        //rectT.localPosition = new Vector3 (rectT.localPosition.x,0,0); 
+    public void TargetCard () {
+        playerController.TargetCard (handNumber, cardInstance);
     }
 
     public void StartDrag () {
@@ -40,14 +36,17 @@ public class CardHandController : MonoBehaviour
     }
 
     public void Drop() {
-        playerController.FocusCard (this);
+        if (Input.mousePosition.y > Screen.height/3)
+            playerController.FocusCard (this);
+        else 
+            DeFocus ();
     }
 
     public void DeFocus () {
         rectT.position = originalPos;
     }
 
-    public void PlayCard (Vector2[] fieldTargets, int[] handTargets, int[] stackTargets) {
+    public void PlayCard (Vector2 placement, Vector2[] targets, Vector2[] extraCostTargets) {
 
         //Play the card
         if (NetworkManager.Singleton.ConnectedClients.TryGetValue(NetworkManager.Singleton.LocalClientId, out var networkedClient))
@@ -55,12 +54,11 @@ public class CardHandController : MonoBehaviour
             var player = networkedClient.PlayerObject.GetComponent<Player>();
             if (player)
             {
-                player.PlayCard (handNumber, fieldTargets, handTargets, stackTargets);
+                player.PlayCard (handNumber, placement, targets, extraCostTargets);
             }
         }
-
-
     }
 
     public CardInstance cardInstance {get {return cardDisplay.cardInstance;}}
+    public int HandNumber {get {return handNumber;}}
 }

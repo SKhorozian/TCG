@@ -11,13 +11,13 @@ public class StructureCard : Card
 
     [Space (20)]
     //Play Effect
-    [SerializeField] OnPlay onPlayEffect;
+    [SerializeField] PlayAbility onPlayEffect;
 
     [Space (20)]
     //Keywords
     [SerializeField] StructureCardStaticKeywords staticKeywords;
 
     public CardEffectTrigger[] CardEffects {get {return cardEffects;}}
-    public OnPlay OnPlayEffect  {get {return onPlayEffect;}}
+    public PlayAbility OnPlayEffect  {get {return onPlayEffect;}}
 
 }

@@ -14,8 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed: 0
   goesOnStack: 1
-  fieldTargetsCount: 1
-  handTargetsCount: 0
-  stackTargetsCount: 0
+  targetTypes: 01000000
+  description: Deal 100 damage to target unit.
   damage: 100
   friendlyFire: 0

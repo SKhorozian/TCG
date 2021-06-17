@@ -93,7 +93,8 @@ GameObject:
   - component: {fileID: 5771860148267370872}
   - component: {fileID: 3169464032686510553}
   - component: {fileID: 5987444494448236045}
-  m_Layer: 0
+  - component: {fileID: 2294241170454245778}
+  m_Layer: 7
   m_Name: FieldHero
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -150,9 +151,24 @@ MonoBehaviour:
     m_InternalValue: {x: 0, y: 0, z: 0}
   cell: {fileID: 0}
   icon: {fileID: 1827052076698528969}
+  effectTriggers: []
+  actions: []
   healthText: {fileID: 6328779019820202430}
   health:
     m_InternalValue: 0
+--- !u!65 &2294241170454245778
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5464092142128600098}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 0.5, y: 0.5, z: 0.5}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &5569073928814077403
 GameObject:
   m_ObjectHideFlags: 0
