@@ -7,7 +7,7 @@ using MLAPI;
 
 public class CardDisplay : MonoBehaviour
 {
-    [Space(10),SerializeField] CardInstance card;
+    CardInstance card;
 
     [SerializeField] Image cardBorder;
     [SerializeField] Image cardArt;
@@ -15,24 +15,20 @@ public class CardDisplay : MonoBehaviour
     [SerializeField] TextMeshProUGUI cardName;
     [SerializeField] TextMeshProUGUI cost;
 
-    [Header ("Unit"), Space (10)]
+    [SerializeField] TextMeshProUGUI description;
+
+    [SerializeField] RectTransform textBox;
+    [SerializeField] LayoutElement textBoxElement;
+
+    [Space(10), Header ("Unit")]
     [SerializeField] GameObject unitStuff;
-    [SerializeField] TextMeshProUGUI unitDescription;
+
     [SerializeField] TextMeshProUGUI strength;
     [SerializeField] TextMeshProUGUI health;
+
     [SerializeField] TextMeshProUGUI range;
-    [SerializeField] TextMeshProUGUI movementSpeed;
-
-    [Space (10), Header ("Structure")]
-    [SerializeField] GameObject structStuff;
-    [SerializeField] TextMeshProUGUI structDescription;
-
-    [SerializeField] Color[] colors;
-
-    [Space (10)]
-    [SerializeField] Sprite unitCardBorder;
-    [SerializeField] Sprite structureCardBorder;
-    [SerializeField] Sprite spellCardBorder;
+    [SerializeField] TextMeshProUGUI speed;
+    [SerializeField] TextMeshProUGUI energy;
 
 
     // Start is called before the first frame update
@@ -41,46 +37,48 @@ public class CardDisplay : MonoBehaviour
         UpdateCard();
     }
 
+    void Update () {
+        textBoxElement.preferredHeight = 30 + description.preferredHeight;
+    }
+
     void UpdateCard () {
         if (card != null) {
 
             cardName.text = card.CardName;
 
-            if (card.CardName.Length > 8)
-                cardName.fontSize = 15f;
-            else 
-                cardName.fontSize = 20f;
-
             cost.text = card.Cost.ToString();
+
+            if (card.Description.Length > 0) {
+                textBox.gameObject.SetActive (true);
+                description.SetText (card.Description);
+                textBoxElement.preferredHeight = 30 + description.preferredHeight;
+            } else {
+                textBox.gameObject.SetActive (false);
+                description.SetText ("");
+            }
+            
 
             switch (card.Type) {
                 case CardType.Unit:
-
                     if (card.Card is UnitCard) {
-                        cardBorder.sprite = unitCardBorder;
-
                         unitStuff.SetActive (true);
-                        structStuff.SetActive (false);
 
                         UnitCardInstance unitCard = card as UnitCardInstance;
-                        strength.text = unitCard.Strength.ToString();
-                        health.text = unitCard.Health.ToString();   
-                        range.text = unitCard.AttackRange.ToString ();
-                        movementSpeed.text = unitCard.MovementSpeed.ToString ();
-                        unitDescription.text = card.Description;
+                        strength.text = "<sprite=3>" + unitCard.Strength.ToString();
+                        health.text = "<sprite=4>" + unitCard.Health.ToString();   
+                        range.text = "<sprite=5>" + unitCard.AttackRange.ToString ();
+                        speed.text = "<sprite=6>" + unitCard.MovementSpeed.ToString ();
+                        energy.text = "<sprite=7>" + unitCard.ActionPoints.ToString ();
                     }
-
                     break;
                 case CardType.Structure:
-
-                    if (card.Card is StructureCard) {
-                        cardBorder.sprite = structureCardBorder;
-
                         unitStuff.SetActive (false);
-                        structStuff.SetActive (true);
-                        structDescription.text = card.Description;
-                    }
 
+                    break;
+                case CardType.Spell:
+                    if (card.Card is SpellCard) {
+                        unitStuff.SetActive (false);
+                    }
                     break;
                 default:
                 break;
@@ -89,24 +87,24 @@ public class CardDisplay : MonoBehaviour
 
             cardArt.sprite = card.CardArt;
 
-            switch (card.Color) {
-                case CardColor.Red:
-                cardBorder.color = colors[0];
-                break;
-                case CardColor.Blue:
-                cardBorder.color = colors[1];
-                break;
-                case CardColor.Black:
-                cardBorder.color = colors[2];
-                break;
-                case CardColor.Green:
-                cardBorder.color = colors[3];
-                break;
-                case CardColor.Yellow:
-                cardBorder.color = colors[4];
-                break;
+            // switch (card.Color) {
+            //     case CardColor.Red:
+            //     cardBorder.color = colors[0];
+            //     break;
+            //     case CardColor.Blue:
+            //     cardBorder.color = colors[1];
+            //     break;
+            //     case CardColor.Black:
+            //     cardBorder.color = colors[2];
+            //     break;
+            //     case CardColor.Green:
+            //     cardBorder.color = colors[3];
+            //     break;
+            //     case CardColor.Yellow:
+            //     cardBorder.color = colors[4];
+            //     break;
                 
-            }
+            // }
 
         }
     }

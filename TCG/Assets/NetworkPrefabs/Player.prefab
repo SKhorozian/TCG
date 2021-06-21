@@ -82,6 +82,8 @@ MonoBehaviour:
       copies: 3
     - card: {fileID: 11400000, guid: 6ac4f5d8dba6b2a498ce89a6d82aea94, type: 2}
       copies: 3
+    - card: {fileID: 11400000, guid: 527b448d1861bf54ab73282f9e6a2b55, type: 2}
+      copies: 3
   playerHero: {fileID: 0}
   controledUnits: []
   controledStructures: []

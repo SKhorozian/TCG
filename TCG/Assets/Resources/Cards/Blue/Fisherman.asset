@@ -14,11 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cardName: Fisherman
   cost: 2
-  description: <b>Entrance:</b> Draw 1.
+  description: <sprite name=entrance> Draw 1.
   color: 1
   cardArt: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
   cardType: 0
-  onPlayEffect: {fileID: 0}
+  extraCost: {fileID: 0}
   strength: 150
   health: 150
   actionPoints: 2
@@ -27,4 +27,4 @@ MonoBehaviour:
   cardEffects:
   - {fileID: 11400000, guid: 64a9b372fc7ad954b9d470874e07f75d, type: 2}
   staticKeywords: 0
-  actions: []
+  onPlayEffect: {fileID: 0}

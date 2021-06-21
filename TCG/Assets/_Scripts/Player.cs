@@ -34,9 +34,6 @@ public class Player : NetworkBehaviour
     [SerializeField] GameObject matchManagerPrefab;
     [SerializeField] MatchManager matchManager;
 
-
-    //Stats:
-
     //Mana
     NetworkVariableInt maxMana = new NetworkVariableInt(new NetworkVariableSettings{
         ReadPermission = NetworkVariablePermission.Everyone,
@@ -91,9 +88,12 @@ public class Player : NetworkBehaviour
 
     public void PlayCard (int c, Vector2 placement, Vector2[] targets, Vector2[] extraCostTargets) {
         if (IsServer) {
-            if (matchManager.PlayCard (playerHand[c], this, placement, targets, extraCostTargets)) {
-                playerHand.RemoveAt(c);
-            }
+            CardInstance card = playerHand[c];
+            playerHand.RemoveAt(c);
+
+            if (!matchManager.PlayCard (card, this, placement, targets, extraCostTargets))
+                AddToHand (card);
+
             UpdatePlayerHand();
         } else {
             PlayCardRequestServerRPC(c, placement, targets, extraCostTargets);
@@ -138,6 +138,19 @@ public class Player : NetworkBehaviour
         }
     }
 
+    public void AddToHand (CardInstance cardInstance) {
+        if (!IsServer) return;
+
+        if (playerHand.Count >= 10) {
+            //Player hand limited reached
+            //Do something
+            return;
+        }
+
+        playerHand.Add(cardInstance);
+        UpdatePlayerHand();
+    }
+
     void UpdatePlayerHand () {
         if (!IsServer) return;
 
@@ -148,6 +161,24 @@ public class Player : NetworkBehaviour
         }
 
         UpdatePlayerHandClientRPC (cardLocations);
+    }
+
+    public CardInstance DiscardCard (int n) {
+        if (playerHand.Count > n) {
+            CardInstance card = playerHand[n];
+            playerHand.RemoveAt (n);
+
+            DiscardCard (card);
+
+            return card;
+        }
+        return null;
+    }
+
+    public void DiscardCard (CardInstance card) {
+        //Call Discard effects
+
+        junkyard.Add (card);
     }
 
     [ClientRpc]

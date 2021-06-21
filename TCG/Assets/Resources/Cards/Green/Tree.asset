@@ -14,12 +14,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cardName: Tree
   cost: 2
-  description: <b>Entrance</b> and <b>Turn Start:</b> Heal friendly units and your
-    player for 100.
+  description: <sprite name = entrance> and <b>Turn Start:</b> Heal friendly units
+    and your player for 100.
   color: 3
   cardArt: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
   cardType: 3
-  onPlayEffect: {fileID: 0}
+  extraCost: {fileID: 0}
   cardEffects:
   - {fileID: 11400000, guid: 87b3c2e2fadabd24cb35f3badf6b122d, type: 2}
+  onPlayEffect: {fileID: 0}
   staticKeywords: 0

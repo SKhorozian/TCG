@@ -14,10 +14,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cardName: Elf Archer
   cost: 3
-  description: 
+  description: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
+    tempor incididunt ut labore et dolore magna aliqua.
   color: 3
   cardArt: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
   cardType: 0
+  extraCost: {fileID: 0}
   strength: 300
   health: 100
   actionPoints: 1
@@ -26,4 +28,3 @@ MonoBehaviour:
   cardEffects: []
   staticKeywords: 16
   onPlayEffect: {fileID: 0}
-  actions: []

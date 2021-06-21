@@ -14,11 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cardName: Treant
   cost: 3
-  description: <b>Entrance:</b> Heal your hero for 200.
+  description: <sprite name=entrance> Heal your hero for 200.
   color: 3
   cardArt: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
   cardType: 0
-  onPlayEffect: {fileID: 0}
+  extraCost: {fileID: 0}
   strength: 300
   health: 500
   actionPoints: 1
@@ -27,4 +27,4 @@ MonoBehaviour:
   cardEffects:
   - {fileID: 11400000, guid: 55ac0f3682696644b9ce8331af7e266a, type: 2}
   staticKeywords: 0
-  actions: []
+  onPlayEffect: {fileID: 0}

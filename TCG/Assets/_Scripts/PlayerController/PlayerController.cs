@@ -121,6 +121,7 @@ public class PlayerController : MonoBehaviour
                         if (targetor.TragetVaildity(selectedTargets, cell, player)) {
                             targets [selectedTargets] = cell.Position;
                             selectedTargets++;
+                            PlayCard ();
                         }
                     }
                 }
@@ -144,6 +145,7 @@ public class PlayerController : MonoBehaviour
                                 HexagonCell cell = hitC.transform.GetComponent<HexagonCell> ();
                                 targets [selectedTargets] = cell.Position;
                                 selectedTargets++;
+                                PlayCard ();
                             }
                         }
                     }
@@ -272,6 +274,8 @@ public class PlayerController : MonoBehaviour
 
         if (extraCost)
             extraCostTargets = new Vector2[extraCost.TargetTypes.Length];
+
+        PlayCard ();
     }
 
     public void FocusUnit (FieldUnit unit) {

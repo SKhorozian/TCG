@@ -77,7 +77,7 @@ public class MatchManager : NetworkBehaviour
         fieldGrid = Instantiate (fieldGridPrefab).GetComponent<HexagonGrid> ();
         fieldGrid.InitializeGrid();
         if (!IsOwner) {
-            Camera.main.transform.position = (new Vector3 (0,7,5));
+            Camera.main.transform.position = (new Vector3 (0,5.5f,4));
             Camera.main.transform.rotation = Quaternion.Euler (new Vector3 (60,-180,0));
         }
 
@@ -94,7 +94,7 @@ public class MatchManager : NetworkBehaviour
 
         HexagonCell cell1;
 
-        if (fieldGrid.Cells.TryGetValue (new Vector2 (5, 17), out cell1)) {
+        if (fieldGrid.Cells.TryGetValue (new Vector2 (3, 13), out cell1)) {
             HeroCardInstance heroCardInstance = new HeroCardInstance (player1.StartDeck.HeroCard);
             FieldHero fieldHero = player1Hero.GetComponent<FieldHero> ();
             fieldHero.SummonHero (heroCardInstance, player1, cell1);
@@ -113,7 +113,7 @@ public class MatchManager : NetworkBehaviour
 
         HexagonCell cell2;
 
-        if (fieldGrid.Cells.TryGetValue (new Vector2 (5, 1), out cell2)) {
+        if (fieldGrid.Cells.TryGetValue (new Vector2 (3, 1), out cell2)) {
             HeroCardInstance heroCardInstance = new HeroCardInstance (player2.StartDeck.HeroCard);
             FieldHero fieldHero = player2Hero.GetComponent<FieldHero> ();
             fieldHero.SummonHero (heroCardInstance, player2, cell1);
@@ -175,10 +175,10 @@ public class MatchManager : NetworkBehaviour
                     if (playEffect.TragetVaildity(newTargets, player) && summonedUnit) { //If targets are valid, then we proceed to call the play effect. Otherwise, we ignore it.
                         playEffect.SetTargets (newTargets);
                         playEffect.DoEffect ();
-                        CallEffects ();
                     } else {Debug.Log("Play Effect failed targeting");};
                 }
 
+                CallEffects ();
                 Debug.Log ("Player " + player.OwnerClientId + " played " + card.CardName + " on cell " + placement);
             } break;
             case CardType.Structure: {
@@ -204,11 +204,10 @@ public class MatchManager : NetworkBehaviour
                     if (playEffect.TragetVaildity(newTargets, player) && summonedStructure) { //If targets are valid, then we proceed to call the play effect. Otherwise, we ignore it.
                         playEffect.SetTargets (newTargets);
                         playEffect.DoEffect ();
-                        CallEffects ();
                     } else {Debug.Log("Play Effect failed targeting");};
                 }
 
-
+                CallEffects ();
                 Debug.Log ("Player " + player.OwnerClientId + " played " + card.CardName + " on cell " + placement);
             } break;
             case CardType.Spell:
@@ -226,13 +225,13 @@ public class MatchManager : NetworkBehaviour
                     if (spell.TragetVaildity(newTargets, player)) { //If targets are valid, then we proceed to call the spell effect. Otherwise, the spell doesn't go off.
                         spell.SetTargets (newTargets);
                         spell.DoEffect ();
-                        CallEffects ();
                     } else {Debug.Log("Spell failed targeting"); return false;};
                 }
 
                 //Spend Mana
                 player.SpendMana (card.Cost);
 
+                CallEffects ();
                 Debug.Log ("Player " + player.OwnerClientId + " casted " + card.CardName);
                 break;
             default:
@@ -259,7 +258,6 @@ public class MatchManager : NetworkBehaviour
 
         player.SummonStructure (fieldStructure);
 
-        CallEffects ();
         return fieldStructure;        
 
     }
@@ -281,7 +279,6 @@ public class MatchManager : NetworkBehaviour
 
         player.SummonUnit (fieldUnit);
         
-        CallEffects ();
         return fieldUnit;
     }
 

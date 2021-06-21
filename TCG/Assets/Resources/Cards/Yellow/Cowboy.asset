@@ -14,10 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cardName: Cowboy
   cost: 2
-  description: <b>Play:</b> Deal 100 damage to target unit.
+  description: <sprite name=play> Deal 100 damage to target unit.
   color: 4
   cardArt: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
   cardType: 0
+  extraCost: {fileID: 0}
   strength: 200
   health: 100
   actionPoints: 1
