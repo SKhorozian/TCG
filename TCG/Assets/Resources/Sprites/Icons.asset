@@ -102,7 +102,7 @@ MonoBehaviour:
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 4
-    m_Scale: 1.5
+    m_Scale: 1.4
     m_Name: hp
     m_HashCode: 3352
   - m_ElementType: 2

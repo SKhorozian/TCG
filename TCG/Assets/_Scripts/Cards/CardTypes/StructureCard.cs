@@ -14,10 +14,15 @@ public class StructureCard : Card
     [SerializeField] PlayAbility onPlayEffect;
 
     [Space (20)]
+    //Actions
+    [SerializeField] List<ActionAbility> actions;
+
+    [Space (20)]
     //Keywords
     [SerializeField] StructureCardStaticKeywords staticKeywords;
 
     public CardEffectTrigger[] CardEffects {get {return cardEffects;}}
     public PlayAbility OnPlayEffect  {get {return onPlayEffect;}}
+    public List<ActionAbility> Actions  {get {return actions;}}
 
 }

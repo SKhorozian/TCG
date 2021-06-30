@@ -6,6 +6,7 @@ using MLAPI.Messaging;
 using MLAPI.NetworkVariable;
 using TMPro;
 using System;
+using MLAPI.Spawning;
 
 public class FieldUnit : FieldCard, IDamageable
 {
@@ -35,7 +36,6 @@ public class FieldUnit : FieldCard, IDamageable
         ReadPermission = NetworkVariablePermission.Everyone,
         WritePermission = NetworkVariablePermission.ServerOnly
     });
-
 
     [SerializeField] TextMeshPro strengthText;
     [SerializeField] TextMeshPro healthText;
@@ -70,6 +70,8 @@ public class FieldUnit : FieldCard, IDamageable
         movementSpeed.Value = unitCard.MovementSpeed;
         attackRange.Value = unitCard.AttackRange;
 
+        SummonUnitClientRPC (card.CardLocation, player.NetworkObjectId, cell.Position);
+
         //Set Card Effects
         effectTriggers = new CardEffectTrigger [unitCard.UnitCard.CardEffects.Length];
         for (int i = 0; i < unitCard.UnitCard.CardEffects.Length; i++) {
@@ -83,19 +85,24 @@ public class FieldUnit : FieldCard, IDamageable
                 player.MatchManage.AddEffectToStack (effect.GetCardEffect());
             }
         }
-
-        SummonUnitClientRPC (card.CardLocation, player.OwnerClientId);
     }
 
     [ClientRpc] 
-    void SummonUnitClientRPC (string cardLocation, ulong playerOwnerID) {
+    void SummonUnitClientRPC (string cardLocation, ulong playerObjectId, Vector2 cellPos) {
         if (!IsServer) { //If we're the client rotate, the object to match the client's camera
             transform.Rotate (new Vector3 (0,180,0));
-            card = new UnitCardInstance (Resources.Load<Card> (cardLocation));
+            unitCard = new UnitCardInstance (Resources.Load<Card> (cardLocation));
+            card = unitCard;
+
+            if (NetworkSpawnManager.SpawnedObjects.TryGetValue (playerObjectId, out var playerObject))
+                player = playerObject.GetComponent<Player>();
+
+            if (player.MatchManage.FieldGrid.Cells.TryGetValue (cellPos, out var hexCell))
+                cell = hexCell;
         } 
 
         //Render Card Art on object
-        icon.sprite = card.CardArt;
+        //icon.sprite = card.CardArt;
 
         strengthText.text = strength.Value.ToString();
         healthText.text = health.Value.ToString();
@@ -108,38 +115,40 @@ public class FieldUnit : FieldCard, IDamageable
         }
     }
 
-    public void TargetCell (Vector2 cell, ulong netid) {
+    //Unit's basic movement.
+    public void MoveUnit (Vector2[] targets, ulong netid) {
         if (IsServer) {
-            HexagonCell hexagonCell;
-            if (player.MatchManage.FieldGrid.Cells.TryGetValue (cell, out hexagonCell)) {
-                if (hexagonCell.FieldCard) {if (hexagonCell.FieldCard is IDamageable) Attack (cell, netid);} //If the hex cell is ocupied and the occupant is an IDamagable, attack it.
-                else MoveUnit (cell, netid); //else just move there
-            }
+            player.MatchManage.MoveUnit (this, targets, netid);
         } else {
-            TargetCellServerRPC (cell, netid);
+            MoveUnitServerRPC (targets, netid);
         }
     }
     [ServerRpc]
-    public void TargetCellServerRPC (Vector2 cell, ulong netid) {
-        TargetCell(cell, netid);
-    }
-
-    //Unit's basic movement.
-    public void MoveUnit (Vector2 cell, ulong netid) {
-        if (!IsServer) return;
-        player.MatchManage.MoveUnit (this, cell, netid);
+    public void MoveUnitServerRPC (Vector2[] targets, ulong netid) {
+        MoveUnit (targets, netid);
     }
 
     //Unit's Basic attack
-    public void Attack (Vector2 cell, ulong netid) {
-        if (!IsServer) return;
-        player.MatchManage.UnitAttack (this, cell, netid);
+    public void Attack (Vector2[] targets, ulong netid) {
+        if (IsServer) {
+            player.MatchManage.UnitAttack (this, targets, netid);
+        } else {
+            AttackServerRPC (targets, netid);
+        }
+    }
+    [ServerRpc]
+    public void AttackServerRPC (Vector2[] targets, ulong netid) {
+        Attack (targets, netid);
     }
 
     public void Strike (IDamageable target) {
+        if (!IsServer) return;
+
         if (strength.Value <= 0) return; //If this unit has no strength, it cannot strike.
         Damage damage = new Damage (strength.Value, DamageSource.Attack, player);
-        player.DamageTarget (target, damage, this);
+        player.DamageTarget (target, damage);
+
+        //player.MatchManage.eventTracker.AddEvent (new StrikeEvent (player, player.MatchManage.TurnNumber, unitCard, ));
     } 
 
     public void UpdateUnit () {
@@ -147,14 +156,18 @@ public class FieldUnit : FieldCard, IDamageable
         strengthText.text = strength.Value.ToString();
         healthText.text = health.Value.ToString();
 
-        if (IsServer) UpdateUnitClientRPC ();
+        if (IsServer) UpdateUnitClientRPC (cell.Position);
     }
     [ClientRpc]
-    void UpdateUnitClientRPC () {
+    void UpdateUnitClientRPC (Vector2 cellPos) {
+        if (!IsClient) return;
         transform.position = position.Value;
         strengthText.text = strength.Value.ToString();
         healthText.text = health.Value.ToString();
         actionPointText.text = currActionPoints.Value.ToString();
+
+        if (player.MatchManage.FieldGrid.Cells.TryGetValue (cellPos, out var hexCell))
+            cell = hexCell;
     }
 
     public void ConsumeActionPoint (int amount) {
@@ -166,6 +179,8 @@ public class FieldUnit : FieldCard, IDamageable
 
     public override void TurnStart()
     {
+        if (!IsServer) return;
+
         currActionPoints.Value = unitCard.ActionPoints; //Untap
     
         //Call Enterance Effects:
@@ -178,6 +193,7 @@ public class FieldUnit : FieldCard, IDamageable
     }
 
     public override void TurnEnd () {
+        if (!IsServer) return;
 
         //Call Enterance Effects:
         foreach (CardEffectTrigger effect in effectTriggers) {
@@ -221,7 +237,7 @@ public class FieldUnit : FieldCard, IDamageable
             }
         }
 
-        UpdateUnitClientRPC ();
+        UpdateUnitClientRPC (cell.Position);
 
         return damageInfo;
     }
@@ -233,7 +249,7 @@ public class FieldUnit : FieldCard, IDamageable
         health.Value += healInfo.HealAmount;
         health.Value = Mathf.Clamp (health.Value, 0, unitCard.Health);
 
-        UpdateUnitClientRPC ();
+        UpdateUnitClientRPC (cell.Position);
 
         return healInfo;
     }

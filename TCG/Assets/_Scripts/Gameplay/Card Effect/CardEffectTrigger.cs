@@ -25,5 +25,6 @@ public enum EffectTrigger {
     Sacrificed = (1 << 7),     //When sacrificed
     OnDestroy = (1 << 8),      //When it dies or is demolished
     DamageTaken = (1 << 9),    //When it takes damage
-    Aura = (1 << 10)           //Will figues this one out TODO
+    Aura = (1 << 10),           
+    Usurp = (1 << 11)          //When striking the enemy hero
 }

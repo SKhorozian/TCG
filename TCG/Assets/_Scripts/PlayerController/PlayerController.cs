@@ -10,9 +10,9 @@ public class PlayerController : MonoBehaviour
     [SerializeField] PlayerHandDisplay handDisplay;
     [SerializeField] TurnButton turnButton;
     
-    [SerializeField] FieldUnit focusUnit;
-    [SerializeField] CardHandController focusCard;
+    [SerializeField] FieldCard focusFieldCard;
 
+    [SerializeField] CardHandController focusCard;
 
     [SerializeField] Targetor targetor;
     [SerializeField] ExtraCost extraCost;
@@ -23,6 +23,24 @@ public class PlayerController : MonoBehaviour
 
     [SerializeField] int selectedTargets;
     [SerializeField] int selectedExtraCostTargets;
+
+    [Space (10)]
+    [SerializeField] CardDisplay hoverDisplay;
+    [SerializeField] GameObject hoverobject;
+
+    [Space (10)]
+    [SerializeField] CardDisplay cardFocusDisplay;
+    [SerializeField] GameObject cardFocusParent;
+
+    [Space (10)]
+    [SerializeField] GameObject fieldCardActions;
+    [SerializeField] GameObject attackButton;
+    [SerializeField] GameObject moveButton;
+    [SerializeField] GameObject act1Button;
+    [SerializeField] GameObject act2Button;
+    [SerializeField] GameObject act3Button;
+
+    [SerializeField] int actionN = 0;
 
     // Start is called before the first frame update
     void Start()
@@ -36,8 +54,10 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (Input.GetAxis("Mouse X") != 0 || Input.GetAxis("Mouse Y") != 0)
+            CheckForCardHighlight ();
+
         if (focusCard) {
-            focusUnit = null;
 
             //If targeting is fulfilled then play the card
             PlayCard (); 
@@ -52,27 +72,22 @@ public class PlayerController : MonoBehaviour
                     TargetorTargeting ();
                 }
             } else if (Input.GetButtonDown ("Fire2")) { //If we right click, defocus the card.
-                focusCard.DeFocus ();
-                focusCard = null;
+                DefocusCard ();
             }
 
-        } else if (focusUnit) {
+        } else if (focusFieldCard) {
 
             if (Input.GetButtonDown ("Fire1")) {
 
-                int layerMask = 1 << 6;
+                PerformAction ();
 
-                RaycastHit hit;
-                Ray ray = Camera.main.ScreenPointToRay (Input.mousePosition);
-
-                if (Physics.Raycast (ray, out hit, Mathf.Infinity, layerMask)) {
-                    HexagonCell cell = hit.transform.GetComponent<HexagonCell> ();
-                    focusUnit.TargetCell (cell.Position, NetworkManager.Singleton.LocalClientId);
+                if (targetor) {
+                    TargetorTargeting ();
+                    PerformAction ();
                 }
 
-                focusUnit = null;
             } else if (Input.GetButtonDown ("Fire2")) {
-                focusUnit = null;
+                DefocusFieldCard ();
             }
 
         } else {
@@ -85,7 +100,7 @@ public class PlayerController : MonoBehaviour
 
                 if (Physics.Raycast (ray, out hit, Mathf.Infinity, layerMask)) {
                     if (hit.transform.GetComponent<NetworkObject>().IsOwner ) {
-                        FocusUnit (hit.transform.gameObject.GetComponent<FieldUnit> ());
+                        FocusFieldCard (hit.transform.gameObject.GetComponent<FieldUnit> ());
                     }
                 }
             }
@@ -94,6 +109,70 @@ public class PlayerController : MonoBehaviour
         }
 
     }
+
+    public void SetTargetorToAttack () {
+        if (!focusFieldCard) return;
+
+        ResetTargets ();
+
+        AttackAction attackAction = new AttackAction ();
+        attackAction.FieldCard = focusFieldCard;
+
+        targetor = attackAction;
+        targets = new Vector2[targetor.TargetTypes.Length];
+        
+        actionN = 3;
+    }
+
+    public void SetTargetorToMove () {
+        if (!focusFieldCard) return;
+
+        ResetTargets ();
+
+        MovementAction movementAction = new MovementAction ();
+        movementAction.FieldCard = focusFieldCard;
+
+        targetor = movementAction;
+        targets = new Vector2[targetor.TargetTypes.Length];
+
+        actionN = 4;
+    }
+
+    public void SetTargetorToAction (int n) {
+        if (!focusFieldCard) return;
+        if (n > focusFieldCard.Actions.Length) return;
+
+        ResetTargets ();
+
+        ActionAbility action = Instantiate <ActionAbility> (focusFieldCard.Actions[n]);
+        action.FieldCard = focusFieldCard;
+
+        targetor = action;
+        targets = new Vector2[targetor.TargetTypes.Length];
+
+        actionN = n;
+    }
+
+    public void PerformAction () {
+        if (focusFieldCard == null) return;
+        if (targetor == null) return; 
+
+        if (targetor)
+            if (targetor.TargetTypes.Length != selectedTargets) return;
+
+        if (actionN == 3) {
+            if (focusFieldCard is FieldUnit)
+                (focusFieldCard as FieldUnit).Attack (targets, player.OwnerClientId);
+        } else if (actionN == 4) {
+            if (focusFieldCard is FieldUnit)
+                (focusFieldCard as FieldUnit).MoveUnit (targets, player.OwnerClientId);
+        } else {
+            focusFieldCard.PerformAction (actionN, targets);
+        }
+
+        DefocusFieldCard ();
+    }
+
 
     void TargetPlacement () {
         int layerMask = 1 << 6;
@@ -226,6 +305,8 @@ public class PlayerController : MonoBehaviour
     }
 
     void PlayCard () {
+        if (focusCard == null) return;
+
         if ((focusCard.cardInstance.Type == CardType.Unit || focusCard.cardInstance.Type == CardType.Structure) && placement.Equals (Vector2.zero)) return;
 
         if (extraCost)
@@ -235,29 +316,44 @@ public class PlayerController : MonoBehaviour
             if (targetor.TargetTypes.Length != selectedTargets) return;
         
         focusCard.PlayCard (placement, targets, extraCostTargets);
-        focusCard.DeFocus ();
-        focusCard = null;
+        DefocusCard ();
     }
 
     public void UpdateCardDisplays (CardInstance[] instances) {
         handDisplay.UpdateCardDisplays (instances);
     }
 
+    void CheckForCardHighlight () {
+        int layerMask = 1 << 7;
+
+        RaycastHit hit;
+        Ray ray = Camera.main.ScreenPointToRay (Input.mousePosition);
+
+        if (Physics.Raycast (ray, out hit, Mathf.Infinity, layerMask)) { 
+            FieldCard fieldCard = hit.transform.GetComponent<FieldCard> ();
+
+            hoverobject.SetActive (true);
+            hoverDisplay.SetCard (fieldCard.Card);
+
+            hoverobject.transform.position = Input.mousePosition;
+        } else {
+            hoverobject.SetActive (false);
+        }
+    }
+
     public void FocusCard (CardHandController card) {
         if (focusCard)
-            focusCard.DeFocus ();
+            DefocusCard ();
 
-        targetor = null;
-        extraCost = null;
+        DefocusFieldCard ();
 
-        targets = null;
-        selectedTargets = 0;
-        extraCostTargets = null;
-        selectedExtraCostTargets = 0;
-        placement = Vector2.zero;
+        ResetTargets ();
 
         focusCard = card;
-        focusUnit = null;
+
+        //Card Visuals
+        cardFocusParent.SetActive (true);
+        cardFocusDisplay.SetCard (card.cardInstance);
 
         extraCost = card.cardInstance.Card.ExtraCost;
 
@@ -278,13 +374,77 @@ public class PlayerController : MonoBehaviour
         PlayCard ();
     }
 
-    public void FocusUnit (FieldUnit unit) {
+    void DefocusCard () {
+        focusCard.DeFocus ();
+        focusCard = null;
+        cardFocusParent.SetActive (false);
+        
+        ResetTargets ();
+    }
+
+    public void FocusFieldCard (FieldCard unit) {
+        focusFieldCard = unit;
+
+        ResetTargets ();
+
+        fieldCardActions.SetActive(true);
+
+        attackButton.gameObject.SetActive (false);
+        moveButton.gameObject.SetActive (false);
+        act1Button.gameObject.SetActive (false);
+        act2Button.gameObject.SetActive (false);
+        act3Button.gameObject.SetActive (false);
+
+        if (focusFieldCard is FieldUnit) {
+            attackButton.gameObject.SetActive (true);
+            moveButton.gameObject.SetActive (true);
+
+            FieldUnit fieldUnit = (focusFieldCard as FieldUnit);
+
+            if (fieldUnit.UnitsCard.UnitCard.Actions == null) return;
+
+            if (fieldUnit.UnitsCard.UnitCard.Actions.Count == 1) act1Button.gameObject.SetActive (true);
+            if (fieldUnit.UnitsCard.UnitCard.Actions.Count == 2) act2Button.gameObject.SetActive (true);
+            if (fieldUnit.UnitsCard.UnitCard.Actions.Count == 3) act3Button.gameObject.SetActive (true);
+        } else if (focusFieldCard is FieldStructure) {
+            FieldStructure fieldStructure = (focusFieldCard as FieldStructure);
+
+            if (fieldStructure.StructursCard.StructureCard.Actions == null) return;
+
+            if (fieldStructure.StructursCard.StructureCard.Actions.Count == 1) act1Button.gameObject.SetActive (true);
+            if (fieldStructure.StructursCard.StructureCard.Actions.Count == 2) act2Button.gameObject.SetActive (true);
+            if (fieldStructure.StructursCard.StructureCard.Actions.Count == 3) act3Button.gameObject.SetActive (true);
+        } else if (focusFieldCard is FieldHero) {
+            FieldHero fieldHero = (focusFieldCard as FieldHero);
+
+            if (fieldHero.HeroCard.HeroCard.Actions == null) return;
+
+            if (fieldHero.HeroCard.HeroCard.Actions.Count == 1) act1Button.gameObject.SetActive (true);
+            if (fieldHero.HeroCard.HeroCard.Actions.Count == 2) act2Button.gameObject.SetActive (true);
+            if (fieldHero.HeroCard.HeroCard.Actions.Count == 3) act3Button.gameObject.SetActive (true);
+        }
+
+
+
+    }
+
+    void DefocusFieldCard () {
+        focusFieldCard = null;
+
+        fieldCardActions.SetActive(false);
+
+        ResetTargets ();
+    }
+
+    public void ResetTargets () {
+        targetor = null;
+        extraCost = null;
+
         targets = null;
         selectedTargets = 0;
+        extraCostTargets = null;
+        selectedExtraCostTargets = 0;
         placement = Vector2.zero;
-
-        focusUnit = unit;
-        focusCard = null;
     }
 
     public void TargetCard (int cardNumber, CardInstance cardInstance) {

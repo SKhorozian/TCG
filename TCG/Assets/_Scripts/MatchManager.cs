@@ -1,10 +1,10 @@
- using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using MLAPI;
 using MLAPI.NetworkVariable;
 using MLAPI.Messaging;
-
+using MLAPI.Spawning;
 
 public class MatchManager : NetworkBehaviour
 {   
@@ -30,6 +30,8 @@ public class MatchManager : NetworkBehaviour
     Stack<CardEffect> effectStack = new Stack<CardEffect> ();
 
     FieldState fieldState;
+
+    public GameEventTracker eventTracker;
 
     // Start is called before the first frame update
     void Start()
@@ -61,17 +63,19 @@ public class MatchManager : NetworkBehaviour
         playerTurn = player1;
         localPlayerTurn = true;
 
-        InitializeMatchClientRpc ();
+        eventTracker = new GameEventTracker ();
+
+        InitializeMatchClientRpc (player1.NetworkObjectId, player2.NetworkObjectId);
     }
     [ClientRpc]
-    void InitializeMatchClientRpc () {
-        if (NetworkManager.Singleton.ConnectedClients.TryGetValue(NetworkManager.Singleton.LocalClientId, out var networkedClient))
-        {
-            var player = networkedClient.PlayerObject.GetComponent<Player>();
-            if (player)
-            {
-                player.MatchManage = this;
-            }
+    void InitializeMatchClientRpc (ulong player1ObjectId, ulong player2ObjectId) {
+
+        if (NetworkSpawnManager.SpawnedObjects.TryGetValue (player1ObjectId, out var player1Object)) {
+            player1Object.GetComponent<Player> ().MatchManage = this;
+        }
+
+        if (NetworkSpawnManager.SpawnedObjects.TryGetValue (player2ObjectId, out var player2Object)) {
+            player2Object.GetComponent<Player> ().MatchManage = this;
         }
 
         fieldGrid = Instantiate (fieldGridPrefab).GetComponent<HexagonGrid> ();
@@ -116,7 +120,7 @@ public class MatchManager : NetworkBehaviour
         if (fieldGrid.Cells.TryGetValue (new Vector2 (3, 1), out cell2)) {
             HeroCardInstance heroCardInstance = new HeroCardInstance (player2.StartDeck.HeroCard);
             FieldHero fieldHero = player2Hero.GetComponent<FieldHero> ();
-            fieldHero.SummonHero (heroCardInstance, player2, cell1);
+            fieldHero.SummonHero (heroCardInstance, player2, cell2);
 
             fieldHero.position.Value = cell2.gameObject.transform.position;
             cell2.FieldCard = fieldHero;
@@ -138,19 +142,6 @@ public class MatchManager : NetworkBehaviour
         if (!player.Equals(playerTurn)) return false;
         if (player.CurrentMana < card.Cost) return false;
 
-        //Extra Cost
-        if (card.Card.ExtraCost) {
-            ExtraCost extraCost = Instantiate <ExtraCost> (card.Card.ExtraCost);
-            
-            List<ITargetable> newTargets = Targeting.ConvertTargets (extraCost.TargetTypes, extraCostTargets, player);
-
-            if (extraCost.TragetVaildity(newTargets, player)) { //If targets are valid, then we proceed to play the card. Otherwise, we return.
-                extraCost.SetTargets (newTargets);
-                extraCost.DoEffect ();
-                CallEffects ();
-            } else {Debug.Log("Extra Cost failed targeting"); return false;};
-        }
-
         switch (card.Type) { 
             case CardType.Unit: {
                 if (placement == null) return false;
@@ -165,6 +156,18 @@ public class MatchManager : NetworkBehaviour
 
                 FieldUnit summonedUnit = SummonUnit (card, player, cell);
 
+                //Extra Cost
+                if (card.Card.ExtraCost) {
+                    ExtraCost extraCost = Instantiate <ExtraCost> (card.Card.ExtraCost);
+                    
+                    List<ITargetable> newTargets = Targeting.ConvertTargets (extraCost.TargetTypes, extraCostTargets, player);
+
+                    if (extraCost.TragetVaildity(newTargets, player)) { //If targets are valid, then we proceed to play the card. Otherwise, we return.
+                        extraCost.SetTargets (newTargets);
+                        extraCost.DoEffect ();
+                    } else {Debug.Log("Extra Cost failed targeting"); return false;};
+                }
+
                 //Play Effects
                 if ((card as UnitCardInstance).UnitCard.OnPlayEffect) {
                     PlayAbility playEffect = Instantiate <PlayAbility> ((card as UnitCardInstance).UnitCard.OnPlayEffect);
@@ -178,6 +181,7 @@ public class MatchManager : NetworkBehaviour
                     } else {Debug.Log("Play Effect failed targeting");};
                 }
 
+                eventTracker.AddEvent (new PlayCardEvent (player, turnNumber.Value, card));
                 CallEffects ();
                 Debug.Log ("Player " + player.OwnerClientId + " played " + card.CardName + " on cell " + placement);
             } break;
@@ -186,13 +190,25 @@ public class MatchManager : NetworkBehaviour
                 if (!(card is StructureCardInstance)) return false;
 
                 HexagonCell cell;
-                if (fieldGrid.Cells.TryGetValue(placement, out cell)) {Debug.Log ("Placement invalid"); return false;};
+                if (!fieldGrid.Cells.TryGetValue(placement, out cell)) {Debug.Log ("Placement invalid"); return false;};
                 if (cell.FieldCard) return false; //If the cell is occupied return false
 
                 //Spend Mana
                 player.SpendMana (card.Cost);
 
                 FieldStructure summonedStructure = SummonStructure (card, player, cell);
+
+                //Extra Cost
+                if (card.Card.ExtraCost) {
+                    ExtraCost extraCost = Instantiate <ExtraCost> (card.Card.ExtraCost);
+                    
+                    List<ITargetable> newTargets = Targeting.ConvertTargets (extraCost.TargetTypes, extraCostTargets, player);
+
+                    if (extraCost.TragetVaildity(newTargets, player)) { //If targets are valid, then we proceed to play the card. Otherwise, we return.
+                        extraCost.SetTargets (newTargets);
+                        extraCost.DoEffect ();
+                    } else {Debug.Log("Extra Cost failed targeting"); return false;};
+                }
 
                 //Play Effects
                 if ((card as StructureCardInstance).StructureCard.OnPlayEffect) {
@@ -207,6 +223,7 @@ public class MatchManager : NetworkBehaviour
                     } else {Debug.Log("Play Effect failed targeting");};
                 }
 
+                eventTracker.AddEvent (new PlayCardEvent (player, turnNumber.Value, card));
                 CallEffects ();
                 Debug.Log ("Player " + player.OwnerClientId + " played " + card.CardName + " on cell " + placement);
             } break;
@@ -223,6 +240,19 @@ public class MatchManager : NetworkBehaviour
                     List<ITargetable> newTargets = Targeting.ConvertTargets (spell.TargetTypes, targets, player);
 
                     if (spell.TragetVaildity(newTargets, player)) { //If targets are valid, then we proceed to call the spell effect. Otherwise, the spell doesn't go off.
+
+                        //Extra Cost
+                        if (card.Card.ExtraCost) {
+                            ExtraCost extraCost = Instantiate <ExtraCost> (card.Card.ExtraCost);
+                            
+                            List<ITargetable> newExtraCostTargets = Targeting.ConvertTargets (extraCost.TargetTypes, extraCostTargets, player);
+
+                            if (extraCost.TragetVaildity(newExtraCostTargets, player)) { //If targets are valid, then we proceed to play the card. Otherwise, we return.
+                                extraCost.SetTargets (newExtraCostTargets);
+                                extraCost.DoEffect ();
+                            } else {Debug.Log("Extra Cost failed targeting"); return false;};
+                        }   
+
                         spell.SetTargets (newTargets);
                         spell.DoEffect ();
                     } else {Debug.Log("Spell failed targeting"); return false;};
@@ -231,6 +261,7 @@ public class MatchManager : NetworkBehaviour
                 //Spend Mana
                 player.SpendMana (card.Cost);
 
+                eventTracker.AddEvent (new PlayCardEvent (player, turnNumber.Value, card));
                 CallEffects ();
                 Debug.Log ("Player " + player.OwnerClientId + " casted " + card.CardName);
                 break;
@@ -258,6 +289,8 @@ public class MatchManager : NetworkBehaviour
 
         player.SummonStructure (fieldStructure);
 
+        eventTracker.AddEvent (new SummonStructureEvent (player, turnNumber.Value, fieldStructure.StructursCard));
+
         return fieldStructure;        
 
     }
@@ -278,6 +311,8 @@ public class MatchManager : NetworkBehaviour
         cell.FieldCard = fieldUnit;
 
         player.SummonUnit (fieldUnit);
+
+        eventTracker.AddEvent (new SummonUnitEvent (player, turnNumber.Value, fieldUnit.UnitsCard));
         
         return fieldUnit;
     }
@@ -303,7 +338,7 @@ public class MatchManager : NetworkBehaviour
     //         localHasPriority = false;
     // }
 
-    public void MoveUnit (FieldUnit unit, Vector2 cell, ulong netid) {
+    public void MoveUnit (FieldUnit unit, Vector2[] targets, ulong netid) {
         if (!IsServer) return;
 
         if (playerTurn.OwnerClientId != netid) return;
@@ -312,67 +347,45 @@ public class MatchManager : NetworkBehaviour
         MovementAction moveAction = new MovementAction ();
         moveAction.FieldCard = unit;
 
-        HexagonCell hexagonCell;
-        if (fieldGrid.Cells.TryGetValue (cell, out hexagonCell)) {
+        List <ITargetable> newTargets = Targeting.ConvertTargets (moveAction.TargetTypes, targets, unit.Player);
 
-            List<ITargetable> targets = new List<ITargetable> ();
-            targets.Add (hexagonCell);
-
-            if (moveAction.TragetVaildity (targets, unit.Player)) {
-                moveAction.SetTargets (targets);
-                moveAction.DoEffect ();
-
-                CallEffects ();
-            }
+        if (moveAction.TragetVaildity (newTargets, unit.Player)) {
+            moveAction.SetTargets (newTargets);
+            moveAction.DoEffect ();
+            CallEffects ();
         }
-
  
     }
 
-    public void UnitAttack (FieldUnit attacker, Vector2 cell, ulong netid) {
+    public void UnitAttack (FieldUnit attacker, Vector2[] targets, ulong netid) {
         if (!IsServer) return;
 
         if (playerTurn.OwnerClientId != netid) return;
         if (attacker.OwnerClientId != netid) return;
-        if (HexagonMetrics.GetDistantce (attacker.Cell.Position, cell) > attacker.attackRange.Value) return;
-        if (attacker.currActionPoints.Value <= 0) return;
 
-        HexagonCell hexCell;
 
-        if (attacker.Player.MatchManage.FieldGrid.Cells.TryGetValue (cell, out hexCell)) {
-            if (hexCell.FieldCard) {
-                if (hexCell.FieldCard is FieldUnit)  {
+        AttackAction attackAction = new AttackAction ();
+        attackAction.FieldCard = attacker;
 
-                    FieldUnit target = hexCell.FieldCard as FieldUnit;
+        List <ITargetable> newTargets = Targeting.ConvertTargets (attackAction.TargetTypes, targets, attacker.Player);
 
-                    if (!CheckCanAttack (attacker, target)) return;
-
-                    attacker.Strike (target);
-                    //The target strikes back if it has an action point and is within its range
-                    if (target.currActionPoints.Value > 0 && (HexagonMetrics.GetDistantce (attacker.Cell.Position, target.Cell.Position) <= target.attackRange.Value)) target.Strike (attacker); 
-                    
-                    attacker.ConsumeActionPoint (1);
-
-                } else if (hexCell.FieldCard is FieldHero) {
-
-                    FieldHero target = hexCell.FieldCard as FieldHero;
-
-                    if (attacker.Player.FieldHero.Equals (target)) return; //Return if target hero is a friendly.
-                    attacker.Strike (target);
-                    
-                    attacker.ConsumeActionPoint (1);
-                } else {
-                    return;
-                }
-            }
+        if (attackAction.TragetVaildity (newTargets, attacker.Player)) {
+            attackAction.SetTargets (newTargets);
+            attackAction.DoEffect ();
+            CallEffects ();
         }
 
-        CallEffects ();
+    }
+
+    public void UnitAct (FieldUnit actor, ITargetable[] targets, ActionAbility action, ulong netid) {
+
     }
 
     public bool CheckCanAttack (FieldUnit attacker, FieldUnit target) { //Returns true if this card fits all the conditions to attack a target
         if (attacker.Player.FieldUnits.Contains (target)) return false; //Return if target unit is a friendly.
+        //Check for Menacing keyword.
         if (target.UnitsCard.UnitCard.StaticKeywords.HasFlag (UnitCardStaticKeywords.Menacing) && attacker.strength.Value < target.strength.Value) return false;
+        //Check for Stealth keyword.
         if (target.UnitsCard.UnitCard.StaticKeywords.HasFlag (UnitCardStaticKeywords.Stealth) && !attacker.UnitsCard.UnitCard.StaticKeywords.HasFlag (UnitCardStaticKeywords.Scout)) return false;
 
         return true;
@@ -461,5 +474,7 @@ public class MatchManager : NetworkBehaviour
             return allUnits;
         }
     }
+
+    public int TurnNumber {get {return turnNumber.Value;}}
 
 }

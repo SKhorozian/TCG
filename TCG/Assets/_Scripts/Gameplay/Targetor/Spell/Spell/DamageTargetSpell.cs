@@ -11,7 +11,7 @@ public class DamageTargetSpell : Spell
     public override void DoEffect()
     {
         IDamageable target = targets[0] as IDamageable;
-        player.DamageTarget (target, new Damage (damageAmount, DamageSource.Spell, player), spellCardInstance);
+        player.DamageTarget (target, new Damage (damageAmount, DamageSource.Spell, player));
     }
     
     public override bool TragetVaildity(int targetNumber, ITargetable target, Player player)

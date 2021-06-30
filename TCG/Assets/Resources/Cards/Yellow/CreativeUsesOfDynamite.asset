@@ -14,9 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cardName: Creative Uses of Dynamite
   cost: 2
-  description: "Deal 300 damage to target enemy unit. \nOR\nDemolish target enemy
-    structure."
+  description: Deal 300 damage to target unit or demolish target structure.
   color: 4
   cardArt: {fileID: 0}
   cardType: 1
+  extraCost: {fileID: 0}
   spell: {fileID: 0}

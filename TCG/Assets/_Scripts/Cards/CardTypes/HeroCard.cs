@@ -12,5 +12,6 @@ public class HeroCard : Card
     [SerializeField] List<ActionAbility> actions;
 
     public CardEffectTrigger[] CardEffects {get {return cardEffects;}}
+    public List<ActionAbility> Actions {get {return actions;}}
 
 }

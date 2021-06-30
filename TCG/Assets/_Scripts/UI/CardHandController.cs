@@ -21,6 +21,7 @@ public class CardHandController : MonoBehaviour
 
     public void SetCard (CardInstance cardInstance) {
         cardDisplay.SetCard (cardInstance);
+        cardDisplay.gameObject.SetActive (true);
     }
 
     public void TargetCard () {
@@ -36,14 +37,19 @@ public class CardHandController : MonoBehaviour
     }
 
     public void Drop() {
-        if (Input.mousePosition.y > Screen.height/3)
+        if (Input.mousePosition.y > Screen.height/3) {
             playerController.FocusCard (this);
-        else 
+            cardDisplay.gameObject.SetActive (false);
+        }
+        else {
             DeFocus ();
+            cardDisplay.gameObject.SetActive (true);
+        }
     }
 
     public void DeFocus () {
         rectT.position = originalPos;
+        cardDisplay.gameObject.SetActive (true);
     }
 
     public void PlayCard (Vector2 placement, Vector2[] targets, Vector2[] extraCostTargets) {

@@ -5,6 +5,7 @@ using MLAPI;
 using MLAPI.Messaging;
 using MLAPI.NetworkVariable;
 using TMPro;
+using MLAPI.Spawning;
 
 public class FieldStructure : FieldCard
 {
@@ -27,6 +28,8 @@ public class FieldStructure : FieldCard
 
         this.cell = cell;
 
+        SummonStructureClientRPC (card.CardLocation, player.NetworkObjectId, cell.Position);
+
         //Set Card Effects
         effectTriggers = new CardEffectTrigger [structureCard.StructureCard.CardEffects.Length];
         for (int i = 0; i < structureCard.StructureCard.CardEffects.Length; i++) {
@@ -41,14 +44,20 @@ public class FieldStructure : FieldCard
             }
         }
 
-        SummonStructureClientRPC (card.CardLocation, player.OwnerClientId);
     }
 
     [ClientRpc] 
-    void SummonStructureClientRPC (string cardLocation, ulong playerOwnerID) {
+    void SummonStructureClientRPC (string cardLocation, ulong playerObjectId, Vector2 cellPos) {
         if (!IsServer) { //If we're the client, rotate the object to match the client's camera
             transform.Rotate (new Vector3 (0,180,0));
-            card = new StructureCardInstance (Resources.Load<Card> (cardLocation));
+            structureCard = new StructureCardInstance (Resources.Load<Card> (cardLocation));
+            card = structureCard;
+
+            if (NetworkSpawnManager.SpawnedObjects.TryGetValue (playerObjectId, out var playerObject))
+                player = playerObject.GetComponent<Player>();
+
+            if (player.MatchManage.FieldGrid.Cells.TryGetValue (cellPos, out var hexCell))
+                cell = hexCell;
         } 
 
         //Render Card Art on object

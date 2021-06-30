@@ -14,9 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cardName: Sun-Tipped Javelin
   cost: 1
-  description: Deal 100 (+100 for each Sun-Tipped Javelin in your junkyard) damage
-    to target unit or hero.
+  description: Deal 100 damage to a target (+100 more for each <b>Sun-Tipped Javelin</b>
+    in your <b>Junkyard</b>).
   color: 4
   cardArt: {fileID: 0}
   cardType: 1
+  extraCost: {fileID: 0}
   spell: {fileID: 0}

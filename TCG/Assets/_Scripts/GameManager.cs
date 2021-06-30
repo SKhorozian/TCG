@@ -47,21 +47,6 @@ public class GameManager : MonoBehaviour
         GUILayout.Label("Mode: " + mode);
     }
 
-    static void DrawCard()
-    {
-        if (GUILayout.Button(NetworkManager.Singleton.IsServer ? "Draw" : "Request Draw"))
-        {
-            if (NetworkManager.Singleton.ConnectedClients.TryGetValue(NetworkManager.Singleton.LocalClientId, out var networkedClient))
-            {
-                var player = networkedClient.PlayerObject.GetComponent<Player>();
-                if (player)
-                {
-                    player.Draw(1);
-                }
-            }
-        }
-    }
-
     static void StartGame () {
         if (!NetworkManager.Singleton.IsServer) return;
 

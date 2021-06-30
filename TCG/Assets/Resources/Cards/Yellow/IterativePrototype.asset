@@ -14,9 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cardName: Iterative Prototype
   cost: 1
-  description: Discard a card to create and shuffle 3 copies of it into your deck.
-    Draw 1.
+  description: Discard 1. Insert 3 copies of it. Draw 1.
   color: 4
   cardArt: {fileID: 0}
   cardType: 1
+  extraCost: {fileID: 0}
   spell: {fileID: 0}

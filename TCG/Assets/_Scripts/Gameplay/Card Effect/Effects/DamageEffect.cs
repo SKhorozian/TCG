@@ -20,16 +20,16 @@ public class DamageEffect : CardEffect
     {
         foreach (FieldUnit unit in fieldCard.Player.MatchManage.AllUnits) {
             if (condition.Invoke (unit)) {
-                fieldCard.Player.DamageTarget (unit, new Damage (damageAmount, source, fieldCard.Player), fieldCard);
+                fieldCard.Player.DamageTarget (unit, new Damage (damageAmount, source, fieldCard.Player));
             }
         }
 
         if (condition.Invoke (fieldCard.Player.FieldHero)) {
-            fieldCard.Player.DamageTarget (fieldCard.Player.FieldHero, new Damage (damageAmount, source, fieldCard.Player), fieldCard);
+            fieldCard.Player.DamageTarget (fieldCard.Player.FieldHero, new Damage (damageAmount, source, fieldCard.Player));
         }
 
         if (condition.Invoke (fieldCard.Player.MatchManage.Player2.FieldHero)) {
-            fieldCard.Player.DamageTarget (fieldCard.Player.MatchManage.Player2.FieldHero, new Damage (damageAmount, source, fieldCard.Player), fieldCard);
+            fieldCard.Player.DamageTarget (fieldCard.Player.MatchManage.Player2.FieldHero, new Damage (damageAmount, source, fieldCard.Player));
         }
     }
 }

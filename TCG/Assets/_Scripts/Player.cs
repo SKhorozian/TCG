@@ -44,6 +44,61 @@ public class Player : NetworkBehaviour
         WritePermission = NetworkVariablePermission.ServerOnly
     });
 
+    //Events
+    #region  Events and Delegates
+    public delegate void OnSummonFieldCardDelegate (FieldCard summonedCard);    //Delegate for when a card is summoned.
+    public event OnSummonFieldCardDelegate fieldCardSummonedEvent;                   
+
+    public delegate void OnDamageDelegate (Damage damage, IDamageable target);  //Delegate for when damage is dealt.
+    public event OnDamageDelegate preDamageEvent;   //Before the damage is dealt.
+    public event OnDamageDelegate postDamageEvent;  //After the damage is dealt.
+        
+    public delegate void OnHealDelegate (Heal heal, IDamageable target);  //Delegate for when healing is done.
+    public event OnHealDelegate preHealEvent;   //Before healing.
+    public event OnHealDelegate postHealEvent;  //After healing.
+
+    public delegate void OnUnitStrike (FieldUnit striker, IDamageable target, Damage damage); //Delegate for when a unit strikes.
+    public event OnUnitStrike preStrikeEvent;   //Before a unit strikes.
+    public event OnUnitStrike postStrikeEvent;  //After a unit strikes.
+
+    public delegate void OnFieldCardAct (FieldCard actor, ActionAbility action);    //Delegate for when a field card acts.
+    public event OnFieldCardAct fieldCardActEvent;
+
+    public delegate void OnFieldCardDestroy (FieldCard destroyed);      //Delegate for when a field card is destroyed (killed or demolished).
+    public event OnFieldCardDestroy fieldCardDestroyEvent;
+
+    public delegate void OnFieldCardBanish (FieldCard banished);    //Delegate for when a field card is banished.
+    public event OnFieldCardBanish fieldCardBanishEvent;
+
+    public delegate void OnCardBanish (CardInstance cardInstance);    //Delegate for when a card is banished.
+    public event OnCardBanish cardBanishEvent;
+
+    public delegate void OnPlayCard (CardInstance playedCard);  //Delegate for when a card is played.
+    public event OnPlayCard playCardEvent;
+    
+    public delegate void OnCardCreate (CardInstance createdCard);   //Delegate for when a card is created.
+    public event OnCardCreate creatCardEvent;
+
+    public delegate void OnDiscard (CardInstance discardedCard);    //Delegate for when a card is discarded.
+    public event OnDiscard discardEvent;
+
+    public delegate void OnSacrifice (FieldCard sacrifice);     //Delegate for when a field card is sacrificed.
+    public event OnSacrifice sacrificeEvent;
+
+    public delegate void OnManaSpend (int amount);  //Delegate for when mana is spent.
+    public event OnManaSpend manaSpendEvent;
+
+    public delegate void OnSpellResolve (Spell spell);  //Delegate for when a spell resolves.
+    public event OnSpellResolve spellResolveEvent;
+
+    public delegate void OnActionResolve (ActionAbility action); //Delegate for when an action resolves.
+    public event OnActionResolve actionResolveEvent;
+
+    public delegate void OnPlayAbilityResolve (PlayAbility playAbility); //Delegate for when a play ability resolves.
+    public event OnPlayAbilityResolve playAbilityResolve; 
+
+    #endregion
+
     #region Gameplay
 
     //Starts the game
@@ -93,6 +148,8 @@ public class Player : NetworkBehaviour
 
             if (!matchManager.PlayCard (card, this, placement, targets, extraCostTargets))
                 AddToHand (card);
+            else 
+                playCardEvent?.Invoke (card);
 
             UpdatePlayerHand();
         } else {
@@ -176,9 +233,9 @@ public class Player : NetworkBehaviour
     }
 
     public void DiscardCard (CardInstance card) {
-        //Call Discard effects
-
         junkyard.Add (card);
+
+        discardEvent?.Invoke (card);
     }
 
     [ClientRpc]
@@ -323,13 +380,12 @@ public class Player : NetworkBehaviour
     }
 
     
-    public Damage DamageTarget (IDamageable target, Damage damage, FieldCard source) { //Deal damage to target.
+    public Damage DamageTarget (IDamageable target, Damage damage) { //Deal damage to target.
+        preDamageEvent?.Invoke (damage, target);
+        
         target.TakeDamage (damage);
-        return damage;
-    }
 
-    public Damage DamageTarget (IDamageable target, Damage damage, SpellCardInstance source) { //Deal damage to target.
-        target.TakeDamage (damage);
+        postDamageEvent?.Invoke (damage, target);
         return damage;
     }
 
@@ -349,6 +405,8 @@ public class Player : NetworkBehaviour
 
     public void SummonUnit (FieldUnit unit) {
         if (!IsServer) return;
+
+        fieldCardSummonedEvent?.Invoke (unit);
 
         controledUnits.Add (unit);
     }
@@ -373,6 +431,8 @@ public class Player : NetworkBehaviour
     public void UnitToDie (FieldUnit unit) {
         if (!IsServer) return;
         if (!controledUnits.Contains (unit)) return;
+
+        fieldCardDestroyEvent?.Invoke (unit);
 
         matchManager.AddEffectToStack(new UnitDeath (unit));
     }
@@ -405,6 +465,8 @@ public class Player : NetworkBehaviour
     public void StructureToDemolish (FieldStructure structure) {
         if (!IsServer) return;
         if (!controledStructures.Contains (structure)) return;
+
+        fieldCardDestroyEvent?.Invoke (structure);
 
         matchManager.AddEffectToStack (new StructureDemolition (structure));
     }
@@ -441,6 +503,11 @@ public class Player : NetworkBehaviour
         currentMana.Value -= cost;
 
         currentMana.Value = Mathf.Clamp (currentMana.Value, 0, maxMana.Value);
+    
+        manaSpendEvent?.Invoke (cost);
+    
+        matchManager.eventTracker.AddEvent (new SpendManaEvent (this, matchManager.TurnNumber, cost));
+
         UpdatePlayerStatsClientRPC ();
     }
 
@@ -461,7 +528,6 @@ public class Player : NetworkBehaviour
         }
         UpdatePlayerStatsClientRPC ();
     }
-
 
     //Getters and setters
     public bool HasGameStart {

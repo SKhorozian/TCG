@@ -64,11 +64,11 @@ public class CardDisplay : MonoBehaviour
                         unitStuff.SetActive (true);
 
                         UnitCardInstance unitCard = card as UnitCardInstance;
-                        strength.text = "<sprite=3>" + unitCard.Strength.ToString();
-                        health.text = "<sprite=4>" + unitCard.Health.ToString();   
-                        range.text = "<sprite=5>" + unitCard.AttackRange.ToString ();
-                        speed.text = "<sprite=6>" + unitCard.MovementSpeed.ToString ();
-                        energy.text = "<sprite=7>" + unitCard.ActionPoints.ToString ();
+                        strength.text = unitCard.Strength.ToString() + " <sprite=3>";
+                        health.text = unitCard.Health.ToString()  + " <sprite=4>";   
+                        range.text = unitCard.AttackRange.ToString ()  + " <sprite=5>";
+                        speed.text = unitCard.MovementSpeed.ToString ()  + " <sprite=6>";
+                        energy.text = unitCard.ActionPoints.ToString ()  + " <sprite=7>";
                     }
                     break;
                 case CardType.Structure:

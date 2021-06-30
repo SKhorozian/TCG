@@ -19,8 +19,8 @@ MonoBehaviour:
   cardArt: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
   cardType: 0
   extraCost: {fileID: 11400000, guid: 14d0798f19fbc424cb2a849423060c86, type: 2}
-  strength: 300
-  health: 300
+  strength: 400
+  health: 200
   actionPoints: 2
   movementSpeed: 1
   attackRange: 1

@@ -1,7 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
 public class MovementAction : ActionAbility
 {
     public MovementAction () {
@@ -13,9 +9,13 @@ public class MovementAction : ActionAbility
     {
         HexagonCell hexCell = targets[0] as HexagonCell;
 
-        fieldCard.Player.MoveUnit ((fieldCard as FieldUnit), hexCell);
+        FieldUnit mover = (fieldCard as FieldUnit);
 
-        (fieldCard as FieldUnit).ConsumeActionPoint (1);
+        mover.Player.MoveUnit (mover, hexCell);
+
+        mover.ConsumeActionPoint (1);
+
+        mover.Player.MatchManage.eventTracker.AddEvent (new UnitMovementEvent (mover.Player, mover.Player.MatchManage.TurnNumber, mover.UnitsCard, hexCell));
     }
 
     public override bool TragetVaildity(int targetNumber, ITargetable target, Player player)

@@ -5,6 +5,7 @@ using MLAPI;
 using MLAPI.NetworkVariable;
 using TMPro;
 using MLAPI.Messaging;
+using MLAPI.Spawning;
 
 public class FieldHero : FieldCard, IDamageable, ITargetable
 {
@@ -37,17 +38,26 @@ public class FieldHero : FieldCard, IDamageable, ITargetable
 
         health.Value = 3000;
 
+        SummonHeroClientRPC (card.CardLocation, player.NetworkObjectId, cell.Position);
+
         //Call Enterance Effects:
-
-
-        SummonHeroClientRPC (card.CardLocation, player.OwnerClientId);
     }
 
     [ClientRpc] 
-    void SummonHeroClientRPC (string cardLocation, ulong playerOwnerID) {
+    void SummonHeroClientRPC (string cardLocation, ulong playerObjectId, Vector2 cellPos) {
         if (!IsServer) { //If we're the client rotate, the object to match the client's camera
             transform.Rotate (new Vector3 (0,180,0));
-            card = new HeroCardInstance (Resources.Load<Card> (cardLocation));
+            heroCard = new HeroCardInstance (Resources.Load<Card> (cardLocation));
+            card = heroCard;
+
+            if (NetworkSpawnManager.SpawnedObjects.TryGetValue (playerObjectId, out var playerObject)) {
+                Debug.Log ("found player");
+                player = playerObject.GetComponent<Player>();
+                Debug.Log (player);
+            }
+
+            if (player.MatchManage.FieldGrid.Cells.TryGetValue (cellPos, out var hexCell))
+                cell = hexCell;
         } 
 
         //Render Card Art on object
@@ -121,4 +131,6 @@ public class FieldHero : FieldCard, IDamageable, ITargetable
 
         return healInfo;
     }
+
+    public HeroCardInstance HeroCard {get {return heroCard;}}
 }

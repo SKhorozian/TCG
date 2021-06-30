@@ -14,8 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cardName: Fireblast
   cost: 1
-  description: Deal 200 damage to a target.
+  description: Deal 100 damage to a target.
   color: 4
   cardArt: {fileID: 0}
   cardType: 1
+  extraCost: {fileID: 0}
   spell: {fileID: 11400000, guid: f66e54990b8855f48b4a128c287424b2, type: 2}
