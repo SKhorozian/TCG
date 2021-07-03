@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d09aa52d3207d4945af88a676a286c8c, type: 3}
   m_Name: Fireblast
   m_EditorClassIdentifier: 
-  speed: 0
-  goesOnStack: 0
+  speed: 1
+  goesOnStack: 1
   targetTypes: 01000000
   description: Deal 200 damage to a target.
   damageAmount: 200

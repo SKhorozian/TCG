@@ -15,7 +15,7 @@ public class DamageUnitOnPlay : PlayAbility
         playCard.Player.DamageTarget (target, new Damage (damage, DamageSource.Spell, playCard.Player));
     }
 
-    public override bool TragetVaildity(int targetNumber, ITargetable target, Player player)
+    public override bool TragetVaildity(int targetNumber, ITargetable target)
     {
         switch (targetNumber) {
             case 0: {

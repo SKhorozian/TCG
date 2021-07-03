@@ -22,26 +22,21 @@ public abstract class FieldCard : NetworkBehaviour, ITargetable
     [SerializeField] protected ActionAbility[] actions;
 
     public void PerformAction (int n, Vector2[] targets) {
-        if (IsServer) {
-            if (n !< actions.Length) return;
-            if (n > 0) return;
+        if (!IsServer) return;
+        
+        if (n !< actions.Length) return;
+        if (n > 0) return;
 
-            ActionAbility action = Instantiate <ActionAbility> (actions[n]);
-            
-            List<ITargetable> newTargets = Targeting.ConvertTargets (action.TargetTypes, targets, player);
+        ActionAbility action = Instantiate <ActionAbility> (actions[n]);
+        action.Player = player;
+        
+        List<ITargetable> newTargets = Targeting.ConvertTargets (action.TargetTypes, targets, player);
 
-            if (action.TragetVaildity (newTargets, player)) {
-                action.SetTargets (newTargets);
-                action.DoEffect ();
-            } else {Debug.Log("Action Ability failed targeting");};
+        if (action.TragetVaildity (newTargets)) {
+            action.SetTargets (newTargets);
+            action.DoEffect ();
+        } else {Debug.Log("Action Ability failed targeting");};
 
-        } else {
-            PerformActionServerRPC (n, targets);
-        }   
-    }
-    [ServerRpc]
-    public void PerformActionServerRPC (int n, Vector2[] targets) {
-        PerformAction (n, targets);
     }
 
     public CardInstance Card {get {return card;}}

@@ -11,7 +11,7 @@ public class KillTargetSpell : Spell
         target.Player.UnitToDie (target);
     }
 
-    public override bool TragetVaildity(int targetNumber, ITargetable target, Player player)
+    public override bool TragetVaildity(int targetNumber, ITargetable target)
     {
         switch (targetNumber){
             case 0: {

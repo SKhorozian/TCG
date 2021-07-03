@@ -12,7 +12,7 @@ public class DrawCardSpell : Spell
         player.Draw (drawAmount);
     }
 
-    public override bool TragetVaildity(int targetNumber, ITargetable target, Player player)
+    public override bool TragetVaildity(int targetNumber, ITargetable target)
     {
         return true;
     }

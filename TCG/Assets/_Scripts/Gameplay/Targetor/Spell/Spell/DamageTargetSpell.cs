@@ -14,7 +14,7 @@ public class DamageTargetSpell : Spell
         player.DamageTarget (target, new Damage (damageAmount, DamageSource.Spell, player));
     }
     
-    public override bool TragetVaildity(int targetNumber, ITargetable target, Player player)
+    public override bool TragetVaildity(int targetNumber, ITargetable target)
     {
         switch (targetNumber) {
             case 0: {

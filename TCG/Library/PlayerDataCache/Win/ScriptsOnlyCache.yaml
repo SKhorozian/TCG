@@ -357,7 +357,7 @@ ScriptsOnlyBuild:
     className: EventTrigger
   - hash:
       serializedVersion: 2
-      Hash: 5d27ccb79c83388963080363a9ff211e
+      Hash: a0bb38698f9b20fa9a154b70028b1a9f
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: MatchManager

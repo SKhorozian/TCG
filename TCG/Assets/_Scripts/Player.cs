@@ -289,18 +289,9 @@ public class Player : NetworkBehaviour
     }
 
     public void ShuffleDeck () {
-        if (NetworkManager.Singleton.IsServer) { 
-            playerDeck.ShuffleDeck();
-        } else {
-            ShuffleDeckServerRpc ();
-        } 
-    }
-
-    [ServerRpc]
-    void ShuffleDeckServerRpc () {
         if (!IsServer) return;
-
-        ShuffleDeck();
+        
+        playerDeck.ShuffleDeck();
     }
 
     [ClientRpc]
@@ -366,17 +357,17 @@ public class Player : NetworkBehaviour
     }
 
 
-    public void PassTurn (){
+    public void ButtonPress (){
         if (IsServer) {
-            matchManager.PassTurn (this);
+            matchManager.ButtonPress (this);
         } else {
-            RequestPassTurnServerRpc ();
+            ButtonPressRequestServerRpc ();
         }
     }
 
     [ServerRpc]
-    void RequestPassTurnServerRpc () {
-        PassTurn();
+    void ButtonPressRequestServerRpc () {
+        ButtonPress();
     }
 
     

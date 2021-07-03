@@ -117,6 +117,7 @@ public class PlayerController : MonoBehaviour
 
         AttackAction attackAction = new AttackAction ();
         attackAction.FieldCard = focusFieldCard;
+        attackAction.Player = player;
 
         targetor = attackAction;
         targets = new Vector2[targetor.TargetTypes.Length];
@@ -131,6 +132,7 @@ public class PlayerController : MonoBehaviour
 
         MovementAction movementAction = new MovementAction ();
         movementAction.FieldCard = focusFieldCard;
+        movementAction.Player = player;
 
         targetor = movementAction;
         targets = new Vector2[targetor.TargetTypes.Length];
@@ -146,6 +148,7 @@ public class PlayerController : MonoBehaviour
 
         ActionAbility action = Instantiate <ActionAbility> (focusFieldCard.Actions[n]);
         action.FieldCard = focusFieldCard;
+        action.Player = player;
 
         targetor = action;
         targets = new Vector2[targetor.TargetTypes.Length];
@@ -197,7 +200,7 @@ public class PlayerController : MonoBehaviour
 
                     if (Physics.Raycast (ray, out hit, Mathf.Infinity, layerMask)) {
                         HexagonCell cell = hit.transform.GetComponent<HexagonCell> ();
-                        if (targetor.TragetVaildity(selectedTargets, cell, player)) {
+                        if (targetor.TragetVaildity(selectedTargets, cell)) {
                             targets [selectedTargets] = cell.Position;
                             selectedTargets++;
                             PlayCard ();
@@ -214,7 +217,7 @@ public class PlayerController : MonoBehaviour
                     if (Physics.Raycast (ray, out hit, Mathf.Infinity, layerMask)) { 
                         FieldCard fieldCard = hit.transform.GetComponent<FieldCard> ();
 
-                        if (targetor.TragetVaildity(selectedTargets, fieldCard, player)) {
+                        if (targetor.TragetVaildity(selectedTargets, fieldCard)) {
                             int layerMaskC = 1 << 6;
 
                             RaycastHit hitC;
@@ -257,7 +260,7 @@ public class PlayerController : MonoBehaviour
 
                     if (Physics.Raycast (ray, out hit, Mathf.Infinity, layerMask)) {
                         HexagonCell cell = hit.transform.GetComponent<HexagonCell> ();
-                        if (extraCost.TragetVaildity(selectedExtraCostTargets, cell, player)) {
+                        if (extraCost.TragetVaildity(selectedExtraCostTargets, cell)) {
                             extraCostTargets [selectedExtraCostTargets] = cell.Position;
                             selectedExtraCostTargets++;
                         }
@@ -273,7 +276,7 @@ public class PlayerController : MonoBehaviour
                     if (Physics.Raycast (ray, out hit, Mathf.Infinity, layerMask)) { 
                         FieldCard fieldCard = hit.transform.GetComponent<FieldCard> ();
 
-                        if (extraCost.TragetVaildity(selectedExtraCostTargets, fieldCard, player)) {
+                        if (extraCost.TragetVaildity(selectedExtraCostTargets, fieldCard)) {
                             int layerMaskC = 1 << 6;
 
                             RaycastHit hitC;

@@ -15,7 +15,7 @@ public class StrikeEachOtherOnPlayEffect : PlayAbility
         }
     }
 
-    public override bool TragetVaildity(int targetNumber, ITargetable target, Player player)
+    public override bool TragetVaildity(int targetNumber, ITargetable target)
     {
         switch (targetNumber) {
             case 0: {

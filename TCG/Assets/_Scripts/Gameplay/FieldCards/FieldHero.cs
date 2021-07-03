@@ -46,7 +46,6 @@ public class FieldHero : FieldCard, IDamageable, ITargetable
     [ClientRpc] 
     void SummonHeroClientRPC (string cardLocation, ulong playerObjectId, Vector2 cellPos) {
         if (!IsServer) { //If we're the client rotate, the object to match the client's camera
-            transform.Rotate (new Vector3 (0,180,0));
             heroCard = new HeroCardInstance (Resources.Load<Card> (cardLocation));
             card = heroCard;
 

@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1879b32d23ebdb94f8ae0436ce1a0bd4, type: 3}
   m_Name: Affliction
   m_EditorClassIdentifier: 
-  speed: 0
-  goesOnStack: 0
+  speed: 1
+  goesOnStack: 1
   targetTypes: 01000000
   description: Kill target unit.

@@ -3,6 +3,8 @@ public class AttackAction : ActionAbility
     public AttackAction () {
         targetTypes = new TargetType[1];
         targetTypes[0] = TargetType.FieldCard;
+        speed = TargetorPriority.Runic;
+        goesOnStack = true;
     }
 
     public override void DoEffect()
@@ -24,7 +26,7 @@ public class AttackAction : ActionAbility
         attacker.ConsumeActionPoint (1);
     }
 
-    public override bool TragetVaildity(int targetNumber, ITargetable target, Player player)
+    public override bool TragetVaildity(int targetNumber, ITargetable target)
     {
         if (!(fieldCard is FieldUnit)) return false;
 

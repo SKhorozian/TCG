@@ -18,7 +18,7 @@ public class MovementAction : ActionAbility
         mover.Player.MatchManage.eventTracker.AddEvent (new UnitMovementEvent (mover.Player, mover.Player.MatchManage.TurnNumber, mover.UnitsCard, hexCell));
     }
 
-    public override bool TragetVaildity(int targetNumber, ITargetable target, Player player)
+    public override bool TragetVaildity(int targetNumber, ITargetable target)
     {
         switch (targetNumber) {
             case 0: {

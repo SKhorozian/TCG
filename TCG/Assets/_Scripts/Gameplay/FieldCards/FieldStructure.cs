@@ -49,7 +49,6 @@ public class FieldStructure : FieldCard
     [ClientRpc] 
     void SummonStructureClientRPC (string cardLocation, ulong playerObjectId, Vector2 cellPos) {
         if (!IsServer) { //If we're the client, rotate the object to match the client's camera
-            transform.Rotate (new Vector3 (0,180,0));
             structureCard = new StructureCardInstance (Resources.Load<Card> (cardLocation));
             card = structureCard;
 

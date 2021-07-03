@@ -18,7 +18,7 @@ public class TurnButton : MonoBehaviour
         }
 
         if (player) {
-            if (player.MatchManage.LocalPlayerTurn) {
+            if (player.MatchManage.LocalPlayerPriority) {
                 button.color = Color.blue;
             } else {
                 button.color = Color.gray;
@@ -29,14 +29,14 @@ public class TurnButton : MonoBehaviour
 
     public void TurnButtonPress () {
         if (player) {
-            player.PassTurn ();
+            player.ButtonPress ();
         } else {
             if (NetworkManager.Singleton.ConnectedClients.TryGetValue(NetworkManager.Singleton.LocalClientId, out var networkedClient))
             {
                 player = networkedClient.PlayerObject.GetComponent<Player>();
                 if (player)
                 {
-                    player.PassTurn ();
+                    player.ButtonPress ();
                 }
             }
         }

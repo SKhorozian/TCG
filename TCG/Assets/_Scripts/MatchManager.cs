@@ -18,7 +18,11 @@ public class MatchManager : NetworkBehaviour
     });
 
     [SerializeField] Player playerTurn; //Who's turn is it to play.
+    [SerializeField] Player playerPriority; //Who's priority it is.
+    [SerializeField] bool hasActed = false;
+
     [SerializeField] bool localPlayerTurn; //Does the local client have the priority
+    [SerializeField] bool localPlayerPriority; //Does the local client have the priority
 
     [SerializeField] GameObject fieldGridPrefab;
     HexagonGrid fieldGrid;
@@ -28,6 +32,8 @@ public class MatchManager : NetworkBehaviour
     [SerializeField] GameObject fieldStructurePrefab;
 
     Stack<CardEffect> effectStack = new Stack<CardEffect> ();
+
+    [SerializeField] List<Targetor> targetorStack = new List<Targetor> ();
 
     FieldState fieldState;
 
@@ -61,7 +67,9 @@ public class MatchManager : NetworkBehaviour
         turnNumber.Value = 1;
 
         playerTurn = player1;
+        playerPriority = player1;
         localPlayerTurn = true;
+        localPlayerPriority = true;
 
         eventTracker = new GameEventTracker ();
 
@@ -80,10 +88,6 @@ public class MatchManager : NetworkBehaviour
 
         fieldGrid = Instantiate (fieldGridPrefab).GetComponent<HexagonGrid> ();
         fieldGrid.InitializeGrid();
-        if (!IsOwner) {
-            Camera.main.transform.position = (new Vector3 (0,5.5f,4));
-            Camera.main.transform.rotation = Quaternion.Euler (new Vector3 (60,-180,0));
-        }
 
         if (IsServer) SummonHeros (); 
     }
@@ -139,11 +143,12 @@ public class MatchManager : NetworkBehaviour
     public bool PlayCard (CardInstance card, Player player, Vector2 placement, Vector2[] targets, Vector2[] extraCostTargets) {
         if (!IsServer) return false;
 
-        if (!player.Equals(playerTurn)) return false;
+        if (!player.Equals(playerPriority)) return false;
         if (player.CurrentMana < card.Cost) return false;
 
         switch (card.Type) { 
             case CardType.Unit: {
+                if (!player.Equals(playerTurn)) return false;
                 if (placement == null) return false;
                 if (!(card is UnitCardInstance)) return false;
 
@@ -159,10 +164,11 @@ public class MatchManager : NetworkBehaviour
                 //Extra Cost
                 if (card.Card.ExtraCost) {
                     ExtraCost extraCost = Instantiate <ExtraCost> (card.Card.ExtraCost);
+                    extraCost.Player = player;
                     
                     List<ITargetable> newTargets = Targeting.ConvertTargets (extraCost.TargetTypes, extraCostTargets, player);
 
-                    if (extraCost.TragetVaildity(newTargets, player)) { //If targets are valid, then we proceed to play the card. Otherwise, we return.
+                    if (extraCost.TragetVaildity(newTargets)) { //If targets are valid, then we proceed to play the card. Otherwise, we return.
                         extraCost.SetTargets (newTargets);
                         extraCost.DoEffect ();
                     } else {Debug.Log("Extra Cost failed targeting"); return false;};
@@ -172,12 +178,17 @@ public class MatchManager : NetworkBehaviour
                 if ((card as UnitCardInstance).UnitCard.OnPlayEffect) {
                     PlayAbility playEffect = Instantiate <PlayAbility> ((card as UnitCardInstance).UnitCard.OnPlayEffect);
                     playEffect.FieldCard = summonedUnit;
+                    playEffect.Player = player;
             
                     List<ITargetable> newTargets = Targeting.ConvertTargets (playEffect.TargetTypes, targets, player);
 
-                    if (playEffect.TragetVaildity(newTargets, player) && summonedUnit) { //If targets are valid, then we proceed to call the play effect. Otherwise, we ignore it.
+                    if (playEffect.TragetVaildity(newTargets) && summonedUnit) { //If targets are valid, then we proceed to call the play effect. Otherwise, we ignore it.
                         playEffect.SetTargets (newTargets);
-                        playEffect.DoEffect ();
+                        
+                        if (playEffect.GoesOnStack) 
+                            AddTargetorToStack (playEffect);
+                        else
+                            playEffect.DoEffect ();
                     } else {Debug.Log("Play Effect failed targeting");};
                 }
 
@@ -186,6 +197,7 @@ public class MatchManager : NetworkBehaviour
                 Debug.Log ("Player " + player.OwnerClientId + " played " + card.CardName + " on cell " + placement);
             } break;
             case CardType.Structure: {
+                if (!player.Equals(playerTurn)) return false;
                 if (placement == null) return false;
                 if (!(card is StructureCardInstance)) return false;
 
@@ -201,10 +213,11 @@ public class MatchManager : NetworkBehaviour
                 //Extra Cost
                 if (card.Card.ExtraCost) {
                     ExtraCost extraCost = Instantiate <ExtraCost> (card.Card.ExtraCost);
-                    
+                    extraCost.Player = player;
+
                     List<ITargetable> newTargets = Targeting.ConvertTargets (extraCost.TargetTypes, extraCostTargets, player);
 
-                    if (extraCost.TragetVaildity(newTargets, player)) { //If targets are valid, then we proceed to play the card. Otherwise, we return.
+                    if (extraCost.TragetVaildity(newTargets)) { //If targets are valid, then we proceed to play the card. Otherwise, we return.
                         extraCost.SetTargets (newTargets);
                         extraCost.DoEffect ();
                     } else {Debug.Log("Extra Cost failed targeting"); return false;};
@@ -214,12 +227,17 @@ public class MatchManager : NetworkBehaviour
                 if ((card as StructureCardInstance).StructureCard.OnPlayEffect) {
                     PlayAbility playEffect = Instantiate <PlayAbility> ((card as StructureCardInstance).StructureCard.OnPlayEffect);
                     playEffect.FieldCard = summonedStructure;
-            
+                    playEffect.Player = player;
+
                     List<ITargetable> newTargets = Targeting.ConvertTargets (playEffect.TargetTypes, targets, player);
 
-                    if (playEffect.TragetVaildity(newTargets, player) && summonedStructure) { //If targets are valid, then we proceed to call the play effect. Otherwise, we ignore it.
+                    if (playEffect.TragetVaildity(newTargets) && summonedStructure) { //If targets are valid, then we proceed to call the play effect. Otherwise, we ignore it.
                         playEffect.SetTargets (newTargets);
-                        playEffect.DoEffect ();
+                        
+                        if (playEffect.GoesOnStack) 
+                            AddTargetorToStack (playEffect);
+                        else
+                            playEffect.DoEffect ();
                     } else {Debug.Log("Play Effect failed targeting");};
                 }
 
@@ -237,24 +255,33 @@ public class MatchManager : NetworkBehaviour
                     spell.SpellCard = card as SpellCardInstance;
                     spell.Player = player;
             
+                    if (spell.Speed == TargetorPriority.Runic && !player.Equals(playerTurn)) return false;
+                    if (spell.Speed == TargetorPriority.Chant && targetorStack.Count == 0) return false;
+
                     List<ITargetable> newTargets = Targeting.ConvertTargets (spell.TargetTypes, targets, player);
 
-                    if (spell.TragetVaildity(newTargets, player)) { //If targets are valid, then we proceed to call the spell effect. Otherwise, the spell doesn't go off.
+                    if (spell.TragetVaildity(newTargets)) { //If targets are valid, then we proceed to call the spell effect. Otherwise, the spell doesn't go off.
 
                         //Extra Cost
                         if (card.Card.ExtraCost) {
                             ExtraCost extraCost = Instantiate <ExtraCost> (card.Card.ExtraCost);
+                            extraCost.Player = player;
                             
                             List<ITargetable> newExtraCostTargets = Targeting.ConvertTargets (extraCost.TargetTypes, extraCostTargets, player);
 
-                            if (extraCost.TragetVaildity(newExtraCostTargets, player)) { //If targets are valid, then we proceed to play the card. Otherwise, we return.
+                            if (extraCost.TragetVaildity(newExtraCostTargets)) { //If targets are valid, then we proceed to play the card. Otherwise, we return.
                                 extraCost.SetTargets (newExtraCostTargets);
                                 extraCost.DoEffect ();
                             } else {Debug.Log("Extra Cost failed targeting"); return false;};
                         }   
 
                         spell.SetTargets (newTargets);
-                        spell.DoEffect ();
+                        
+                        if (spell.GoesOnStack) 
+                            AddTargetorToStack (spell);
+                        else
+                            spell.DoEffect ();
+
                     } else {Debug.Log("Spell failed targeting"); return false;};
                 }
 
@@ -268,6 +295,8 @@ public class MatchManager : NetworkBehaviour
             default:
                 break;
         }
+
+        hasActed = true;
 
         return true;
     }
@@ -317,27 +346,6 @@ public class MatchManager : NetworkBehaviour
         return fieldUnit;
     }
 
-    // void SwitchPriority () {
-    //     if (!IsServer) return;
-
-    //     //Here we swap the priority 
-    //     if (playerTurn.Equals (player1)) {
-    //         playerTurn = player2;
-    //     } else {
-    //         playerTurn = player1;
-    //     }
-
-
-    //     SwitchPriorityClientRpc (playerTurn.OwnerClientId);
-    // }
-    // [ClientRpc]
-    // void SwitchPriorityClientRpc (ulong netid) {
-    //     if (NetworkManager.Singleton.LocalClientId == netid)
-    //         localHasPriority = true;
-    //     else 
-    //         localHasPriority = false;
-    // }
-
     public void MoveUnit (FieldUnit unit, Vector2[] targets, ulong netid) {
         if (!IsServer) return;
 
@@ -346,10 +354,11 @@ public class MatchManager : NetworkBehaviour
 
         MovementAction moveAction = new MovementAction ();
         moveAction.FieldCard = unit;
+        moveAction.Player = unit.Player;
 
         List <ITargetable> newTargets = Targeting.ConvertTargets (moveAction.TargetTypes, targets, unit.Player);
 
-        if (moveAction.TragetVaildity (newTargets, unit.Player)) {
+        if (moveAction.TragetVaildity (newTargets)) {
             moveAction.SetTargets (newTargets);
             moveAction.DoEffect ();
             CallEffects ();
@@ -366,19 +375,22 @@ public class MatchManager : NetworkBehaviour
 
         AttackAction attackAction = new AttackAction ();
         attackAction.FieldCard = attacker;
+        attackAction.Player = attacker.Player;
 
         List <ITargetable> newTargets = Targeting.ConvertTargets (attackAction.TargetTypes, targets, attacker.Player);
 
-        if (attackAction.TragetVaildity (newTargets, attacker.Player)) {
+        if (attackAction.TragetVaildity (newTargets)) {
             attackAction.SetTargets (newTargets);
-            attackAction.DoEffect ();
-            CallEffects ();
-        }
+            AddTargetorToStack (attackAction);
 
+            CallEffects ();
+
+            hasActed = true;
+        }
     }
 
     public void UnitAct (FieldUnit actor, ITargetable[] targets, ActionAbility action, ulong netid) {
-
+        //TODO
     }
 
     public bool CheckCanAttack (FieldUnit attacker, FieldUnit target) { //Returns true if this card fits all the conditions to attack a target
@@ -391,7 +403,20 @@ public class MatchManager : NetworkBehaviour
         return true;
     }
 
-    public void PassTurn (Player player) {
+    public void ButtonPress (Player player) {
+        if (!IsServer) return;
+
+        if (targetorStack.Count == 0) PassTurn (player); //If there is nothing on the stack, just pass the turn.
+        else { //Else...
+            if (hasActed) //If the player has acted during their priority 
+                SwitchPriority ();  //We switch priorities.
+            else
+                CallTargetors (); //Else, we just call the effects.
+        }
+    }
+
+
+    void PassTurn (Player player) {
         if (!IsServer) return;
 
         //If the player requesting the pass is the player who has the turn... 
@@ -401,7 +426,9 @@ public class MatchManager : NetworkBehaviour
             else
                 playerTurn = player2;
 
+            playerPriority = playerTurn;
             PassTurnClientRPC (playerTurn.OwnerClientId);
+            SwitchPriorityClientRpc (playerPriority.OwnerClientId);
 
             EndTurn ();
         }
@@ -416,17 +443,70 @@ public class MatchManager : NetworkBehaviour
     }
 
 
+    void SwitchPriority () {
+        if (!IsServer) return;
+
+        if (playerPriority.Equals (player1))
+            playerPriority = player2;
+        else 
+            playerPriority = player1;
+
+        hasActed = false;
+
+        SwitchPriorityClientRpc (playerPriority.OwnerClientId);
+    }
+    [ClientRpc]
+    void SwitchPriorityClientRpc (ulong netid) {
+        if (NetworkManager.Singleton.LocalClientId == netid)
+            localPlayerPriority = true;
+        else 
+            localPlayerPriority = false;
+    }
+
     public void AddEffectToStack (CardEffect effect) {
+        if (!IsServer) return;
+
         effectStack.Push (effect);
     }
 
+    //Call the effect stack here. Called recursively.
     public void CallEffects () {
+        if (!IsServer) return;
+
         if (effectStack.Count > 0) {
             CardEffect effect = effectStack.Pop();
             if (effect.FieldCard != null) {
                 effect.DoEffect ();
             }
             CallEffects ();
+        }
+    }
+
+    public void AddTargetorToStack (Targetor targetor) {
+        if (!IsServer) return;
+
+        if (targetor.GoesOnStack) 
+            targetorStack.Add (targetor);
+    }
+
+    //Call the targetor stack here. Calls itself recursively.
+    public void CallTargetors () {
+        if (!IsServer) return;
+
+        if (targetorStack.Count > 0) {
+            Targetor targetor = targetorStack[targetorStack.Count-1];
+            targetorStack.RemoveAt (targetorStack.Count-1);
+
+            if (targetor.TragetVaildity (targetor.Targets)) {
+                targetor.DoEffect ();
+            }
+            CallEffects ();
+            CallTargetors ();
+        }
+
+        if (targetorStack.Count == 0) {
+            playerPriority = playerTurn;
+            SwitchPriorityClientRpc (playerPriority.OwnerClientId);
         }
     }
 
@@ -451,6 +531,12 @@ public class MatchManager : NetworkBehaviour
     public bool LocalPlayerTurn {
         get {
             return localPlayerTurn;
+        }
+    }
+
+    public bool LocalPlayerPriority {
+        get {
+            return localPlayerPriority;
         }
     }
 

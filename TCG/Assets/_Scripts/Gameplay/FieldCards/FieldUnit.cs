@@ -89,8 +89,7 @@ public class FieldUnit : FieldCard, IDamageable
 
     [ClientRpc] 
     void SummonUnitClientRPC (string cardLocation, ulong playerObjectId, Vector2 cellPos) {
-        if (!IsServer) { //If we're the client rotate, the object to match the client's camera
-            transform.Rotate (new Vector3 (0,180,0));
+        if (!IsServer) {
             unitCard = new UnitCardInstance (Resources.Load<Card> (cardLocation));
             card = unitCard;
 
@@ -113,6 +112,8 @@ public class FieldUnit : FieldCard, IDamageable
         } else {
             icon.color = Color.red;
         }
+
+        UpdateUnit ();
     }
 
     //Unit's basic movement.
