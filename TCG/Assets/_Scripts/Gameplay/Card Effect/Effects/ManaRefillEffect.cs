@@ -1,14 +1,16 @@
 public class ManaRefillEffect : CardEffect
 {
     int refillAmount;
+    Player player;
 
-    public ManaRefillEffect(FieldCard fieldCard, int refillAmount) : base(fieldCard)
+    public ManaRefillEffect(int refillAmount, Player player) : base()
     {
         this.refillAmount = refillAmount;
+        this.player = player;
     }
 
     public override void DoEffect()
     {
-        fieldCard.Player.RefillMana (refillAmount);
+        player.RefillMana (refillAmount);
     }
 }

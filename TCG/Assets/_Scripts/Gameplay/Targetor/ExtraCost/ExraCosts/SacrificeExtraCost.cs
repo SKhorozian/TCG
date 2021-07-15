@@ -21,7 +21,7 @@ public class SacrificeExtraCost : ExtraCost
         switch (targetNumber) {
             case 0: {
                 if (!(target is FieldCard)) return false;
-                if (!(target as FieldCard).OwnerClientId.Equals (player.OwnerClientId)) return false;
+                if ((target as FieldCard).OwnerClientId != player.OwnerClientId) return false;
 
                 return true;
             }

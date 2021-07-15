@@ -42,6 +42,9 @@ public class PlayerController : MonoBehaviour
 
     [SerializeField] int actionN = 0;
 
+    [Space (10)]
+    [SerializeField] TargetorStackUI stackUI;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -368,11 +371,15 @@ public class PlayerController : MonoBehaviour
             targetor = (card.cardInstance.Card as SpellCard).Spell;
         } 
 
-        if (targetor)
+        if (targetor) {
             targets = new Vector2[targetor.TargetTypes.Length];
+            targetor.Player = player;    
+        }
 
-        if (extraCost)
+        if (extraCost) {
             extraCostTargets = new Vector2[extraCost.TargetTypes.Length];
+            extraCost.Player = player;
+        }
 
         PlayCard ();
     }
@@ -453,5 +460,7 @@ public class PlayerController : MonoBehaviour
     public void TargetCard (int cardNumber, CardInstance cardInstance) {
 
     }
+
+    public TargetorStackUI StackUI {get {return stackUI;}}
 
 }

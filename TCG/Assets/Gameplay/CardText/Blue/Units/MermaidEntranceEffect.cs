@@ -5,6 +5,6 @@ public class MermaidEntranceEffect : CardEffectTrigger
 {
     public override CardEffect GetCardEffect()
     {
-        return new ManaRampEffect (fieldCard, 1, false, true);
+        return new ManaRampEffect (1, false, true, fieldCard.Player);
     }
 }

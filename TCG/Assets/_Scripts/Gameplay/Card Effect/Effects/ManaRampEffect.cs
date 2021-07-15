@@ -7,19 +7,21 @@ public class ManaRampEffect : CardEffect
     int manaRampAmount;
     bool refillsMana;
     bool isPermanent;
+    Player player;
 
-    public ManaRampEffect(FieldCard fieldCard, int manaRampAmount, bool refillsMana, bool isPermanent) : base(fieldCard)
+    public ManaRampEffect(int manaRampAmount, bool refillsMana, bool isPermanent, Player player) : base()
     {
         this.manaRampAmount = manaRampAmount;
         this.refillsMana = refillsMana;
         this.isPermanent = isPermanent;
+        this.player = player;
     }
 
     public override void DoEffect()
     {
         //If it is a permanent ramp
         if (isPermanent) {
-            fieldCard.Player.RampManaPermanent (manaRampAmount, refillsMana);
+            player.RampManaPermanent (manaRampAmount, refillsMana);
         } else { //Else call the temporary ramp one
 
         }

@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using MLAPI;
 
 [CreateAssetMenu (fileName = "New DamageUnit OnPlay", menuName = "Card OnPlay/Create New DamageUnit OnPlay"), System.Serializable]
 public class DamageUnitOnPlay : PlayAbility
@@ -12,7 +13,11 @@ public class DamageUnitOnPlay : PlayAbility
     {
         FieldUnit target = targets[0] as FieldUnit;
 
-        playCard.Player.DamageTarget (target, new Damage (damage, DamageSource.Spell, playCard.Player));
+        player.MatchManage.AddEffectToStack (new DamageEffect (player, damage, DamageSource.Spell, Condition));
+    }
+
+    bool Condition (IDamageable damageable) {
+        return damageable.Equals (targets[0]);
     }
 
     public override bool TragetVaildity(int targetNumber, ITargetable target)
@@ -20,10 +25,7 @@ public class DamageUnitOnPlay : PlayAbility
         switch (targetNumber) {
             case 0: {
                 if (!(target is FieldUnit)) return false;
-                // if (playCard) //On Server
-                //     if ((target as FieldUnit).Player.Equals (playCard.Player)) return false;
-                // else //Client Side
-                //     if ((target as FieldUnit).IsOwner) return false;
+                if ((target as FieldUnit).Player.OwnerClientId.Equals (player.OwnerClientId)) return false;
                 return true;
             }
             default:

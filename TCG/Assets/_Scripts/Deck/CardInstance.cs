@@ -18,6 +18,26 @@ public abstract class CardInstance : ITargetable
 
     //Keywords 
 
+    //Status Stuff
+    protected List<StatusEffect> effects = new List<StatusEffect> ();
+
+    public void AddStatusEffect (StatusEffect effect) {
+        effects.Add (effect);
+        effect.ApplyStatus (this);
+    }
+
+    public void RemoveStatusEffect (StatusEffect effect) {
+        if (effects.Contains (effect)) {
+            effects.Remove (effect);
+            effect.RemoveStatus (this);
+        }
+    }
+
+    //Effect Card:
+    public void AffectCost (int change) {
+        costChange += change;
+    }
+
     public Card Card            {get {return card;}}
     public int Cost             {get {return card.Cost + costChange;}}
     public int CostChange       {get {return costChange;}}

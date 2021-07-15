@@ -1,15 +1,14 @@
 public class StructureDemolition : CardEffect
 {
-    public StructureDemolition(FieldCard fieldCard) : base(fieldCard)
-    {
+    FieldStructure demolishingStructure;
 
+    public StructureDemolition(FieldStructure demolishingStructure) : base()
+    {
+        this.demolishingStructure = demolishingStructure;
     }
 
     public override void DoEffect()
     {
-        if (!(fieldCard is FieldStructure)) return;     
-        FieldStructure structure = fieldCard as FieldStructure;
-
-        structure.Player.StructureDemolish (structure);
+        demolishingStructure.Player.StructureDemolish (demolishingStructure);
     }
 }

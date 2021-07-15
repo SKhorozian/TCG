@@ -5,7 +5,6 @@ using UnityEngine;
 public abstract class Targetor : ScriptableObject
 {
     [SerializeField] protected TargetorPriority speed;
-    [SerializeField] protected bool goesOnStack;
 
     protected List<ITargetable> targets;
 
@@ -15,7 +14,7 @@ public abstract class Targetor : ScriptableObject
 
     [SerializeField, TextArea (minLines: 4, maxLines: 8)] string description;
 
-    public bool TragetVaildity (List<ITargetable> targets) {
+    public virtual bool TragetVaildity (List<ITargetable> targets) {
         if (targets.Count != targetTypes.Length) {Debug.Log ("Target length doesn't match"); return false;}
 
         foreach (ITargetable target in targets) {
@@ -31,12 +30,13 @@ public abstract class Targetor : ScriptableObject
         this.targets = targets;
     }
 
+    public abstract string Location ();
+
     public abstract void DoEffect ();
 
     public List<ITargetable> Targets {get {return targets;}}
 
     public TargetorPriority Speed        {get {return speed;}}
-    public bool GoesOnStack              {get {return goesOnStack;}}
 
     public TargetType[] TargetTypes      {get {return targetTypes;}}
 

@@ -11,7 +11,11 @@ public class DamageTargetSpell : Spell
     public override void DoEffect()
     {
         IDamageable target = targets[0] as IDamageable;
-        player.DamageTarget (target, new Damage (damageAmount, DamageSource.Spell, player));
+        player.MatchManage.AddEffectToStack (new DamageEffect (player, damageAmount, DamageSource.Spell, Condition));
+    }
+
+    bool Condition (IDamageable damageable) {
+        return damageable.Equals (targets[0]);
     }
     
     public override bool TragetVaildity(int targetNumber, ITargetable target)

@@ -7,6 +7,6 @@ public class FishermanEntranceEffect : CardEffectTrigger
 {
     public override CardEffect GetCardEffect()
     {
-        return new DrawCardEffect (fieldCard, 1);
+        return new DrawCardEffect (fieldCard.Player, 1);
     }
 }

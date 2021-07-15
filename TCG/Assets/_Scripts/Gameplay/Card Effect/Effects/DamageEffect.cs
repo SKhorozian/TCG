@@ -4,13 +4,15 @@ using UnityEngine;
 
 public class DamageEffect : CardEffect
 {
+    Player player;
     int damageAmount;
     DamageSource source;
     System.Func<IDamageable, bool> condition;
 
 
-    public DamageEffect(FieldCard fieldCard, int damageAmount, DamageSource source, System.Func<IDamageable, bool> condition) : base(fieldCard)
+    public DamageEffect(Player player, int damageAmount, DamageSource source, System.Func<IDamageable, bool> condition) : base()
     {
+        this.player = player;
         this.damageAmount = damageAmount;
         this.source = source;
         this.condition = condition;
@@ -18,18 +20,18 @@ public class DamageEffect : CardEffect
 
     public override void DoEffect()
     {
-        foreach (FieldUnit unit in fieldCard.Player.MatchManage.AllUnits) {
+        foreach (FieldUnit unit in player.MatchManage.AllUnits) {
             if (condition.Invoke (unit)) {
-                fieldCard.Player.DamageTarget (unit, new Damage (damageAmount, source, fieldCard.Player));
+                player.DamageTarget (unit, new Damage (damageAmount, source, player));
             }
         }
 
-        if (condition.Invoke (fieldCard.Player.FieldHero)) {
-            fieldCard.Player.DamageTarget (fieldCard.Player.FieldHero, new Damage (damageAmount, source, fieldCard.Player));
+        if (condition.Invoke (player.FieldHero)) {
+            player.DamageTarget (player.FieldHero, new Damage (damageAmount, source, player));
         }
 
-        if (condition.Invoke (fieldCard.Player.MatchManage.Player2.FieldHero)) {
-            fieldCard.Player.DamageTarget (fieldCard.Player.MatchManage.Player2.FieldHero, new Damage (damageAmount, source, fieldCard.Player));
+        if (condition.Invoke (player.MatchManage.Player2.FieldHero)) {
+            player.DamageTarget (player.MatchManage.Player2.FieldHero, new Damage (damageAmount, source, player));
         }
     }
 }

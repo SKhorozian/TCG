@@ -7,7 +7,7 @@ public class TreeEffect : CardEffectTrigger
 {
     public override CardEffect GetCardEffect()
     {
-        return new HealEffect (fieldCard, 100, Condition);
+        return new HealEffect (100, fieldCard.Player, Condition, fieldCard.Card);
     }
 
     bool Condition (IDamageable damageable) {

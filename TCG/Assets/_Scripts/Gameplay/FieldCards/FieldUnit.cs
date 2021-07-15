@@ -205,6 +205,13 @@ public class FieldUnit : FieldCard, IDamageable
 
     }
 
+    public void GiveStats (int strength, int health, int range, int speed) {
+        this.strength.Value += strength;
+        this.health.Value += health;
+        this.attackRange.Value += range;
+        this.movementSpeed.Value += speed;
+    }
+
 
     void Update () {
         if (IsClient) {

@@ -6,4 +6,8 @@ public abstract class ExtraCost : Targetor
 {
     [SerializeField] int extraManaCost;
 
+        public override string Location()
+    {
+        return "TargetorEffects/ExtraCost/" + name;
+    }
 }

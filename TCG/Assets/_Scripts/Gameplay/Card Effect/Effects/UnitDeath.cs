@@ -1,14 +1,14 @@
 public class UnitDeath : CardEffect
 {
-    public UnitDeath(FieldCard fieldCard) : base(fieldCard)
+    FieldUnit dyingUnit;
+
+    public UnitDeath(FieldUnit dyingUnit) : base()
     {
+        this.dyingUnit = dyingUnit;
     }
 
     public override void DoEffect()
     {
-        if (!(fieldCard is FieldUnit)) return;     
-        FieldUnit unit = fieldCard as FieldUnit;
-
-        unit.Player.UnitDie (unit);
+        dyingUnit.Player.UnitDie (dyingUnit);
     }
 }

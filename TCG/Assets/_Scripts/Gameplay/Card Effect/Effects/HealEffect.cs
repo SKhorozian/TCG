@@ -5,28 +5,32 @@ using UnityEngine;
 public class HealEffect : CardEffect
 {
     int healAmount;
+    Player player;
     System.Func<IDamageable, bool> condition;
+    CardInstance source;
 
-    public HealEffect(FieldCard fieldCard, int healAmount, System.Func<IDamageable, bool> condition) : base(fieldCard)
+    public HealEffect(int healAmount, Player player, System.Func<IDamageable, bool> condition, CardInstance source) : base()
     {
         this.healAmount = healAmount;
+        this.player = player;
         this.condition = condition;
+        this.source = source;
     }
 
     public override void DoEffect()
     {
-        foreach (FieldUnit unit in fieldCard.Player.MatchManage.AllUnits) {
+        foreach (FieldUnit unit in player.MatchManage.AllUnits) {
             if (condition.Invoke (unit)) {
-                fieldCard.Player.HealTarget (unit, new Heal (healAmount, fieldCard.Player), fieldCard);
+                player.HealTarget (unit, new Heal (healAmount, player), source);
             }
         }
 
-        if (condition.Invoke (fieldCard.Player.FieldHero)) {
-            fieldCard.Player.HealTarget (fieldCard.Player.FieldHero, new Heal (healAmount, fieldCard.Player), fieldCard);
+        if (condition.Invoke (player.FieldHero)) {
+            player.HealTarget (player.FieldHero, new Heal (healAmount, player), source);
         }
 
-        if (condition.Invoke (fieldCard.Player.MatchManage.Player2.FieldHero)) {
-            fieldCard.Player.HealTarget (fieldCard.Player.MatchManage.Player2.FieldHero, new Heal (healAmount, fieldCard.Player), fieldCard);
+        if (condition.Invoke (player.MatchManage.Player2.FieldHero)) {
+            player.HealTarget (player.MatchManage.Player2.FieldHero, new Heal (healAmount, player), source);
         }
     }
 }

@@ -20,6 +20,9 @@ public class CardDisplay : MonoBehaviour
     [SerializeField] RectTransform textBox;
     [SerializeField] LayoutElement textBoxElement;
 
+    [Space (10)]
+    [SerializeField] Color[] colors;
+
     [Space(10), Header ("Unit")]
     [SerializeField] GameObject unitStuff;
 
@@ -38,7 +41,7 @@ public class CardDisplay : MonoBehaviour
     }
 
     void Update () {
-        textBoxElement.preferredHeight = 30 + description.preferredHeight;
+        textBoxElement.preferredHeight = 20 + description.preferredHeight;
     }
 
     void UpdateCard () {
@@ -51,7 +54,7 @@ public class CardDisplay : MonoBehaviour
             if (card.Description.Length > 0) {
                 textBox.gameObject.SetActive (true);
                 description.SetText (card.Description);
-                textBoxElement.preferredHeight = 30 + description.preferredHeight;
+                textBoxElement.preferredHeight = 5 + description.preferredHeight;
             } else {
                 textBox.gameObject.SetActive (false);
                 description.SetText ("");
@@ -64,11 +67,11 @@ public class CardDisplay : MonoBehaviour
                         unitStuff.SetActive (true);
 
                         UnitCardInstance unitCard = card as UnitCardInstance;
-                        strength.text = unitCard.Strength.ToString() + " <sprite=3>";
-                        health.text = unitCard.Health.ToString()  + " <sprite=4>";   
-                        range.text = unitCard.AttackRange.ToString ()  + " <sprite=5>";
-                        speed.text = unitCard.MovementSpeed.ToString ()  + " <sprite=6>";
-                        energy.text = unitCard.ActionPoints.ToString ()  + " <sprite=7>";
+                        strength.text = unitCard.Strength.ToString();
+                        health.text = unitCard.Health.ToString();   
+                        range.text = unitCard.AttackRange.ToString();
+                        speed.text = unitCard.MovementSpeed.ToString();
+                        energy.text = unitCard.ActionPoints.ToString();
                     }
                     break;
                 case CardType.Structure:
@@ -87,24 +90,29 @@ public class CardDisplay : MonoBehaviour
 
             cardArt.sprite = card.CardArt;
 
-            // switch (card.Color) {
-            //     case CardColor.Red:
-            //     cardBorder.color = colors[0];
-            //     break;
-            //     case CardColor.Blue:
-            //     cardBorder.color = colors[1];
-            //     break;
-            //     case CardColor.Black:
-            //     cardBorder.color = colors[2];
-            //     break;
-            //     case CardColor.Green:
-            //     cardBorder.color = colors[3];
-            //     break;
-            //     case CardColor.Yellow:
-            //     cardBorder.color = colors[4];
-            //     break;
-                
-            // }
+            switch (card.Color) {
+                case CardColor.Red:
+                cardBorder.color = colors[0];
+                break;
+                case CardColor.Blue:
+                cardBorder.color = colors[1];
+                break;
+                case CardColor.Black:
+                cardBorder.color = colors[2];
+                break;
+                case CardColor.Green:
+                cardBorder.color = colors[3];
+                break;
+                case CardColor.Yellow:
+                cardBorder.color = colors[4];
+                break;
+                case CardColor.Pink:
+                    cardBorder.color = colors[5];
+                break;
+                case CardColor.Colorless:
+                    cardBorder.color = colors[6];
+                break;
+            }
 
         }
     }

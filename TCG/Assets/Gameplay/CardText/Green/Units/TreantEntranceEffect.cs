@@ -7,7 +7,7 @@ public class TreantEntranceEffect : CardEffectTrigger
 {
     public override CardEffect GetCardEffect()
     {
-        return new HealEffect (fieldCard, 200, Condition);
+        return new HealEffect (200, fieldCard.Player, Condition, fieldCard.Card);
     }
 
     bool Condition (IDamageable damageable) {

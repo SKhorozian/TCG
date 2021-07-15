@@ -9,7 +9,7 @@ public class DrawCardSpell : Spell
 
     public override void DoEffect()
     {
-        player.Draw (drawAmount);
+        player.MatchManage.AddEffectToStack (new DrawCardEffect (player, 2));
     }
 
     public override bool TragetVaildity(int targetNumber, ITargetable target)

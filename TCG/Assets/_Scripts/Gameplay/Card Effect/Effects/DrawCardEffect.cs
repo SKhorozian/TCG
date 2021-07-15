@@ -1,14 +1,16 @@
 public class DrawCardEffect : CardEffect
 {
     int drawAmount;
+    Player player;
 
-    public DrawCardEffect(FieldCard fieldCard, int drawAmount) : base(fieldCard)
+    public DrawCardEffect(Player player, int drawAmount) : base()
     {
+        this.player = player;
         this.drawAmount = drawAmount;
     }
 
     public override void DoEffect()
     {
-        fieldCard.Player.Draw (drawAmount);
+        player.Draw (drawAmount);
     }
 }

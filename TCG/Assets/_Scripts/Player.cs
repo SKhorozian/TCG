@@ -380,12 +380,7 @@ public class Player : NetworkBehaviour
         return damage;
     }
 
-    public Heal HealTarget (IDamageable target, Heal heal, FieldCard source) {
-        target.TakeHeal (heal);
-        return heal;
-    }
-
-    public Heal HealTarget (IDamageable target, Heal heal, SpellCardInstance source) {
+    public Heal HealTarget (IDamageable target, Heal heal, CardInstance source) {
         target.TakeHeal (heal);
         return heal;
     }
@@ -500,6 +495,34 @@ public class Player : NetworkBehaviour
         matchManager.eventTracker.AddEvent (new SpendManaEvent (this, matchManager.TurnNumber, cost));
 
         UpdatePlayerStatsClientRPC ();
+    }
+
+    //UI
+    [ClientRpc]
+    public void UpdateStackClientRPC (string[] targetorLocations, ulong[] playerIDs) {
+        if (!IsLocalPlayer) return;
+
+        Targetor[] targetors = new Targetor[targetorLocations.Length];
+
+        if (targetorLocations.Length != playerIDs.Length) return; //If the array lengths don't match, return.
+
+        for (int i = 0 ; i < targetors.Length; i++) {
+            Targetor targetor = Resources.Load<Targetor> (targetorLocations[i]); //Find the targetor
+            targetors[i] = Instantiate<Targetor> (targetor); //Create a new targetor
+            targetors[i].name = targetor.name;
+
+            if (playerIDs[i] == matchManager.Player1.OwnerClientId)
+                targetors[i].Player = matchManager.Player1;
+            else
+                targetors[i].Player = matchManager.Player2;
+            
+            // List<ITargetable> newTargets = Targeting.ConvertTargets (targetors[i].TargetTypes, targets[i], targetors[i].Player);
+
+            // if (targetors[i].TragetVaildity (newTargets))
+            //     targetors[i].SetTargets (newTargets);
+        }
+
+        playerController.StackUI.UpdateStack (targetors);
     }
 
     public void RefillMana (int refillAmount) {

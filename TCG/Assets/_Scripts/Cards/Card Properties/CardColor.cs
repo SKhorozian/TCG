@@ -3,5 +3,7 @@ public enum CardColor {
     Blue,
     Black,
     Green,
-    Yellow
+    Yellow,
+    Pink,
+    Colorless
 }

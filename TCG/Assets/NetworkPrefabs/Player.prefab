@@ -70,8 +70,6 @@ MonoBehaviour:
       copies: 2
     - card: {fileID: 11400000, guid: 606da591aba12be4fab28b6781f4d87f, type: 2}
       copies: 3
-    - card: {fileID: 11400000, guid: 2ce9f58ee9b30e446adb1375ea8e55e7, type: 2}
-      copies: 3
     - card: {fileID: 11400000, guid: 1e3e9d2e13162794d9eb56fa57baad12, type: 2}
       copies: 3
     - card: {fileID: 11400000, guid: c1da1338cbe2cc44abb5f40975e82994, type: 2}
@@ -82,17 +80,7 @@ MonoBehaviour:
       copies: 3
     - card: {fileID: 11400000, guid: 6ac4f5d8dba6b2a498ce89a6d82aea94, type: 2}
       copies: 3
-    - card: {fileID: 11400000, guid: 527b448d1861bf54ab73282f9e6a2b55, type: 2}
-      copies: 3
-    - card: {fileID: 11400000, guid: 725267f823e2f424c9766655c56b36f1, type: 2}
-      copies: 3
-    - card: {fileID: 11400000, guid: 465775347a2d488418f8164f799cb765, type: 2}
-      copies: 3
-    - card: {fileID: 11400000, guid: 2dd25e381ef3a7142873031536fcd193, type: 2}
-      copies: 3
-    - card: {fileID: 11400000, guid: 57c0b4d42198ec24fa5da6e843db02cf, type: 2}
-      copies: 3
-    - card: {fileID: 11400000, guid: beb62e59b43611943b37607229096e9a, type: 2}
+    - card: {fileID: 11400000, guid: 9e2bd001df395d7478a6356498af2f3a, type: 2}
       copies: 3
   playerHero: {fileID: 0}
   controledUnits: []

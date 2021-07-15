@@ -5,6 +5,6 @@ public class FishEntranceEffect : CardEffectTrigger
 {
     public override CardEffect GetCardEffect()
     {
-        return new ManaRefillEffect (FieldCard, 1);
+        return new ManaRefillEffect (1, fieldCard.Player);
     }
 }

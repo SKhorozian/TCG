@@ -79,11 +79,15 @@ public class MatchManager : NetworkBehaviour
     void InitializeMatchClientRpc (ulong player1ObjectId, ulong player2ObjectId) {
 
         if (NetworkSpawnManager.SpawnedObjects.TryGetValue (player1ObjectId, out var player1Object)) {
-            player1Object.GetComponent<Player> ().MatchManage = this;
+            Player player1 = player1Object.GetComponent<Player> ();
+            player1.MatchManage = this;
+            this.player1 = player1;
         }
 
         if (NetworkSpawnManager.SpawnedObjects.TryGetValue (player2ObjectId, out var player2Object)) {
-            player2Object.GetComponent<Player> ().MatchManage = this;
+            Player player2 = player2Object.GetComponent<Player> ();
+            player2.MatchManage = this;
+            this.player2 = player2;
         }
 
         fieldGrid = Instantiate (fieldGridPrefab).GetComponent<HexagonGrid> ();
@@ -164,6 +168,7 @@ public class MatchManager : NetworkBehaviour
                 //Extra Cost
                 if (card.Card.ExtraCost) {
                     ExtraCost extraCost = Instantiate <ExtraCost> (card.Card.ExtraCost);
+                    extraCost = card.Card.ExtraCost;
                     extraCost.Player = player;
                     
                     List<ITargetable> newTargets = Targeting.ConvertTargets (extraCost.TargetTypes, extraCostTargets, player);
@@ -177,6 +182,7 @@ public class MatchManager : NetworkBehaviour
                 //Play Effects
                 if ((card as UnitCardInstance).UnitCard.OnPlayEffect) {
                     PlayAbility playEffect = Instantiate <PlayAbility> ((card as UnitCardInstance).UnitCard.OnPlayEffect);
+                    playEffect.name = (card as UnitCardInstance).UnitCard.OnPlayEffect.name;
                     playEffect.FieldCard = summonedUnit;
                     playEffect.Player = player;
             
@@ -184,11 +190,7 @@ public class MatchManager : NetworkBehaviour
 
                     if (playEffect.TragetVaildity(newTargets) && summonedUnit) { //If targets are valid, then we proceed to call the play effect. Otherwise, we ignore it.
                         playEffect.SetTargets (newTargets);
-                        
-                        if (playEffect.GoesOnStack) 
-                            AddTargetorToStack (playEffect);
-                        else
-                            playEffect.DoEffect ();
+                        AddTargetorToStack (playEffect);
                     } else {Debug.Log("Play Effect failed targeting");};
                 }
 
@@ -213,6 +215,7 @@ public class MatchManager : NetworkBehaviour
                 //Extra Cost
                 if (card.Card.ExtraCost) {
                     ExtraCost extraCost = Instantiate <ExtraCost> (card.Card.ExtraCost);
+                    extraCost = card.Card.ExtraCost;
                     extraCost.Player = player;
 
                     List<ITargetable> newTargets = Targeting.ConvertTargets (extraCost.TargetTypes, extraCostTargets, player);
@@ -226,6 +229,7 @@ public class MatchManager : NetworkBehaviour
                 //Play Effects
                 if ((card as StructureCardInstance).StructureCard.OnPlayEffect) {
                     PlayAbility playEffect = Instantiate <PlayAbility> ((card as StructureCardInstance).StructureCard.OnPlayEffect);
+                    playEffect.name = (card as StructureCardInstance).StructureCard.OnPlayEffect.name;
                     playEffect.FieldCard = summonedStructure;
                     playEffect.Player = player;
 
@@ -233,11 +237,7 @@ public class MatchManager : NetworkBehaviour
 
                     if (playEffect.TragetVaildity(newTargets) && summonedStructure) { //If targets are valid, then we proceed to call the play effect. Otherwise, we ignore it.
                         playEffect.SetTargets (newTargets);
-                        
-                        if (playEffect.GoesOnStack) 
-                            AddTargetorToStack (playEffect);
-                        else
-                            playEffect.DoEffect ();
+                        AddTargetorToStack (playEffect);
                     } else {Debug.Log("Play Effect failed targeting");};
                 }
 
@@ -251,7 +251,7 @@ public class MatchManager : NetworkBehaviour
                 //Spell Effects
                 if ((card as SpellCardInstance)._SpellCard.Spell) {
                     Spell spell = Instantiate <Spell> ((card as SpellCardInstance)._SpellCard.Spell);
-                    
+                    spell.name = (card as SpellCardInstance)._SpellCard.Spell.name;
                     spell.SpellCard = card as SpellCardInstance;
                     spell.Player = player;
             
@@ -265,6 +265,7 @@ public class MatchManager : NetworkBehaviour
                         //Extra Cost
                         if (card.Card.ExtraCost) {
                             ExtraCost extraCost = Instantiate <ExtraCost> (card.Card.ExtraCost);
+                            extraCost = card.Card.ExtraCost;
                             extraCost.Player = player;
                             
                             List<ITargetable> newExtraCostTargets = Targeting.ConvertTargets (extraCost.TargetTypes, extraCostTargets, player);
@@ -276,12 +277,7 @@ public class MatchManager : NetworkBehaviour
                         }   
 
                         spell.SetTargets (newTargets);
-                        
-                        if (spell.GoesOnStack) 
-                            AddTargetorToStack (spell);
-                        else
-                            spell.DoEffect ();
-
+                        AddTargetorToStack (spell);
                     } else {Debug.Log("Spell failed targeting"); return false;};
                 }
 
@@ -374,6 +370,7 @@ public class MatchManager : NetworkBehaviour
 
 
         AttackAction attackAction = new AttackAction ();
+        attackAction.name = "Attack";
         attackAction.FieldCard = attacker;
         attackAction.Player = attacker.Player;
 
@@ -475,9 +472,10 @@ public class MatchManager : NetworkBehaviour
 
         if (effectStack.Count > 0) {
             CardEffect effect = effectStack.Pop();
-            if (effect.FieldCard != null) {
-                effect.DoEffect ();
-            }
+            
+            effect.DoEffect ();
+            Debug.Log ("Effect: " + effect);
+            
             CallEffects ();
         }
     }
@@ -485,12 +483,12 @@ public class MatchManager : NetworkBehaviour
     public void AddTargetorToStack (Targetor targetor) {
         if (!IsServer) return;
 
-        if (targetor.GoesOnStack) 
-            targetorStack.Add (targetor);
+        targetorStack.Add (targetor);
+        UpdateStackUI ();
     }
 
-    //Call the targetor stack here. Calls itself recursively.
-    public void CallTargetors () {
+    //Call the top-most targetor on the stack.
+    void CallTargetors () {
         if (!IsServer) return;
 
         if (targetorStack.Count > 0) {
@@ -499,15 +497,36 @@ public class MatchManager : NetworkBehaviour
 
             if (targetor.TragetVaildity (targetor.Targets)) {
                 targetor.DoEffect ();
+                Debug.Log ("Targetor: " + targetor.name);
             }
+
             CallEffects ();
-            CallTargetors ();
+            UpdateStackUI ();
         }
 
         if (targetorStack.Count == 0) {
             playerPriority = playerTurn;
+            
             SwitchPriorityClientRpc (playerPriority.OwnerClientId);
+            UpdateStackUI ();
         }
+    }
+
+    void UpdateStackUI () {
+        if (!IsServer) return;
+
+        string[] stackLocations = new string [targetorStack.Count];
+        ulong[] playerIDs = new ulong [targetorStack.Count];
+        //Vector2[][] targets = new Vector2 [targetorStack.Count][];
+
+        for (int i = 0; i < targetorStack.Count; i++) { 
+            stackLocations[i] = targetorStack[i].Location();
+            Debug.Log (stackLocations[i]);
+            playerIDs[i] = targetorStack[i].Player.OwnerClientId;
+        }
+
+        player1.UpdateStackClientRPC (stackLocations, playerIDs);
+        player2.UpdateStackClientRPC (stackLocations, playerIDs);
     }
 
     //End Turn here!
