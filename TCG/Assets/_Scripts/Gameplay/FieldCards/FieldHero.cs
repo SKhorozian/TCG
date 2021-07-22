@@ -71,6 +71,10 @@ public class FieldHero : FieldCard, IDamageable, ITargetable
             icon.color = Color.red;
         }
     }
+
+    public override void OnRemove () {
+        
+    }
     
 
     public void UpdateHero () {

@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5900168b39cbc2546a4602ea08c8d6e5, type: 3}
   m_Name: CowboyPlayEffect
   m_EditorClassIdentifier: 
+  abilityName: Sharpshooter
   speed: 0
-  goesOnStack: 1
   targetTypes: 01000000
   description: Deal 100 damage to target unit.
   damage: 100

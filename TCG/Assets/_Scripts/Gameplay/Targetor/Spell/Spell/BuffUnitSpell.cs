@@ -9,13 +9,14 @@ public class BuffUnitSpell : Spell
     [SerializeField] int health;
     [SerializeField] int range;
     [SerializeField] int moveSpeed;
+    [SerializeField] StatusDuration duration;
 
     public override void DoEffect()
     {
-        StatsStatusEffect statusEffect = new StatsStatusEffect (StatusDuration.Permanent, strength, health, range, moveSpeed);
+        StatsStatusEffect statusEffect = new StatsStatusEffect (duration, strength, health, range, moveSpeed);
         ApplyFieldCardStatusEffect effect = new ApplyFieldCardStatusEffect (statusEffect, targets[0] as FieldCard);
 
-        player.MatchManage.AddEffectToStack (effect);
+        effect.DoEffect ();
     }
 
     public override bool TragetVaildity(int targetNumber, ITargetable target)

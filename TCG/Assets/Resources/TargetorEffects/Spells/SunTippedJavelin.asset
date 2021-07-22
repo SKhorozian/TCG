@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e63ff183a32941409f35f300f4a30f7, type: 3}
+  m_Name: SunTippedJavelin
+  m_EditorClassIdentifier: 
+  abilityName: Sun-Tipped Javelin
+  speed: 1
+  targetTypes: 01000000
+  description: Deal 100 damage to a target (+100 for each <b>Sun-Tipped Javelin</b>
+    in your <b>Junkyard</b>).
+  damageAmount: 100
+  friendlyFire: 1
+  _card: {fileID: 11400000, guid: 465775347a2d488418f8164f799cb765, type: 2}

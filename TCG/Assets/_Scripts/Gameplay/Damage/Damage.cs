@@ -10,7 +10,7 @@ public class Damage
         this.playerSource = playerSource;
     }
 
-    public int DamageAmount   {get {return damage;}}
+    public int DamageAmount   {get {return damage;} set {damage = value;}}
     public DamageSource Source  {get {return source;}}
     public Player PlayerSource  {get {return playerSource;}}
 }

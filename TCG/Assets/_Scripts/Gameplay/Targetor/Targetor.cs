@@ -4,6 +4,8 @@ using UnityEngine;
 
 public abstract class Targetor : ScriptableObject
 {
+    [SerializeField] string abilityName;
+
     [SerializeField] protected TargetorPriority speed;
 
     protected List<ITargetable> targets;
@@ -41,5 +43,6 @@ public abstract class Targetor : ScriptableObject
     public TargetType[] TargetTypes      {get {return targetTypes;}}
 
     public Player Player                 {get {return player;} set {player = value;}}
+    public string AbilityName            {get {return abilityName;}}
     public string Description            {get {return description;}}
 }

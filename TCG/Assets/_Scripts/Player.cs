@@ -88,7 +88,7 @@ public class Player : NetworkBehaviour
     public delegate void OnManaSpend (int amount);  //Delegate for when mana is spent.
     public event OnManaSpend manaSpendEvent;
 
-    public delegate void OnSpellResolve (Spell spell);  //Delegate for when a spell resolves.
+    public delegate void OnSpellResolve (SpellCardInstance spell);  //Delegate for when a spell resolves.
     public event OnSpellResolve spellResolveEvent;
 
     public delegate void OnActionResolve (ActionAbility action); //Delegate for when an action resolves.
@@ -165,34 +165,28 @@ public class Player : NetworkBehaviour
 
     //Draws a number of cards
     public void Draw (int number) {
-        if (NetworkManager.Singleton.IsServer) {
+    if (!IsServer) return;
 
-            //We Loop for the number of times we want to draw.
-            for (int i = 0; i < number; i++) {
-                if (playerDeck.CurrentDeckSize <= 0 ) {
-                    //No more cards in the deck
-                    //Do something
-                    break;
-                }
-
-                if (playerHand.Count >= 10) {
-                    //Player hand limited reached
-                    //Do something
-                    break;
-                }
-
-                playerHand.Add(playerDeck.Draw());
+        //We Loop for the number of times we want to draw.
+        for (int i = 0; i < number; i++) {
+            if (playerDeck.CurrentDeckSize <= 0 ) {
+                //No more cards in the deck
+                //Do something
+                break;
             }
 
-            Debug.Log("Player: " + OwnerClientId + " drew " + number + " cards.");
+            if (playerHand.Count >= 10) {
+                //Player hand limited reached
+                //Do something
+                break;
+            }
 
-            UpdatePlayerHand ();
-
-        } else {
-            //We call an RPC
-            DrawServerRpc(number);
-            Debug.Log("Player: " + OwnerClientId + " sent an RPC to draw " + number + " cards.");
+            playerHand.Add(playerDeck.Draw());
         }
+
+        Debug.Log("Player: " + OwnerClientId + " drew " + number + " cards.");
+
+        UpdatePlayerHand ();
     }
 
     public void AddToHand (CardInstance cardInstance) {
@@ -212,15 +206,23 @@ public class Player : NetworkBehaviour
         if (!IsServer) return;
 
         string[] cardLocations = new string [playerHand.Count];
+        CardInstanceInfo[] cardInfos = new CardInstanceInfo[playerHand.Count];
 
         for (int i = 0; i < playerHand.Count; i++) {
             cardLocations[i] = playerHand[i].CardLocation;
+
+            if (playerHand[i] is UnitCardInstance) {
+                UnitCardInstance unitCardInstance = playerHand[i] as UnitCardInstance;
+
+                cardInfos[i] = new CardInstanceInfo (playerHand[i].CostChange, unitCardInstance.StrengthBonus, unitCardInstance.HealthBonus, unitCardInstance.RangeBonus, unitCardInstance.SpeedBonus, 0);
+            }
         }
 
-        UpdatePlayerHandClientRPC (cardLocations);
+        UpdatePlayerHandClientRPC (cardLocations, cardInfos);
     }
 
     public CardInstance DiscardCard (int n) {
+        if (!IsServer) return null;
         if (playerHand.Count > n) {
             CardInstance card = playerHand[n];
             playerHand.RemoveAt (n);
@@ -233,13 +235,14 @@ public class Player : NetworkBehaviour
     }
 
     public void DiscardCard (CardInstance card) {
+        if (!IsServer) return;
         junkyard.Add (card);
 
         discardEvent?.Invoke (card);
     }
 
     [ClientRpc]
-    void UpdatePlayerHandClientRPC (string[] cardLocations) {
+    void UpdatePlayerHandClientRPC (string[] cardLocations, CardInstanceInfo[] cardInfos) {
         if (!IsOwner) return;
 
         CardInstance[] instances = new CardInstance [cardLocations.Length];
@@ -249,9 +252,9 @@ public class Player : NetworkBehaviour
             Card c = Resources.Load<Card> (cardLocations[i]);
 
             switch (c.Type) {
-                case CardType.Unit:
-                    instances[i] = new UnitCardInstance (Resources.Load<Card> (cardLocations[i]));
-                    break;
+                case CardType.Unit: {
+                    instances[i] = new UnitCardInstance (Resources.Load<Card> (cardLocations[i]), cardInfos[i]);
+                } break;
                 case CardType.Structure:
                     instances[i] = new StructureCardInstance (Resources.Load<Card> (cardLocations[i]));
                     break;
@@ -264,6 +267,15 @@ public class Player : NetworkBehaviour
         }
 
         playerController.UpdateCardDisplays (instances);
+    }
+
+    //For when a spell is successfully cast.
+    public void SpellResolved (SpellCardInstance spellCard) {
+        if (!IsServer) return;
+
+        junkyard.Add (spellCard);
+
+        spellResolveEvent?.Invoke (spellCard);
     }
 
     [ServerRpc]
@@ -334,6 +346,8 @@ public class Player : NetworkBehaviour
             structure.TurnEnd ();
         }
 
+        playerHero.TurnStart ();
+
     }
 
     public void StartTurn (int turnNumber) {
@@ -341,7 +355,7 @@ public class Player : NetworkBehaviour
 
         Draw (1);
 
-        RampManaPermanent (1, true);
+        RampMana (1, true);
         currentMana.Value = maxMana.Value;
 
         foreach (FieldUnit unit in controledUnits) {
@@ -351,6 +365,8 @@ public class Player : NetworkBehaviour
         foreach (FieldStructure structure in controledStructures) {
             structure.TurnStart ();
         }
+
+        playerHero.TurnStart ();
 
         matchManager.CallEffects ();
 
@@ -381,6 +397,11 @@ public class Player : NetworkBehaviour
     }
 
     public Heal HealTarget (IDamageable target, Heal heal, CardInstance source) {
+        target.TakeHeal (heal);
+        return heal;
+    }
+
+    public Heal HealTarget (IDamageable target, Heal heal) {
         target.TakeHeal (heal);
         return heal;
     }
@@ -482,6 +503,27 @@ public class Player : NetworkBehaviour
     #endregion
 
 
+    #region Special Keywords
+
+    public void Crystalize (int rampAmount) {
+        if (!IsServer) return;
+        RampMana (rampAmount, false);
+    }
+
+    public void Sacrifice (FieldUnit unit) {
+        if (!IsServer) return;
+        UnitToDie (unit);
+        sacrificeEvent?.Invoke (unit);
+    }
+
+    public void Sacrifice (FieldStructure structure) {
+        if (!IsServer) return;
+        StructureToDemolish (structure);
+        sacrificeEvent?.Invoke (structure);
+    }
+
+    #endregion
+
     //Player Stats
 
     public void SpendMana (int cost) {
@@ -529,11 +571,11 @@ public class Player : NetworkBehaviour
         if (!IsServer) return;
         currentMana.Value += refillAmount;
 
-        currentMana.Value = Mathf.Clamp (currentMana.Value, 0, maxMana.Value);
+        currentMana.Value = Mathf.Clamp (currentMana.Value, 0, 10);
         UpdatePlayerStatsClientRPC ();
     }
 
-    public void RampManaPermanent (int rampAmount, bool fillsMana) {
+    public void RampMana (int rampAmount, bool fillsMana) {
         if (!IsServer) return;
         maxMana.Value += rampAmount;
         maxMana.Value = Mathf.Clamp (maxMana.Value, 0, 10);
@@ -576,5 +618,7 @@ public class Player : NetworkBehaviour
     public List<FieldStructure> FieldStructures     {get {return controledStructures;}}
     public FieldHero FieldHero                      {get {return playerHero;}}
     
-
+    public List<CardInstance> Graveyard             {get {return graveyard;}}
+    public List<CardInstance> Junkyard              {get {return junkyard;}}
+    public List<CardInstance> Banishyard            {get {return banishyard;}}
 }

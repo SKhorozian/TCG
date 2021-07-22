@@ -14,9 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cardName: Vessel of Avarice
   cost: 1
-  description: Sacrifice 2 to draw 2.
-  color: 0
+  description: Sacrifice a unit to draw 2.
+  color: 2
   cardArt: {fileID: 0}
-  cardType: 0
+  cardType: 1
   extraCost: {fileID: 0}
   spell: {fileID: 0}

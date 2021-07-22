@@ -11,6 +11,11 @@ public class FieldStructure : FieldCard
 {
     StructureCardInstance structureCard;
 
+    public NetworkVariableBool isTapped = new NetworkVariableBool (new NetworkVariableSettings{
+        ReadPermission = NetworkVariablePermission.Everyone,
+        WritePermission = NetworkVariablePermission.ServerOnly
+    });
+
     public void SummonStructure (CardInstance card, Player player, HexagonCell cell) {
         if (!IsServer) return;
         if (card.Type != CardType.Structure) return;
@@ -28,6 +33,8 @@ public class FieldStructure : FieldCard
 
         this.cell = cell;
 
+        isTapped.Value = false;
+
         SummonStructureClientRPC (card.CardLocation, player.NetworkObjectId, cell.Position);
 
         //Set Card Effects
@@ -35,6 +42,21 @@ public class FieldStructure : FieldCard
         for (int i = 0; i < structureCard.StructureCard.CardEffects.Length; i++) {
             effectTriggers[i] = Instantiate<CardEffectTrigger> (structureCard.StructureCard.CardEffects[i]);
             effectTriggers[i].FieldCard = this;
+        }
+
+        effectListeners = new CardEffectListener [structureCard.StructureCard.CardEffectListeners.Length];
+        for (int i = 0; i < structureCard.StructureCard.CardEffectListeners.Length; i++) {
+            effectListeners[i] = Instantiate<CardEffectListener> (structureCard.StructureCard.CardEffectListeners[i]);
+            effectListeners[i].FieldCard = this;
+            effectListeners[i].RegisterListener (player);
+        }
+
+        //Set Actions
+        actions = new ActionAbility [structureCard.StructureCard.Actions.Count];
+        for (int i = 0; i < structureCard.StructureCard.Actions.Count; i++) {
+            actions[i] = Instantiate<ActionAbility> (structureCard.StructureCard.Actions[i]);
+            actions[i].name = structureCard.StructureCard.Actions[i].name;
+            actions[i].FieldCard = this;
         }
 
         //Call Enterance Effects:
@@ -72,12 +94,14 @@ public class FieldStructure : FieldCard
 
     public void UpdateStructure () {
         transform.position = position.Value;
+        tallyText.text = tallies.Value.ToString();
 
         if (IsServer) UpdateStructureClientRPC ();
     }
     [ClientRpc]
     void UpdateStructureClientRPC () {
         transform.position = position.Value;
+        tallyText.text = tallies.Value.ToString();
     }
 
     public override void TurnStart()
@@ -98,6 +122,19 @@ public class FieldStructure : FieldCard
                 player.MatchManage.AddEffectToStack (effect.GetCardEffect());
             }
         }
+    }
+
+    public override void OnRemove()
+    {
+        
+    }
+
+    public void Tap () {
+        isTapped.Value = true;
+    }
+
+    public void Untap () {
+        isTapped.Value = false;
     }
 
     void Update () {

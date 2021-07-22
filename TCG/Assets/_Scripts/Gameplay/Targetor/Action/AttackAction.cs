@@ -3,7 +3,7 @@ public class AttackAction : ActionAbility
     public AttackAction () {
         targetTypes = new TargetType[1];
         targetTypes[0] = TargetType.FieldCard;
-        speed = TargetorPriority.Runic;
+        speed = TargetorPriority.Ritual;
     }
 
     public override void DoEffect()

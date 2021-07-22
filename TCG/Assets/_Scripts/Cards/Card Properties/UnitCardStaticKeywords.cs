@@ -13,4 +13,5 @@ public enum UnitCardStaticKeywords
     A = (1 << 7),
     Undying = (1 << 8),
     Scavenger = (1 << 9),
+    DoubleAction = (1 << 10),
 }

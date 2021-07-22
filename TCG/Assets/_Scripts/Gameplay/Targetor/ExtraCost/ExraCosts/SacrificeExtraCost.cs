@@ -9,10 +9,10 @@ public class SacrificeExtraCost : ExtraCost
     {
         if (targets[0] is FieldUnit) {
             FieldUnit fieldUnit = targets[0] as FieldUnit;
-            fieldUnit.Player.UnitToDie (fieldUnit);
+            fieldUnit.Player.Sacrifice (fieldUnit);
         } else if (targets[0] is FieldStructure) {
             FieldStructure fieldStructure = targets[0] as FieldStructure;
-            fieldStructure.Player.StructureToDemolish (fieldStructure);
+            fieldStructure.Player.Sacrifice (fieldStructure);
         }
     }
 

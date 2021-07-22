@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9926997581354e942a625d41c8f1f0bb, type: 3}
   m_Name: Insight
   m_EditorClassIdentifier: 
+  abilityName: Insight
   speed: 1
-  goesOnStack: 0
   targetTypes: 
   description: Draw 2.
   drawAmount: 2

@@ -31,7 +31,6 @@ public class CardDisplay : MonoBehaviour
 
     [SerializeField] TextMeshProUGUI range;
     [SerializeField] TextMeshProUGUI speed;
-    [SerializeField] TextMeshProUGUI energy;
 
 
     // Start is called before the first frame update
@@ -71,7 +70,6 @@ public class CardDisplay : MonoBehaviour
                         health.text = unitCard.Health.ToString();   
                         range.text = unitCard.AttackRange.ToString();
                         speed.text = unitCard.MovementSpeed.ToString();
-                        energy.text = unitCard.ActionPoints.ToString();
                     }
                     break;
                 case CardType.Structure:

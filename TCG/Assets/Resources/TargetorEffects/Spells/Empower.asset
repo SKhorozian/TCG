@@ -12,11 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fd6fdc7021d0f2c4e8dda63d6373f035, type: 3}
   m_Name: Empower
   m_EditorClassIdentifier: 
+  abilityName: Empower
   speed: 0
   targetTypes: 01000000
   description: 'Give target allied unit +200 <sprite name="str"> +200 <sprite name="hp">. '
-  canTargetEnemy: 1
+  canTargetEnemy: 0
   strength: 200
   health: 200
   range: 0
   moveSpeed: 0
+  duration: 2

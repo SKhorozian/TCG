@@ -21,8 +21,7 @@ MonoBehaviour:
   extraCost: {fileID: 0}
   strength: 150
   health: 150
-  actionPoints: 2
-  movementSpeed: 1
+  movementSpeed: 2
   attackRange: 1
   cardEffects:
   - {fileID: 11400000, guid: 64a9b372fc7ad954b9d470874e07f75d, type: 2}

@@ -6,7 +6,7 @@ using MLAPI.Serialization;
 [System.Serializable]
 public abstract class CardInstance : ITargetable
 {
-    protected Card card;
+    [SerializeField] protected Card card;
     
     //Card Stats
     protected int costChange;
@@ -15,7 +15,7 @@ public abstract class CardInstance : ITargetable
     public void ChangeCard (Card newCard) {
         card = newCard;
     }
-
+    
     //Keywords 
 
     //Status Stuff
@@ -28,14 +28,8 @@ public abstract class CardInstance : ITargetable
 
     public void RemoveStatusEffect (StatusEffect effect) {
         if (effects.Contains (effect)) {
-            effects.Remove (effect);
             effect.RemoveStatus (this);
         }
-    }
-
-    //Effect Card:
-    public void AffectCost (int change) {
-        costChange += change;
     }
 
     public Card Card            {get {return card;}}
@@ -48,4 +42,5 @@ public abstract class CardInstance : ITargetable
     public CardColor Color      {get {return card.Color;}}
     public CardType Type        {get {return card.Type;}}
     public string CardLocation  {get {return "Cards/" + Color.ToString() + "/" + card.name;}}
+    public List<StatusEffect> StatusEffects     {get {return effects;}}
 }

@@ -255,8 +255,7 @@ public class MatchManager : NetworkBehaviour
                     spell.SpellCard = card as SpellCardInstance;
                     spell.Player = player;
             
-                    if (spell.Speed == TargetorPriority.Runic && !player.Equals(playerTurn)) return false;
-                    if (spell.Speed == TargetorPriority.Chant && targetorStack.Count == 0) return false;
+                    if (spell.Speed == TargetorPriority.Ritual && targetorStack.Count > 0) return false;
 
                     List<ITargetable> newTargets = Targeting.ConvertTargets (spell.TargetTypes, targets, player);
 
@@ -386,8 +385,17 @@ public class MatchManager : NetworkBehaviour
         }
     }
 
-    public void UnitAct (FieldUnit actor, ITargetable[] targets, ActionAbility action, ulong netid) {
-        //TODO
+    public void FieldCardAct (FieldCard actor, List<ITargetable> extraCostTargets, List<ITargetable> targets, ActionAbility action) {
+        if (!IsServer) return;
+        
+        if (!actor.Player.Equals(playerPriority)) return;
+        if (action.Speed == TargetorPriority.Ritual && targetorStack.Count > 0) return;
+        
+        if (action.TragetVaildity (targets)) {
+            action.SetTargets (targets);
+            AddTargetorToStack (action);
+            hasActed = true;
+        } else {Debug.Log("Action Ability failed targeting");};
     }
 
     public bool CheckCanAttack (FieldUnit attacker, FieldUnit target) { //Returns true if this card fits all the conditions to attack a target
@@ -402,6 +410,7 @@ public class MatchManager : NetworkBehaviour
 
     public void ButtonPress (Player player) {
         if (!IsServer) return;
+        if (!player.Equals (playerPriority)) return;
 
         if (targetorStack.Count == 0) PassTurn (player); //If there is nothing on the stack, just pass the turn.
         else { //Else...
@@ -498,6 +507,8 @@ public class MatchManager : NetworkBehaviour
             if (targetor.TragetVaildity (targetor.Targets)) {
                 targetor.DoEffect ();
                 Debug.Log ("Targetor: " + targetor.name);
+
+                if (targetor is Spell) targetor.Player.SpellResolved ((targetor as Spell).SpellCard);
             }
 
             CallEffects ();

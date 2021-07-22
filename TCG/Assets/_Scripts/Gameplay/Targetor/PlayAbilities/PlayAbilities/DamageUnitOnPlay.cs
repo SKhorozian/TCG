@@ -13,11 +13,7 @@ public class DamageUnitOnPlay : PlayAbility
     {
         FieldUnit target = targets[0] as FieldUnit;
 
-        player.MatchManage.AddEffectToStack (new DamageEffect (player, damage, DamageSource.Spell, Condition));
-    }
-
-    bool Condition (IDamageable damageable) {
-        return damageable.Equals (targets[0]);
+        player.DamageTarget (target, new Damage (damage, DamageSource.Spell, player));
     }
 
     public override bool TragetVaildity(int targetNumber, ITargetable target)

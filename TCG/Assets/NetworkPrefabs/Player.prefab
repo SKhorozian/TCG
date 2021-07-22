@@ -70,17 +70,19 @@ MonoBehaviour:
       copies: 2
     - card: {fileID: 11400000, guid: 606da591aba12be4fab28b6781f4d87f, type: 2}
       copies: 3
-    - card: {fileID: 11400000, guid: 1e3e9d2e13162794d9eb56fa57baad12, type: 2}
-      copies: 3
     - card: {fileID: 11400000, guid: c1da1338cbe2cc44abb5f40975e82994, type: 2}
       copies: 3
     - card: {fileID: 11400000, guid: 323fb40fb6650ba4da2b2b155d8888f5, type: 2}
       copies: 3
     - card: {fileID: 11400000, guid: 84257c174fdc8874eb27432d629418b1, type: 2}
       copies: 3
-    - card: {fileID: 11400000, guid: 6ac4f5d8dba6b2a498ce89a6d82aea94, type: 2}
+    - card: {fileID: 11400000, guid: 2dd25e381ef3a7142873031536fcd193, type: 2}
       copies: 3
-    - card: {fileID: 11400000, guid: 9e2bd001df395d7478a6356498af2f3a, type: 2}
+    - card: {fileID: 11400000, guid: 4a5d8e55584d2264dbda6a55f2a5ed83, type: 2}
+      copies: 3
+    - card: {fileID: 11400000, guid: 465775347a2d488418f8164f799cb765, type: 2}
+      copies: 3
+    - card: {fileID: 11400000, guid: ebb2580d841c1b648a9ebead7f126ae4, type: 2}
       copies: 3
   playerHero: {fileID: 0}
   controledUnits: []

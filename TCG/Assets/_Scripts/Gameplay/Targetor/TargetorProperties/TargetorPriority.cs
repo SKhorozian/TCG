@@ -4,7 +4,6 @@ using UnityEngine;
 
 public enum TargetorPriority
 {
-    Runic,
-    Arcane,
-    Chant
+    Ritual,
+    Arcane
 }

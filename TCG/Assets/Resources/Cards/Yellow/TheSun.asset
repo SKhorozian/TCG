@@ -14,13 +14,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cardName: The Sun
   cost: 3
-  description: '<b>Aura:</b> Your spells deal 10% (+8% per Tally) increased damage.
+  description: 'Your spells deal 10% (+8% per <b>Tally</b>) increased damage.
 
-    <b>Action
-    -</b> 2 mana<b>:</b> Tally 1, upto 5.'
+    <sprite
+    name="ritual"> <b>Action(</b>2 mana<b>): Tally</b>  1, up to 5.'
   color: 4
-  cardArt: {fileID: 0}
+  cardArt: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
   cardType: 3
+  extraCost: {fileID: 0}
   cardEffects: []
+  cardEffectListeners:
+  - {fileID: 11400000, guid: 9af168c2ea045a34fa83166432977d48, type: 2}
   onPlayEffect: {fileID: 0}
+  actions:
+  - {fileID: 11400000, guid: 153dbb312f2f15e44832aaa53a81304f, type: 2}
   staticKeywords: 0

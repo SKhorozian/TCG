@@ -13,7 +13,7 @@ public class MovementAction : ActionAbility
 
         mover.Player.MoveUnit (mover, hexCell);
 
-        mover.ConsumeActionPoint (1);
+        mover.hasMoved.Value = true;
 
         mover.Player.MatchManage.eventTracker.AddEvent (new UnitMovementEvent (mover.Player, mover.Player.MatchManage.TurnNumber, mover.UnitsCard, hexCell));
     }
@@ -29,7 +29,7 @@ public class MovementAction : ActionAbility
                 FieldUnit fieldUnit = fieldCard as FieldUnit;
 
                 if (HexagonMetrics.GetDistantce (fieldUnit.Cell.Position, (target as HexagonCell).Position) > fieldUnit.movementSpeed.Value) return false; //If it is outside the Unit's move range
-                if (fieldUnit.currActionPoints.Value <= 0) return false;    //If the unit cannot act.
+                if (fieldUnit.hasMoved.Value) return false;    //If the unit has already moved.
                 return true;
             }
             default:

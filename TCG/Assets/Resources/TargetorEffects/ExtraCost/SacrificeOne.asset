@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: de8490ccc0fcd924dbdfac702c6aafbe, type: 3}
   m_Name: SacrificeOne
   m_EditorClassIdentifier: 
+  abilityName: Sacrifice
   speed: 0
-  goesOnStack: 0
   targetTypes: 01000000
   description: Sacrifice a unit.
   extraManaCost: 0

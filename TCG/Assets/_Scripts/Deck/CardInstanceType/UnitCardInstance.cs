@@ -35,11 +35,34 @@ public class UnitCardInstance : CardInstance
         this.costChange = 0;
     }
 
+    public UnitCardInstance (Card card, CardInstanceInfo cardInfo) {
+        this.card = card;
+
+        if (card is UnitCard) {
+            unitCard = card as UnitCard;
+        } else {
+            throw new System.Exception ("CardType doesn't match the card's subclass");
+        }
+
+        this.strengthBonus = cardInfo.bonusStrength;
+        this.healthBonus = cardInfo.bonusHealth;
+        this.speedBonus = cardInfo.bonusSpeed;
+        this.rangeBonus = cardInfo.bonusRange;
+        this.costChange = cardInfo.costChange;
+    }
+
+    public void SetCardInfo (CardInstanceInfo cardInfo) {
+        this.strengthBonus = cardInfo.bonusStrength;
+        this.healthBonus = cardInfo.bonusHealth;
+        this.speedBonus = cardInfo.bonusSpeed;
+        this.rangeBonus = cardInfo.bonusRange;
+        this.costChange = cardInfo.costChange;
+    }
+
     public UnitCard UnitCard    {get {return unitCard;}}
 
     public int Strength         {get {return UnitCard.Strength + strengthBonus;}}
     public int Health           {get {return UnitCard.Health + healthBonus;}}
-    public int ActionPoints     {get {return UnitCard.ActionPoints;}}
     public int MovementSpeed    {get {return UnitCard.MovementSpeed + speedBonus;}}
     public int AttackRange      {get {return UnitCard.AttackRange + rangeBonus;}}
 

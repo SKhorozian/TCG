@@ -23,7 +23,7 @@ public class TargetorStackIcon : MonoBehaviour
         else
             icon.color = Color.red;
 
-        nameText.text = targetor.name;
+        nameText.text = targetor.AbilityName;
         descText.text = targetor.Description;
 
 

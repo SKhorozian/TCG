@@ -69,7 +69,7 @@ public class PlayerController : MonoBehaviour
             if (Input.GetButtonDown ("Fire1")) {  
                 if ((focusCard.cardInstance.Type == CardType.Unit || focusCard.cardInstance.Type == CardType.Structure) && placement.Equals (Vector2.zero)) { //If it is a unit or structure, we need to ask for its placement.
                     TargetPlacement ();
-                } else if (extraCost) {
+                } else if (extraCost && extraCost.TargetTypes.Length != selectedExtraCostTargets) {
                     ExtraCostTargeting ();
                 } else if (targetor) {
                     TargetorTargeting ();
@@ -80,13 +80,15 @@ public class PlayerController : MonoBehaviour
 
         } else if (focusFieldCard) {
 
+            PerformAction ();
+
             if (Input.GetButtonDown ("Fire1")) {
 
-                PerformAction ();
 
-                if (targetor) {
+                if (extraCost && extraCost.TargetTypes.Length != selectedExtraCostTargets) {
+                    ExtraCostTargeting ();
+                } else if (targetor) {
                     TargetorTargeting ();
-                    PerformAction ();
                 }
 
             } else if (Input.GetButtonDown ("Fire2")) {
@@ -103,7 +105,7 @@ public class PlayerController : MonoBehaviour
 
                 if (Physics.Raycast (ray, out hit, Mathf.Infinity, layerMask)) {
                     if (hit.transform.GetComponent<NetworkObject>().IsOwner ) {
-                        FocusFieldCard (hit.transform.gameObject.GetComponent<FieldUnit> ());
+                        FocusFieldCard (hit.transform.gameObject.GetComponent<FieldCard> ());
                     }
                 }
             }
@@ -145,16 +147,27 @@ public class PlayerController : MonoBehaviour
 
     public void SetTargetorToAction (int n) {
         if (!focusFieldCard) return;
-        if (n > focusFieldCard.Actions.Length) return;
 
         ResetTargets ();
 
-        ActionAbility action = Instantiate <ActionAbility> (focusFieldCard.Actions[n]);
+        ActionAbility action; 
+
+        if (focusFieldCard is FieldUnit) {action = Instantiate <ActionAbility> ((focusFieldCard as FieldUnit).UnitsCard.UnitCard.Actions[n]);} 
+        else if (focusFieldCard is FieldStructure) {action = Instantiate <ActionAbility> ((focusFieldCard as FieldStructure).StructursCard.StructureCard.Actions[n]);} 
+        else return;
+
         action.FieldCard = focusFieldCard;
         action.Player = player;
 
         targetor = action;
         targets = new Vector2[targetor.TargetTypes.Length];
+
+        if (action.ExtraCost) {
+            ExtraCost extraCost = Instantiate <ExtraCost> (action.ExtraCost);
+
+            this.extraCost = extraCost;
+            extraCostTargets = new Vector2[extraCost.TargetTypes.Length];
+        }
 
         actionN = n;
     }
@@ -165,7 +178,7 @@ public class PlayerController : MonoBehaviour
 
         if (targetor)
             if (targetor.TargetTypes.Length != selectedTargets) return;
-
+        //
         if (actionN == 3) {
             if (focusFieldCard is FieldUnit)
                 (focusFieldCard as FieldUnit).Attack (targets, player.OwnerClientId);
@@ -173,7 +186,7 @@ public class PlayerController : MonoBehaviour
             if (focusFieldCard is FieldUnit)
                 (focusFieldCard as FieldUnit).MoveUnit (targets, player.OwnerClientId);
         } else {
-            focusFieldCard.PerformAction (actionN, targets);
+            focusFieldCard.PerformAction (actionN, extraCostTargets, targets);
         }
 
         DefocusFieldCard ();
@@ -312,6 +325,8 @@ public class PlayerController : MonoBehaviour
 
     void PlayCard () {
         if (focusCard == null) return;
+        if (!player.MatchManage.LocalPlayerPriority) return;
+        if (player.CurrentMana < focusCard.cardInstance.Cost) return;
 
         if ((focusCard.cardInstance.Type == CardType.Unit || focusCard.cardInstance.Type == CardType.Structure) && placement.Equals (Vector2.zero)) return;
 
@@ -392,8 +407,8 @@ public class PlayerController : MonoBehaviour
         ResetTargets ();
     }
 
-    public void FocusFieldCard (FieldCard unit) {
-        focusFieldCard = unit;
+    public void FocusFieldCard (FieldCard fieldcard) {
+        focusFieldCard = fieldcard;
 
         ResetTargets ();
 

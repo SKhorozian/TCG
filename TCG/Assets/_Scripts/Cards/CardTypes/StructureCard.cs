@@ -8,6 +8,7 @@ public class StructureCard : Card
     [Space (20)]
     //Card Effects
     [SerializeField] CardEffectTrigger[] cardEffects;
+    [SerializeField] CardEffectListener[] cardEffectListeners;
 
     [Space (20)]
     //Play Effect
@@ -22,6 +23,7 @@ public class StructureCard : Card
     [SerializeField] StructureCardStaticKeywords staticKeywords;
 
     public CardEffectTrigger[] CardEffects {get {return cardEffects;}}
+    public CardEffectListener[] CardEffectListeners {get {return cardEffectListeners;}}
     public PlayAbility OnPlayEffect  {get {return onPlayEffect;}}
     public List<ActionAbility> Actions  {get {return actions;}}
 

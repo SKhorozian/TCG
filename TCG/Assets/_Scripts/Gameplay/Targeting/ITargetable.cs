@@ -4,7 +4,7 @@ using UnityEngine;
 
 public interface ITargetable
 {
-
+    
 }
 
 public enum TargetType {

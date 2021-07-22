@@ -9,14 +9,14 @@ public class UnitCard : Card
     [Space (20)]
     [SerializeField] int strength;
     [SerializeField] int health;
-    [SerializeField] int actionPoints;
     [SerializeField] int movementSpeed;
     [SerializeField] int attackRange;
 
     [Space (20)]
     //Card Effects
     [SerializeField] CardEffectTrigger[] cardEffects;
-
+    [SerializeField] CardEffectListener[] cardEffectListeners;
+ 
     [Space (20)]
     //Keywords
     [SerializeField] UnitCardStaticKeywords staticKeywords;
@@ -27,16 +27,16 @@ public class UnitCard : Card
 
     [Space (20)]
     //Actions
-    [SerializeField] List<Action> actions;
+    [SerializeField] List<ActionAbility> actions;
     
 
     public int Strength                             {get {return strength;}}
     public int Health                               {get {return health;}}
     public int MovementSpeed                        {get {return movementSpeed;}}
-    public int ActionPoints                         {get {return actionPoints;}}
     public int AttackRange                          {get {return attackRange;}}
     public UnitCardStaticKeywords StaticKeywords    {get {return staticKeywords;}}
     public CardEffectTrigger[] CardEffects          {get {return cardEffects;}}
-    public PlayAbility OnPlayEffect                      {get {return onPlayEffect;}}
-    public List<Action> Actions                     {get {return actions;}}
+    public CardEffectListener[] CardEffectListeners {get {return cardEffectListeners;}}
+    public PlayAbility OnPlayEffect                 {get {return onPlayEffect;}}
+    public List<ActionAbility> Actions                     {get {return actions;}}
 }

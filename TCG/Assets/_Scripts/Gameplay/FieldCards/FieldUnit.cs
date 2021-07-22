@@ -37,6 +37,11 @@ public class FieldUnit : FieldCard, IDamageable
         WritePermission = NetworkVariablePermission.ServerOnly
     });
 
+    public NetworkVariableBool hasMoved = new NetworkVariableBool(new NetworkVariableSettings{
+        ReadPermission = NetworkVariablePermission.Everyone,
+        WritePermission = NetworkVariablePermission.ServerOnly
+    });
+
     [SerializeField] TextMeshPro strengthText;
     [SerializeField] TextMeshPro healthText;
     [SerializeField] TextMeshPro actionPointText;
@@ -62,21 +67,37 @@ public class FieldUnit : FieldCard, IDamageable
 
         //Initialize stats
         strength.Value = unitCard.Strength;
-
         health.Value = unitCard.Health;
 
-        currActionPoints.Value = unitCard.ActionPoints;
+        Energize ();
 
         movementSpeed.Value = unitCard.MovementSpeed;
         attackRange.Value = unitCard.AttackRange;
 
-        SummonUnitClientRPC (card.CardLocation, player.NetworkObjectId, cell.Position);
+        CardInstanceInfo cardInfo = new CardInstanceInfo (card.CostChange, unitCard.StrengthBonus, unitCard.HealthBonus, unitCard.RangeBonus, unitCard.SpeedBonus, 0);
+
+        SummonUnitClientRPC (card.CardLocation, cardInfo, player.NetworkObjectId, cell.Position);
 
         //Set Card Effects
         effectTriggers = new CardEffectTrigger [unitCard.UnitCard.CardEffects.Length];
         for (int i = 0; i < unitCard.UnitCard.CardEffects.Length; i++) {
             effectTriggers[i] = Instantiate<CardEffectTrigger> (unitCard.UnitCard.CardEffects[i]);
             effectTriggers[i].FieldCard = this;
+        }
+
+        effectListeners = new CardEffectListener [unitCard.UnitCard.CardEffectListeners.Length];
+        for (int i = 0; i < unitCard.UnitCard.CardEffectListeners.Length; i++) {
+            effectListeners[i] = Instantiate<CardEffectListener> (unitCard.UnitCard.CardEffectListeners[i]);
+            effectListeners[i].FieldCard = this;
+            effectListeners[i].RegisterListener (player);
+        }
+
+        //Set Actions
+        actions = new ActionAbility [unitCard.UnitCard.Actions.Count];
+        for (int i = 0; i < unitCard.UnitCard.Actions.Count; i++) {
+            actions[i] = Instantiate<ActionAbility> (unitCard.UnitCard.Actions[i]);
+            actions[i].name = unitCard.UnitCard.Actions[i].name;
+            actions[i].FieldCard = this;
         }
 
         //Call Enterance Effects:
@@ -88,9 +109,9 @@ public class FieldUnit : FieldCard, IDamageable
     }
 
     [ClientRpc] 
-    void SummonUnitClientRPC (string cardLocation, ulong playerObjectId, Vector2 cellPos) {
+    void SummonUnitClientRPC (string cardLocation, CardInstanceInfo cardInfo, ulong playerObjectId, Vector2 cellPos) {
         if (!IsServer) {
-            unitCard = new UnitCardInstance (Resources.Load<Card> (cardLocation));
+            unitCard = new UnitCardInstance (Resources.Load<Card> (cardLocation), cardInfo);
             card = unitCard;
 
             if (NetworkSpawnManager.SpawnedObjects.TryGetValue (playerObjectId, out var playerObject))
@@ -156,16 +177,20 @@ public class FieldUnit : FieldCard, IDamageable
         transform.position = position.Value;
         strengthText.text = strength.Value.ToString();
         healthText.text = health.Value.ToString();
+        tallyText.text = tallies.Value.ToString ();
 
-        if (IsServer) UpdateUnitClientRPC (cell.Position);
+        if (IsServer) UpdateUnitClientRPC (cell.Position, card.CostChange, unitCard.StrengthBonus, unitCard.HealthBonus, unitCard.RangeBonus, unitCard.SpeedBonus, 0);
     }
     [ClientRpc]
-    void UpdateUnitClientRPC (Vector2 cellPos) {
+    void UpdateUnitClientRPC (Vector2 cellPos, int costChange, int bonusStrength, int bonusHealth, int bonusRange, int bonusSpeed, UnitCardStaticKeywords unitStatics) {
         if (!IsClient) return;
         transform.position = position.Value;
         strengthText.text = strength.Value.ToString();
         healthText.text = health.Value.ToString();
         actionPointText.text = currActionPoints.Value.ToString();
+        tallyText.text = tallies.Value.ToString ();
+
+        unitCard.SetCardInfo (new CardInstanceInfo (costChange, bonusStrength, bonusHealth, bonusRange, bonusSpeed, unitStatics));
 
         if (player.MatchManage.FieldGrid.Cells.TryGetValue (cellPos, out var hexCell))
             cell = hexCell;
@@ -175,15 +200,28 @@ public class FieldUnit : FieldCard, IDamageable
         if (!IsServer) return;
         currActionPoints.Value -= amount;
         
-        currActionPoints.Value = Mathf.Clamp (currActionPoints.Value, 0, unitCard.ActionPoints);
+        currActionPoints.Value = Mathf.Clamp (currActionPoints.Value, 0, 9);
+    }
+
+    public void Energize () {
+        currActionPoints.Value = unitCard.UnitCard.StaticKeywords.HasFlag (UnitCardStaticKeywords.DoubleAction) ? 2: 1;
+        hasMoved.Value = false;
     }
 
     public override void TurnStart()
     {
         if (!IsServer) return;
 
-        currActionPoints.Value = unitCard.ActionPoints; //Untap
+        Energize ();
     
+        foreach (StatusEffect status in unitCard.StatusEffects) {
+            if (status.Duration == StatusDuration.TurnStart) {
+                unitCard.RemoveStatusEffect (status);
+                status.RemoveStatus (this);
+            }
+        }
+        unitCard.StatusEffects.RemoveAll (status => status.Duration == StatusDuration.TurnStart);
+
         //Call Enterance Effects:
         foreach (CardEffectTrigger effect in effectTriggers) {
             if (effect.Trigger.HasFlag (EffectTrigger.TurnStart)) {
@@ -195,6 +233,14 @@ public class FieldUnit : FieldCard, IDamageable
 
     public override void TurnEnd () {
         if (!IsServer) return;
+
+        foreach (StatusEffect status in unitCard.StatusEffects) {
+            if (status.Duration == StatusDuration.TurnEnd) {
+                unitCard.RemoveStatusEffect (status);
+                status.RemoveStatus (this);
+            }
+        }
+        unitCard.StatusEffects.RemoveAll (status => status.Duration == StatusDuration.TurnEnd);
 
         //Call Enterance Effects:
         foreach (CardEffectTrigger effect in effectTriggers) {
@@ -245,9 +291,28 @@ public class FieldUnit : FieldCard, IDamageable
             }
         }
 
-        UpdateUnitClientRPC (cell.Position);
+        UpdateUnitClientRPC (cell.Position, card.CostChange, unitCard.StrengthBonus, unitCard.HealthBonus, unitCard.RangeBonus, unitCard.SpeedBonus, 0);
 
         return damageInfo;
+    }
+
+    public override void OnRemove () {
+        if (!IsServer) return;
+
+        toBeRemoved.Value = true;
+
+        for (int i = 0; i < effectListeners.Length; i++) { //Remove all listener effects
+            effectListeners[i].RemoveListener (player);
+        }
+
+        //Remove all non-permanent Effects
+        foreach (StatusEffect status in unitCard.StatusEffects) {
+            if (status.Duration != StatusDuration.Permanent) {
+                unitCard.RemoveStatusEffect (status);
+            }
+        }
+        unitCard.StatusEffects.RemoveAll (status => status.Duration == StatusDuration.TurnEnd || status.Duration == StatusDuration.TurnStart);
+
     }
 
     public Heal TakeHeal(Heal healInfo)
@@ -257,7 +322,7 @@ public class FieldUnit : FieldCard, IDamageable
         health.Value += healInfo.HealAmount;
         health.Value = Mathf.Clamp (health.Value, 0, unitCard.Health);
 
-        UpdateUnitClientRPC (cell.Position);
+        UpdateUnitClientRPC (cell.Position, card.CostChange, unitCard.StrengthBonus, unitCard.HealthBonus, unitCard.RangeBonus, unitCard.SpeedBonus, 0);
 
         return healInfo;
     }
