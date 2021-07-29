@@ -15,6 +15,11 @@ public abstract class FieldCard : NetworkBehaviour, ITargetable
         WritePermission = NetworkVariablePermission.ServerOnly
     });
 
+    public NetworkVariableInt currActionPoints = new NetworkVariableInt(new NetworkVariableSettings{
+        ReadPermission = NetworkVariablePermission.Everyone,
+        WritePermission = NetworkVariablePermission.ServerOnly
+    });
+
     //Position, this is used for networking
     [SerializeField] public NetworkVariableVector3 position = new NetworkVariableVector3 (new NetworkVariableSettings {
         ReadPermission = NetworkVariablePermission.Everyone,
@@ -44,7 +49,7 @@ public abstract class FieldCard : NetworkBehaviour, ITargetable
             action.name = actions[n].name;
             action.FieldCard = this;
             action.Player = player;
-            
+
             List<ITargetable> newTargets = Targeting.ConvertTargets (action.TargetTypes, targets, player);
             List<ITargetable> newExtraCostTargets = new List<ITargetable> ();
             if (action.ExtraCost)
@@ -58,6 +63,15 @@ public abstract class FieldCard : NetworkBehaviour, ITargetable
     [ServerRpc]
     public void PerformActionRequestServerRPC (int n, Vector2[] extraCostTargets, Vector2[] targets) {
         PerformAction (n, extraCostTargets, targets);
+    }
+
+    public abstract void Energize ();
+    
+    public void ConsumeActionPoint () {
+        if (!IsServer) return;
+        currActionPoints.Value -= 1;
+        
+        currActionPoints.Value = Mathf.Clamp (currActionPoints.Value, 0, 9);
     }
 
     //Tally n number of times.

@@ -107,8 +107,8 @@ public class Player : NetworkBehaviour
 
     
         //Initialize Player stats
-        maxMana.Value = 1;
-        currentMana.Value = 1;
+        maxMana.Value = 0;
+        currentMana.Value = 0;
 
         // We tell all the clients that the game has started
         StartGameClientRPC();
@@ -121,7 +121,7 @@ public class Player : NetworkBehaviour
         gameStart = true;
 
         InitializeDeck();
-        Draw(5); //TODO offer mulligan instead
+        Draw(4); //TODO offer mulligan instead
     }
 
     [ClientRpc]
@@ -164,8 +164,10 @@ public class Player : NetworkBehaviour
 
 
     //Draws a number of cards
-    public void Draw (int number) {
-    if (!IsServer) return;
+    public List<CardInstance> Draw (int number) {
+        if (!IsServer) return null;
+
+        List<CardInstance> drawnCards = new List<CardInstance> ();
 
         //We Loop for the number of times we want to draw.
         for (int i = 0; i < number; i++) {
@@ -175,18 +177,17 @@ public class Player : NetworkBehaviour
                 break;
             }
 
-            if (playerHand.Count >= 10) {
-                //Player hand limited reached
-                //Do something
-                break;
-            }
+            CardInstance drawnCard = playerDeck.Draw();
 
-            playerHand.Add(playerDeck.Draw());
+            drawnCards.Add (drawnCard);
+            AddToHand (drawnCard);
         }
 
         Debug.Log("Player: " + OwnerClientId + " drew " + number + " cards.");
 
         UpdatePlayerHand ();
+
+        return drawnCards;
     }
 
     public void AddToHand (CardInstance cardInstance) {
@@ -195,6 +196,7 @@ public class Player : NetworkBehaviour
         if (playerHand.Count >= 10) {
             //Player hand limited reached
             //Do something
+            DiscardCard (cardInstance);
             return;
         }
 
@@ -277,22 +279,6 @@ public class Player : NetworkBehaviour
 
         spellResolveEvent?.Invoke (spellCard);
     }
-
-    [ServerRpc]
-    void DrawServerRpc(int number) {
-        if (!IsServer) return;
-
-        Draw (number);
-    }
-
-    //We draw a specific card
-    public void Draw (Card card) {
-        if (NetworkManager.Singleton.IsServer) {
-            
-        } else {
-            //We call an RPC
-        }
-    }       
 
     public void InitializeDeck () {
         if (NetworkManager.Singleton.IsServer) { 

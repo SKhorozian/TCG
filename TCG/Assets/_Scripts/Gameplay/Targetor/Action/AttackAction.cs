@@ -17,15 +17,11 @@ public class AttackAction : ActionAbility
 
             if (target.currActionPoints.Value > 0 && (HexagonMetrics.GetDistantce (attacker.Cell.Position, target.Cell.Position) <= target.attackRange.Value)) target.Strike (attacker);
         }
-
-        attacker.ConsumeActionPoint (1);
     }
 
     public override bool TragetVaildity(int targetNumber, ITargetable target)
     {
         if (!(fieldCard is FieldUnit)) return false;
-
-        if ((fieldCard as FieldUnit).currActionPoints.Value <= 0) return false;
 
         switch (targetNumber) {
             case 0: {

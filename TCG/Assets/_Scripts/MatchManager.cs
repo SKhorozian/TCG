@@ -35,8 +35,6 @@ public class MatchManager : NetworkBehaviour
 
     [SerializeField] List<Targetor> targetorStack = new List<Targetor> ();
 
-    FieldState fieldState;
-
     public GameEventTracker eventTracker;
 
     // Start is called before the first frame update
@@ -61,10 +59,7 @@ public class MatchManager : NetworkBehaviour
         player1.MatchManage = this;
         player2.MatchManage = this;
 
-        fieldState = new FieldState ();
-        fieldState.ChangeState(CurrentFieldState.FreePlay); //Later on offer both players mulligans
-
-        turnNumber.Value = 1;
+        turnNumber.Value = 0;
 
         playerTurn = player1;
         playerPriority = player1;
@@ -140,6 +135,7 @@ public class MatchManager : NetworkBehaviour
 
         CallEffects ();
 
+        StartTurn();
     }
 
 
@@ -367,6 +363,7 @@ public class MatchManager : NetworkBehaviour
         if (playerTurn.OwnerClientId != netid) return;
         if (attacker.OwnerClientId != netid) return;
 
+        if (attacker.currActionPoints.Value == 0) return; else attacker.ConsumeActionPoint ();
 
         AttackAction attackAction = new AttackAction ();
         attackAction.name = "Attack";
@@ -390,6 +387,11 @@ public class MatchManager : NetworkBehaviour
         
         if (!actor.Player.Equals(playerPriority)) return;
         if (action.Speed == TargetorPriority.Ritual && targetorStack.Count > 0) return;
+
+
+        if (actor.Player.CurrentMana < action.ManaCost) return;
+        if (action.UsesActionPoint && actor.currActionPoints.Value == 0) return; else actor.ConsumeActionPoint ();
+        actor.Player.SpendMana (action.ManaCost);
         
         if (action.TragetVaildity (targets)) {
             action.SetTargets (targets);

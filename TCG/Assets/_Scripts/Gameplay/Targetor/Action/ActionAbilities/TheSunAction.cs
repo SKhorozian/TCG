@@ -13,8 +13,7 @@ public class TheSunAction : ActionAbility
     }
 
     public override bool TragetVaildity (List<ITargetable> targets) {
-        if (fieldCard.tallies.Value >= 5) return false;
-
+        if (fieldCard.tallies.Value >= 4) return false;
         return base.TragetVaildity (targets);
     }
 

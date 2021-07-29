@@ -18,6 +18,6 @@ public class TheSunListenerEffect : CardEffectListener
     void TheSunEffect (Damage damage, IDamageable target) {
         if (damage.Source != DamageSource.Spell) return;
 
-        damage.DamageAmount += (int)(damage.DamageAmount * (0.1f + (0.08f * fieldCard.tallies.Value)) + 0.5f);
+        damage.DamageAmount += (int)(damage.BaseDamage * (0.1f + (0.1f * fieldCard.tallies.Value)) + 0.5f);
     }
 }

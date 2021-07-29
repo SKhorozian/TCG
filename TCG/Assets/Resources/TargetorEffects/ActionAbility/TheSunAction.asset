@@ -12,9 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ee913d423ac00114d8587930ac1cf98f, type: 3}
   m_Name: TheSunAction
   m_EditorClassIdentifier: 
-  abilityName: The Sun's Glory
+  abilityName: Exalt
   speed: 0
   targetTypes: 
   description: Tally <b>The Sun</b> 1.
+  manaCost: 2
+  usesActionPoint: 1
   extraCost: {fileID: 0}
   tallyAmount: 1

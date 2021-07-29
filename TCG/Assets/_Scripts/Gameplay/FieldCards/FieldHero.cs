@@ -135,5 +135,10 @@ public class FieldHero : FieldCard, IDamageable, ITargetable
         return healInfo;
     }
 
+    public override void Energize()
+    {
+        currActionPoints.Value = 1;
+    }
+
     public HeroCardInstance HeroCard {get {return heroCard;}}
 }

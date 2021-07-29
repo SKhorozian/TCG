@@ -11,11 +11,6 @@ public class FieldStructure : FieldCard
 {
     StructureCardInstance structureCard;
 
-    public NetworkVariableBool isTapped = new NetworkVariableBool (new NetworkVariableSettings{
-        ReadPermission = NetworkVariablePermission.Everyone,
-        WritePermission = NetworkVariablePermission.ServerOnly
-    });
-
     public void SummonStructure (CardInstance card, Player player, HexagonCell cell) {
         if (!IsServer) return;
         if (card.Type != CardType.Structure) return;
@@ -33,7 +28,7 @@ public class FieldStructure : FieldCard
 
         this.cell = cell;
 
-        isTapped.Value = false;
+        Energize ();
 
         SummonStructureClientRPC (card.CardLocation, player.NetworkObjectId, cell.Position);
 
@@ -106,6 +101,8 @@ public class FieldStructure : FieldCard
 
     public override void TurnStart()
     {
+        Energize ();
+
         //Call Enterance Effects:
         foreach (CardEffectTrigger effect in effectTriggers) {
             if (effect.Trigger.HasFlag (EffectTrigger.TurnStart)) {
@@ -129,18 +126,15 @@ public class FieldStructure : FieldCard
         
     }
 
-    public void Tap () {
-        isTapped.Value = true;
-    }
-
-    public void Untap () {
-        isTapped.Value = false;
-    }
-
     void Update () {
         if (IsClient) {
             UpdateStructure ();
         }
+    }
+
+    public override void Energize()
+    {
+        currActionPoints.Value = 1;
     }
 
     public new CardInstance Card {get {return structureCard;}}

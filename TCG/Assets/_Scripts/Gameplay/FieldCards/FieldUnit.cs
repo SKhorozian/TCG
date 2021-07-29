@@ -22,11 +22,6 @@ public class FieldUnit : FieldCard, IDamageable
         WritePermission = NetworkVariablePermission.ServerOnly
     });
 
-    public NetworkVariableInt currActionPoints = new NetworkVariableInt(new NetworkVariableSettings{
-        ReadPermission = NetworkVariablePermission.Everyone,
-        WritePermission = NetworkVariablePermission.ServerOnly
-    });
-
     public NetworkVariableInt movementSpeed = new NetworkVariableInt(new NetworkVariableSettings{
         ReadPermission = NetworkVariablePermission.Everyone,
         WritePermission = NetworkVariablePermission.ServerOnly
@@ -190,20 +185,14 @@ public class FieldUnit : FieldCard, IDamageable
         actionPointText.text = currActionPoints.Value.ToString();
         tallyText.text = tallies.Value.ToString ();
 
-        unitCard.SetCardInfo (new CardInstanceInfo (costChange, bonusStrength, bonusHealth, bonusRange, bonusSpeed, unitStatics));
+        if (unitCard != null)
+            unitCard.SetCardInfo (new CardInstanceInfo (costChange, bonusStrength, bonusHealth, bonusRange, bonusSpeed, unitStatics));
 
         if (player.MatchManage.FieldGrid.Cells.TryGetValue (cellPos, out var hexCell))
             cell = hexCell;
     }
 
-    public void ConsumeActionPoint (int amount) {
-        if (!IsServer) return;
-        currActionPoints.Value -= amount;
-        
-        currActionPoints.Value = Mathf.Clamp (currActionPoints.Value, 0, 9);
-    }
-
-    public void Energize () {
+    public override void Energize () {
         currActionPoints.Value = unitCard.UnitCard.StaticKeywords.HasFlag (UnitCardStaticKeywords.DoubleAction) ? 2: 1;
         hasMoved.Value = false;
     }

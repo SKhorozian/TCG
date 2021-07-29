@@ -14,10 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cardName: The Sun
   cost: 3
-  description: 'Your spells deal 10% (+8% per <b>Tally</b>) increased damage.
+  description: 'Your spells deal 10% (+10% per <b>Tally</b>) increased damage.
 
     <sprite
-    name="ritual"> <b>Action(</b>2 mana<b>): Tally</b>  1, up to 5.'
+    name="ritual"> <b>Exalt(</b>2 mana, Tap<b>): Tally</b>  1, up to 4.'
   color: 4
   cardArt: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
   cardType: 3

@@ -16,4 +16,6 @@ MonoBehaviour:
   speed: 0
   targetTypes: 01000000
   description: 
+  manaCost: 0
+  usesActionPoint: 1
   extraCost: {fileID: 0}

@@ -6,10 +6,14 @@ public abstract class ActionAbility : Targetor
 {
     protected FieldCard fieldCard;
 
+    [SerializeField] int manaCost;
+    [SerializeField] bool usesActionPoint;
     [SerializeField] ExtraCost extraCost;
 
-    public FieldCard FieldCard {get {return fieldCard;} set {fieldCard = value;}}
-    public ExtraCost ExtraCost {get {return extraCost;}}
+    public FieldCard FieldCard  {get {return fieldCard;} set {fieldCard = value;}}
+    public int ManaCost         {get {return manaCost;}}
+    public bool UsesActionPoint {get {return usesActionPoint;}}
+    public ExtraCost ExtraCost  {get {return extraCost;}}
 
     public override bool TragetVaildity (List<ITargetable> targets) {
         if (fieldCard == null) return false;
