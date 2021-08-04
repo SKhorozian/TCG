@@ -179,6 +179,8 @@ public class FieldUnit : FieldCard, IDamageable
     [ClientRpc]
     void UpdateUnitClientRPC (Vector2 cellPos, int costChange, int bonusStrength, int bonusHealth, int bonusRange, int bonusSpeed, UnitCardStaticKeywords unitStatics) {
         if (!IsClient) return;
+        if (player == null) {SynchronizeObjectRequestServerRPC (); return;} //Syncronize the object, then return.
+
         transform.position = position.Value;
         strengthText.text = strength.Value.ToString();
         healthText.text = health.Value.ToString();
@@ -192,7 +194,37 @@ public class FieldUnit : FieldCard, IDamageable
             cell = hexCell;
     }
 
+    [ServerRpc]
+    public void SynchronizeObjectRequestServerRPC () {
+        CardInstanceInfo cardInfo = new CardInstanceInfo (card.CostChange, unitCard.StrengthBonus, unitCard.HealthBonus, unitCard.RangeBonus, unitCard.SpeedBonus, 0);
+        SyncronizeObjectClientRPC (card.CardLocation, cardInfo, player.NetworkObjectId, cell.Position);
+    }
+    [ClientRpc]
+    public void SyncronizeObjectClientRPC (string cardLocation, CardInstanceInfo cardInfo, ulong playerObjectId, Vector2 cellPos) {
+        if (IsServer) return; //We don't want this to run on the server.
+
+        unitCard = new UnitCardInstance (Resources.Load<Card> (cardLocation), cardInfo);
+        card = unitCard;
+
+        if (NetworkSpawnManager.SpawnedObjects.TryGetValue (playerObjectId, out var playerObject))
+            player = playerObject.GetComponent<Player>();
+
+        if (player.MatchManage.FieldGrid.Cells.TryGetValue (cellPos, out var hexCell))
+            cell = hexCell;
+
+        //Color to show ownership
+        if (IsOwner) {
+            icon.color = Color.green;
+        } else {
+            icon.color = Color.red;
+        }
+
+        UpdateUnit ();
+    }
+
     public override void Energize () {
+        if (!IsServer) return;
+
         currActionPoints.Value = unitCard.UnitCard.StaticKeywords.HasFlag (UnitCardStaticKeywords.DoubleAction) ? 2: 1;
         hasMoved.Value = false;
     }
@@ -237,6 +269,9 @@ public class FieldUnit : FieldCard, IDamageable
                 player.MatchManage.AddEffectToStack (effect.GetCardEffect());
             }
         }
+
+        //If this is Decaying, kill it at the end of round.
+        if (unitCard.UnitCard.StaticKeywords.HasFlag (UnitCardStaticKeywords.Decaying)) player.UnitToDie (this);
 
     }
 

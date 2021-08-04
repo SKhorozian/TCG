@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Nurture
   m_EditorClassIdentifier: 
   abilityName: Nurture
-  speed: 0
+  speed: 1
   targetTypes: 01000000
   description: Heal an allied target for 200. Draw 1.
   healAmount: 200

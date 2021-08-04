@@ -17,6 +17,16 @@ public abstract class CardInstance : ITargetable
     }
     
     //Keywords 
+    protected bool isBrief = false;
+    protected bool isCreated = false;
+
+    public void MakeBrief () {
+        isBrief = true;
+    }
+
+    public void MakeCreated () {
+        isCreated = true;
+    }
 
     //Status Stuff
     protected List<StatusEffect> effects = new List<StatusEffect> ();
@@ -43,4 +53,8 @@ public abstract class CardInstance : ITargetable
     public CardType Type        {get {return card.Type;}}
     public string CardLocation  {get {return "Cards/" + Color.ToString() + "/" + card.name;}}
     public List<StatusEffect> StatusEffects     {get {return effects;}}
+
+    //Keywords
+    public bool IsBrief         {get {return isBrief;}}
+    public bool IsCreated       {get {return isCreated;}}
 }

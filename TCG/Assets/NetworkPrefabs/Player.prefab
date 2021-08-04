@@ -70,7 +70,7 @@ MonoBehaviour:
       copies: 2
     - card: {fileID: 11400000, guid: 606da591aba12be4fab28b6781f4d87f, type: 2}
       copies: 3
-    - card: {fileID: 11400000, guid: c1da1338cbe2cc44abb5f40975e82994, type: 2}
+    - card: {fileID: 11400000, guid: f8c319a3befbf9b4d8ce2243825140ef, type: 2}
       copies: 3
     - card: {fileID: 11400000, guid: 323fb40fb6650ba4da2b2b155d8888f5, type: 2}
       copies: 3
@@ -82,7 +82,7 @@ MonoBehaviour:
       copies: 3
     - card: {fileID: 11400000, guid: 465775347a2d488418f8164f799cb765, type: 2}
       copies: 3
-    - card: {fileID: 11400000, guid: ebb2580d841c1b648a9ebead7f126ae4, type: 2}
+    - card: {fileID: 11400000, guid: 912474eb2ec21714c960bd7d3f687f95, type: 2}
       copies: 3
   playerHero: {fileID: 0}
   controledUnits: []

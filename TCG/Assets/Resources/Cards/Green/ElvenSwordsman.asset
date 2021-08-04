@@ -14,17 +14,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cardName: Elven Swordsman
   cost: 2
-  description: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-    tempor incididunt ut labore et dolore magna aliqua.
+  description: 
   color: 3
   cardArt: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
   cardType: 0
   extraCost: {fileID: 0}
   strength: 400
   health: 100
-  actionPoints: 2
   movementSpeed: 1
   attackRange: 1
   cardEffects: []
+  cardEffectListeners: []
   staticKeywords: 0
   onPlayEffect: {fileID: 0}
+  actions: []

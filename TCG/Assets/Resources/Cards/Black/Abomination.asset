@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cardName: Abomination
   cost: 1
-  description: <b>Tribute:</b> Sacrifice 1.
+  description: <b>Tribute:</b> Sacrifice a unit.
   color: 2
   cardArt: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
   cardType: 0

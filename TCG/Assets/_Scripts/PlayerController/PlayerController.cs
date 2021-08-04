@@ -477,5 +477,6 @@ public class PlayerController : MonoBehaviour
     }
 
     public TargetorStackUI StackUI {get {return stackUI;}}
+    public bool IsFocused          {get {return (focusCard || focusFieldCard);}}
 
 }

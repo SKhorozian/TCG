@@ -33,9 +33,11 @@ public class GameDeck
         return card;
     }
 
-    //Draw a specific card
-    public CardInstance Draw (Card card) {
-        return null;
+    //Draw at
+    public CardInstance Draw (int i) {
+        CardInstance card = deck[i];
+        deck.RemoveAt (i);
+        return card;
     }
 
     //Draw a specific TYPE of card

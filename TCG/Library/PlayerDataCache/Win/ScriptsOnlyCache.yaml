@@ -6,6 +6,7 @@ ScriptsOnlyBuild:
     - BuffUnitSpell
     - CardDisplay
     - CardHandController
+    - CreateCardInHandAction
     - CrystalizeOnPlay
     - DamageTargetSpell
     - DamageUnitOnPlay
@@ -15,13 +16,14 @@ ScriptsOnlyBuild:
     - FieldUnit
     - FishEntranceEffect
     - FishermanEntranceEffect
-    - GameManager
     - HealTargetDrawSpell
     - HeroCard
     - HexagonCell
     - HexagonGrid
+    - JavelinTosserEntranceEffect
     - KillTargetSpell
     - MatchManager
+    - NetworkConnect
     - Player
     - PlayerController
     - PlayerHandDisplay
@@ -79,10 +81,9 @@ ScriptsOnlyBuild:
     - UnityEngine.Rendering.Universal.XRSystemData
     Unity.Rider.Editor.dll:
     - Packages.Rider.Editor.UnitTesting.CallbackData
-    Unity.ShaderGraph.Editor.dll:
-    - UnityEditor.ShaderGraph.Drawing.MaterialGraphEditWindow
     Unity.TextMeshPro.dll:
     - TMPro.TMP_FontAsset
+    - TMPro.TMP_InputField
     - TMPro.TMP_Settings
     - TMPro.TMP_SpriteAsset
     - TMPro.TMP_StyleSheet
@@ -105,6 +106,7 @@ ScriptsOnlyBuild:
     - UnityEngine.UI.Image
     - UnityEngine.UI.LayoutElement
     - UnityEngine.UI.Mask
+    - UnityEngine.UI.RectMask2D
     - UnityEngine.UI.ScrollRect
     - UnityEngine.UI.Scrollbar
     - UnityEngine.UI.Text
@@ -157,13 +159,13 @@ ScriptsOnlyBuild:
     - Class: 114
       Script: {instanceID: 1622}
     - Class: 114
-      Script: {instanceID: 1624}
+      Script: {instanceID: 1626}
     - Class: 114
-      Script: {instanceID: 1628}
+      Script: {instanceID: 1632}
     - Class: 114
-      Script: {instanceID: 1634}
+      Script: {instanceID: 1676}
     - Class: 114
-      Script: {instanceID: 1678}
+      Script: {instanceID: 1746}
     - Class: 114
       Script: {instanceID: 1776}
     - Class: 114
@@ -199,131 +201,139 @@ ScriptsOnlyBuild:
     - Class: 114
       Script: {instanceID: 2518}
     - Class: 114
-      Script: {instanceID: 2594}
-    - Class: 114
       Script: {instanceID: 2626}
     - Class: 114
       Script: {instanceID: 2670}
     - Class: 114
       Script: {instanceID: 2774}
     - Class: 114
-      Script: {instanceID: 2884}
+      Script: {instanceID: 2886}
     - Class: 114
-      Script: {instanceID: 2916}
+      Script: {instanceID: 2918}
     - Class: 114
-      Script: {instanceID: 2948}
+      Script: {instanceID: 2950}
     - Class: 114
-      Script: {instanceID: 3070}
+      Script: {instanceID: 3072}
     - Class: 114
-      Script: {instanceID: 3116}
+      Script: {instanceID: 3118}
     - Class: 114
-      Script: {instanceID: 3272}
+      Script: {instanceID: 3274}
     - Class: 114
-      Script: {instanceID: 3328}
+      Script: {instanceID: 3330}
     - Class: 114
-      Script: {instanceID: 3338}
+      Script: {instanceID: 3340}
     - Class: 114
-      Script: {instanceID: 3456}
+      Script: {instanceID: 3458}
     - Class: 114
-      Script: {instanceID: 3466}
+      Script: {instanceID: 3468}
     - Class: 114
-      Script: {instanceID: 3494}
+      Script: {instanceID: 3496}
     - Class: 114
-      Script: {instanceID: 3620}
+      Script: {instanceID: 3622}
     - Class: 114
-      Script: {instanceID: 3682}
+      Script: {instanceID: 3684}
     - Class: 114
-      Script: {instanceID: 3694}
+      Script: {instanceID: 3696}
     - Class: 114
-      Script: {instanceID: 3732}
+      Script: {instanceID: 3734}
     - Class: 114
-      Script: {instanceID: 3756}
+      Script: {instanceID: 3758}
     - Class: 114
-      Script: {instanceID: 3874}
-    - Class: 114
-      Script: {instanceID: 3888}
+      Script: {instanceID: 3876}
     - Class: 114
       Script: {instanceID: 3890}
     - Class: 114
-      Script: {instanceID: 4044}
+      Script: {instanceID: 3892}
     - Class: 114
-      Script: {instanceID: 4062}
+      Script: {instanceID: 4046}
     - Class: 114
-      Script: {instanceID: 4106}
+      Script: {instanceID: 4064}
     - Class: 114
-      Script: {instanceID: 4166}
+      Script: {instanceID: 4108}
     - Class: 114
-      Script: {instanceID: 4236}
+      Script: {instanceID: 4168}
     - Class: 114
-      Script: {instanceID: 4278}
+      Script: {instanceID: 4238}
     - Class: 114
-      Script: {instanceID: 4310}
+      Script: {instanceID: 4280}
     - Class: 114
-      Script: {instanceID: 4372}
+      Script: {instanceID: 4312}
     - Class: 114
-      Script: {instanceID: 4400}
+      Script: {instanceID: 4374}
     - Class: 114
-      Script: {instanceID: 4406}
+      Script: {instanceID: 4402}
     - Class: 114
-      Script: {instanceID: 4598}
+      Script: {instanceID: 4408}
     - Class: 114
-      Script: {instanceID: 4620}
+      Script: {instanceID: 4600}
     - Class: 114
-      Script: {instanceID: 4626}
+      Script: {instanceID: 4622}
     - Class: 114
-      Script: {instanceID: 4708}
+      Script: {instanceID: 4628}
     - Class: 114
-      Script: {instanceID: 4778}
+      Script: {instanceID: 4710}
     - Class: 114
-      Script: {instanceID: 4852}
+      Script: {instanceID: 4780}
     - Class: 114
-      Script: {instanceID: 4960}
+      Script: {instanceID: 4854}
     - Class: 114
-      Script: {instanceID: 5034}
+      Script: {instanceID: 4912}
     - Class: 114
-      Script: {instanceID: 5218}
+      Script: {instanceID: 4964}
     - Class: 114
-      Script: {instanceID: 5226}
+      Script: {instanceID: 5010}
     - Class: 114
-      Script: {instanceID: 5312}
+      Script: {instanceID: 5040}
     - Class: 114
-      Script: {instanceID: 5388}
+      Script: {instanceID: 5224}
     - Class: 114
-      Script: {instanceID: 5404}
+      Script: {instanceID: 5232}
     - Class: 114
-      Script: {instanceID: 5452}
+      Script: {instanceID: 5318}
     - Class: 114
-      Script: {instanceID: 5456}
+      Script: {instanceID: 5394}
     - Class: 114
-      Script: {instanceID: 5580}
+      Script: {instanceID: 5410}
     - Class: 114
-      Script: {instanceID: 5620}
+      Script: {instanceID: 5434}
     - Class: 114
-      Script: {instanceID: 5848}
+      Script: {instanceID: 5460}
     - Class: 114
-      Script: {instanceID: 5880}
+      Script: {instanceID: 5464}
     - Class: 114
-      Script: {instanceID: 5896}
+      Script: {instanceID: 5560}
     - Class: 114
-      Script: {instanceID: 5902}
+      Script: {instanceID: 5588}
     - Class: 114
-      Script: {instanceID: 5944}
+      Script: {instanceID: 5628}
     - Class: 114
-      Script: {instanceID: 6010}
+      Script: {instanceID: 5856}
     - Class: 114
-      Script: {instanceID: 6072}
+      Script: {instanceID: 5888}
     - Class: 114
-      Script: {instanceID: 6298}
+      Script: {instanceID: 5904}
     - Class: 114
-      Script: {instanceID: 6428}
+      Script: {instanceID: 5910}
     - Class: 114
-      Script: {instanceID: 6440}
+      Script: {instanceID: 5952}
     - Class: 114
-      Script: {instanceID: 6558}
+      Script: {instanceID: 6020}
     - Class: 114
-      Script: {instanceID: 6564}
+      Script: {instanceID: 6082}
     - Class: 114
-      Script: {instanceID: 6590}
+      Script: {instanceID: 6308}
+    - Class: 114
+      Script: {instanceID: 6438}
+    - Class: 114
+      Script: {instanceID: 6450}
+    - Class: 114
+      Script: {instanceID: 6568}
+    - Class: 114
+      Script: {instanceID: 6574}
+    - Class: 114
+      Script: {instanceID: 6600}
+    - Class: 114
+      Script: {instanceID: 28810}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 128
@@ -381,13 +391,7 @@ ScriptsOnlyBuild:
     className: Button
   - hash:
       serializedVersion: 2
-      Hash: 134322c9293c1896357cce271b819ce4
-    assemblyName: UnityEngine.UI.dll
-    namespaceName: UnityEngine.EventSystems
-    className: EventTrigger
-  - hash:
-      serializedVersion: 2
-      Hash: a0bb38698f9b20fa9a154b70028b1a9f
+      Hash: e6c82faaa267e967ac25c1b7e0e71a83
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: MatchManager
@@ -477,7 +481,7 @@ ScriptsOnlyBuild:
     className: Selectable
   - hash:
       serializedVersion: 2
-      Hash: 50fd2c1e86ddfa7914693e22c4a48e22
+      Hash: 58828b15e71db5d3cdf7d06f0e9d73e2
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: TurnButton
@@ -619,12 +623,6 @@ ScriptsOnlyBuild:
     assemblyName: Unity.TextMeshPro.dll
     namespaceName: TMPro
     className: TMP_StyleSheet
-  - hash:
-      serializedVersion: 2
-      Hash: 71bb6a6b6c8f052f948db64c7dd3ca4f
-    assemblyName: Assembly-CSharp.dll
-    namespaceName: 
-    className: GameManager
   - hash:
       serializedVersion: 2
       Hash: f1d735cc1a21c3704ab52568f4fbfcf8
@@ -1113,6 +1111,12 @@ ScriptsOnlyBuild:
     className: RemoteTestResultSender
   - hash:
       serializedVersion: 2
+      Hash: 134322c9293c1896357cce271b819ce4
+    assemblyName: UnityEngine.UI.dll
+    namespaceName: UnityEngine.EventSystems
+    className: EventTrigger
+  - hash:
+      serializedVersion: 2
       Hash: 5860c479e1d84a9fb5e9a040e4376e41
     assemblyName: Unity.Multiplayer.MLAPI.Runtime.dll
     namespaceName: MLAPI.Transports.UNET
@@ -1129,6 +1133,12 @@ ScriptsOnlyBuild:
     assemblyName: UnityEngine.UI.dll
     namespaceName: UnityEngine.UI
     className: Dropdown
+  - hash:
+      serializedVersion: 2
+      Hash: 11b786997053f8504df259124b5dec32
+    assemblyName: Assembly-CSharp.dll
+    namespaceName: 
+    className: CreateCardInHandAction
   - hash:
       serializedVersion: 2
       Hash: a5781dc71a671b1ad2b38de19f24b71f
@@ -1195,6 +1205,12 @@ ScriptsOnlyBuild:
     assemblyName: Unity.RenderPipelines.Core.Runtime.dll
     namespaceName: UnityEngine.Rendering.UI
     className: DebugUIHandlerPersistentCanvas
+  - hash:
+      serializedVersion: 2
+      Hash: b347dce0de835dcd3de8f795fb366ef7
+    assemblyName: Assembly-CSharp.dll
+    namespaceName: 
+    className: JavelinTosserEntranceEffect
   - hash:
       serializedVersion: 2
       Hash: 3165968ba45c74472d279ba04455fccb
@@ -1441,7 +1457,13 @@ ScriptsOnlyBuild:
     assemblyName: UnityEngine.UI.dll
     namespaceName: UnityEngine.EventSystems
     className: TouchInputModule
+  - hash:
+      serializedVersion: 2
+      Hash: 32d5018cf04e3db689c7e1e6de05ce2b
+    assemblyName: Assembly-CSharp.dll
+    namespaceName: 
+    className: NetworkConnect
   platform: 5
   scenePathNames:
   - Assets/Scenes/Scene.unity
-  playerPath: E:/Builds/AB TCG/Autobattler TCG.exe
+  playerPath: C:/Users/Sarkis/Documents/stuff/Torment/Builds/TCG/Autobattler TCG.exe

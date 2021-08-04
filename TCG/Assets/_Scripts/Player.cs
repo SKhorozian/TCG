@@ -77,7 +77,7 @@ public class Player : NetworkBehaviour
     public event OnPlayCard playCardEvent;
     
     public delegate void OnCardCreate (CardInstance createdCard);   //Delegate for when a card is created.
-    public event OnCardCreate creatCardEvent;
+    public event OnCardCreate createCardEvent;
 
     public delegate void OnDiscard (CardInstance discardedCard);    //Delegate for when a card is discarded.
     public event OnDiscard discardEvent;
@@ -190,6 +190,22 @@ public class Player : NetworkBehaviour
         return drawnCards;
     }
 
+    public CardInstance DrawAt (int i) {
+        if (!IsServer) return null;
+
+        if (i >= CurrentDeck.Deck.Count) return null;
+        if (i < 0) return null;
+
+        CardInstance drawnCard = playerDeck.Draw (i);
+        AddToHand (drawnCard);
+
+        Debug.Log("Player: " + OwnerClientId + " drew " + drawnCard.CardName + ".");
+
+        UpdatePlayerHand ();
+
+        return drawnCard;
+    }
+
     public void AddToHand (CardInstance cardInstance) {
         if (!IsServer) return;
 
@@ -233,6 +249,9 @@ public class Player : NetworkBehaviour
 
             return card;
         }
+
+        UpdatePlayerHand ();
+
         return null;
     }
 
@@ -241,6 +260,37 @@ public class Player : NetworkBehaviour
         junkyard.Add (card);
 
         discardEvent?.Invoke (card);
+    }
+
+    public CardInstance CreateCard (Card card) {
+        CardInstance createdCard;
+
+        //Create a card that suits its type
+        switch (card.Type) {
+            case CardType.Unit:
+                if (!(card is UnitCard)) throw new System.Exception ("Incorrect Card Type");
+                createdCard = new UnitCardInstance (card);
+                break;
+            case CardType.Spell:
+                if (!(card is SpellCard)) throw new System.Exception ("Incorrect Card Type");
+                createdCard = new SpellCardInstance (card);
+                break;
+            case CardType.Structure:
+                if (!(card is StructureCard)) throw new System.Exception ("Incorrect Card Type");
+                createdCard = new StructureCardInstance (card);
+                break;
+            case CardType.Hero:
+                if (!(card is HeroCard)) throw new System.Exception ("Incorrect Card Type");
+                createdCard = new HeroCardInstance (card);
+                break;
+            default:
+                throw new System.Exception ("Card Type not found");
+        }
+
+        createdCard.MakeCreated ();
+        createCardEvent?.Invoke (createdCard);
+
+        return createdCard;
     }
 
     [ClientRpc]
@@ -332,7 +382,17 @@ public class Player : NetworkBehaviour
             structure.TurnEnd ();
         }
 
-        playerHero.TurnStart ();
+        //Discard brief cards
+        List<int> briefsToDiscard = new List<int> ();
+        playerHand.ForEach (card => {
+            if (card.IsBrief)
+                briefsToDiscard.Add (playerHand.IndexOf (card));
+        });
+        foreach (int i in briefsToDiscard) {
+            DiscardCard (i);
+        }
+
+        playerHero.TurnEnd ();
 
     }
 
@@ -604,6 +664,7 @@ public class Player : NetworkBehaviour
     public List<FieldStructure> FieldStructures     {get {return controledStructures;}}
     public FieldHero FieldHero                      {get {return playerHero;}}
     
+    public List<CardInstance> Deck                  {get {return CurrentDeck.Deck;}}
     public List<CardInstance> Graveyard             {get {return graveyard;}}
     public List<CardInstance> Junkyard              {get {return junkyard;}}
     public List<CardInstance> Banishyard            {get {return banishyard;}}

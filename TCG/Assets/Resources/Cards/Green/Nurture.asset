@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cardName: Nurture
   cost: 1
-  description: Heal an allied target for 200. Draw 1.
+  description: "Heal an allied target for 200. \nDraw 1."
   color: 3
   cardArt: {fileID: 0}
   cardType: 1

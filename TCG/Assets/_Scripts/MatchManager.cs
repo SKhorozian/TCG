@@ -19,7 +19,11 @@ public class MatchManager : NetworkBehaviour
 
     [SerializeField] Player playerTurn; //Who's turn is it to play.
     [SerializeField] Player playerPriority; //Who's priority it is.
-    [SerializeField] bool hasActed = false;
+    //If the current player has acted during this priority.
+    [SerializeField] NetworkVariableBool hasActed = new NetworkVariableBool (new NetworkVariableSettings {
+        ReadPermission = NetworkVariablePermission.Everyone,
+        WritePermission = NetworkVariablePermission.ServerOnly
+    }); 
 
     [SerializeField] bool localPlayerTurn; //Does the local client have the priority
     [SerializeField] bool localPlayerPriority; //Does the local client have the priority
@@ -287,7 +291,7 @@ public class MatchManager : NetworkBehaviour
                 break;
         }
 
-        hasActed = true;
+        hasActed.Value = true;
 
         return true;
     }
@@ -363,7 +367,7 @@ public class MatchManager : NetworkBehaviour
         if (playerTurn.OwnerClientId != netid) return;
         if (attacker.OwnerClientId != netid) return;
 
-        if (attacker.currActionPoints.Value == 0) return; else attacker.ConsumeActionPoint ();
+        if (targetorStack.Count > 0) return; 
 
         AttackAction attackAction = new AttackAction ();
         attackAction.name = "Attack";
@@ -373,12 +377,14 @@ public class MatchManager : NetworkBehaviour
         List <ITargetable> newTargets = Targeting.ConvertTargets (attackAction.TargetTypes, targets, attacker.Player);
 
         if (attackAction.TragetVaildity (newTargets)) {
+            if (attacker.currActionPoints.Value == 0) return; else attacker.ConsumeActionPoint ();
+
             attackAction.SetTargets (newTargets);
             AddTargetorToStack (attackAction);
 
             CallEffects ();
 
-            hasActed = true;
+            hasActed.Value = true;
         }
     }
 
@@ -389,14 +395,15 @@ public class MatchManager : NetworkBehaviour
         if (action.Speed == TargetorPriority.Ritual && targetorStack.Count > 0) return;
 
 
-        if (actor.Player.CurrentMana < action.ManaCost) return;
-        if (action.UsesActionPoint && actor.currActionPoints.Value == 0) return; else actor.ConsumeActionPoint ();
-        actor.Player.SpendMana (action.ManaCost);
         
         if (action.TragetVaildity (targets)) {
+            if (actor.Player.CurrentMana < action.ManaCost) return; else actor.Player.SpendMana (action.ManaCost);
+
+            if (action.UsesActionPoint && actor.currActionPoints.Value == 0) return; else actor.ConsumeActionPoint ();
+            
             action.SetTargets (targets);
             AddTargetorToStack (action);
-            hasActed = true;
+            hasActed.Value = true;
         } else {Debug.Log("Action Ability failed targeting");};
     }
 
@@ -416,7 +423,7 @@ public class MatchManager : NetworkBehaviour
 
         if (targetorStack.Count == 0) PassTurn (player); //If there is nothing on the stack, just pass the turn.
         else { //Else...
-            if (hasActed) //If the player has acted during their priority 
+            if (hasActed.Value) //If the player has acted during their priority 
                 SwitchPriority ();  //We switch priorities.
             else
                 CallTargetors (); //Else, we just call the effects.
@@ -428,7 +435,9 @@ public class MatchManager : NetworkBehaviour
         if (!IsServer) return;
 
         //If the player requesting the pass is the player who has the turn... 
-        if (player.Equals(playerTurn)) {            
+        if (player.Equals(playerTurn)) {       
+            EndTurn (); //Do Turn End Effects
+
             if (turnNumber.Value % 2 == 0)
                 playerTurn = player1;
             else
@@ -438,7 +447,7 @@ public class MatchManager : NetworkBehaviour
             PassTurnClientRPC (playerTurn.OwnerClientId);
             SwitchPriorityClientRpc (playerPriority.OwnerClientId);
 
-            EndTurn ();
+            StartTurn ();
         }
         
     }
@@ -459,7 +468,7 @@ public class MatchManager : NetworkBehaviour
         else 
             playerPriority = player1;
 
-        hasActed = false;
+        hasActed.Value = false;
 
         SwitchPriorityClientRpc (playerPriority.OwnerClientId);
     }
@@ -548,8 +557,6 @@ public class MatchManager : NetworkBehaviour
 
         //TODO end turn stuff here
         playerTurn.EndTurn (turnNumber.Value);
-
-        StartTurn ();
     }
 
     void StartTurn () {
@@ -594,5 +601,6 @@ public class MatchManager : NetworkBehaviour
     }
 
     public int TurnNumber {get {return turnNumber.Value;}}
+    public bool HasActed {get {return hasActed.Value;}}
 
 }
