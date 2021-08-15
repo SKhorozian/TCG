@@ -6,6 +6,9 @@ using UnityEngine;
 public class StructureCard : Card
 {
     [Space (20)]
+    [SerializeField] int health;
+
+    [Space (20)]
     //Card Effects
     [SerializeField] CardEffectTrigger[] cardEffects;
     [SerializeField] CardEffectListener[] cardEffectListeners;
@@ -18,10 +21,7 @@ public class StructureCard : Card
     //Actions
     [SerializeField] List<ActionAbility> actions;
 
-    [Space (20)]
-    //Keywords
-    [SerializeField] StructureCardStaticKeywords staticKeywords;
-
+    public int Health   {get {return health;}}
     public CardEffectTrigger[] CardEffects {get {return cardEffects;}}
     public CardEffectListener[] CardEffectListeners {get {return cardEffectListeners;}}
     public PlayAbility OnPlayEffect  {get {return onPlayEffect;}}

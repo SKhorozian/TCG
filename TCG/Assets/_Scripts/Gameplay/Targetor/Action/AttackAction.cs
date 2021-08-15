@@ -15,7 +15,7 @@ public class AttackAction : ActionAbility
         if (targets[0] is FieldUnit) {
             FieldUnit target = targets[0] as FieldUnit;
 
-            if (target.currActionPoints.Value > 0 && (HexagonMetrics.GetDistantce (attacker.Cell.Position, target.Cell.Position) <= target.attackRange.Value)) target.Strike (attacker);
+            if (target.currActionPoints.Value > 0 && (HexagonMetrics.GetDistantce (attacker.Cell.Position, target.Cell.Position) <= target.Range)) target.Strike (attacker);
         }
     }
 
@@ -31,7 +31,7 @@ public class AttackAction : ActionAbility
                 
                 if ((target as FieldCard).OwnerClientId.Equals (player.OwnerClientId)) return false; //Cannot attack friendly units
 
-                if (HexagonMetrics.GetDistantce (fieldCard.Cell.Position, (target as FieldCard).Cell.Position) > (fieldCard as FieldUnit).attackRange.Value) return false; // Check for distance
+                if (HexagonMetrics.GetDistantce (fieldCard.Cell.Position, (target as FieldCard).Cell.Position) > (fieldCard as FieldUnit).Range) return false; // Check for distance
 
                 if (target is FieldUnit) //Check if this unit can attack it
                     if (!player.MatchManage.CheckCanAttack (fieldCard as FieldUnit, target as FieldUnit)) return false;

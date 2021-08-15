@@ -6,15 +6,8 @@ public class UnitCardInstance : CardInstance
 {
     protected UnitCard unitCard;
 
-    public void GiveStats (int strength, int health, int range, int speed) {
-        strengthBonus += strength;
-        healthBonus += health;
-        rangeBonus += range;
-        speedBonus += speed;
-    }
-
     //Card Stats
-    int strengthBonus; 
+    int powerBonus; 
     int healthBonus; 
     int rangeBonus;
     int speedBonus;
@@ -28,12 +21,20 @@ public class UnitCardInstance : CardInstance
             throw new System.Exception ("CardType doesn't match the card's subclass");
         }
 
-        this.strengthBonus = 0;
+        this.powerBonus = 0;
         this.healthBonus = 0;
         this.speedBonus = 0;
         this.rangeBonus = 0;
         this.costChange = 0;
     }
+
+    public void GiveStats (int power, int health, int range, int speed) {
+        powerBonus += power;
+        healthBonus += health;
+        rangeBonus += range;
+        speedBonus += speed;
+    }
+
 
     public UnitCardInstance (Card card, CardInstanceInfo cardInfo) {
         this.card = card;
@@ -44,7 +45,7 @@ public class UnitCardInstance : CardInstance
             throw new System.Exception ("CardType doesn't match the card's subclass");
         }
 
-        this.strengthBonus = cardInfo.bonusStrength;
+        this.powerBonus = cardInfo.bonusPower;
         this.healthBonus = cardInfo.bonusHealth;
         this.speedBonus = cardInfo.bonusSpeed;
         this.rangeBonus = cardInfo.bonusRange;
@@ -52,7 +53,7 @@ public class UnitCardInstance : CardInstance
     }
 
     public void SetCardInfo (CardInstanceInfo cardInfo) {
-        this.strengthBonus = cardInfo.bonusStrength;
+        this.powerBonus = cardInfo.bonusPower;
         this.healthBonus = cardInfo.bonusHealth;
         this.speedBonus = cardInfo.bonusSpeed;
         this.rangeBonus = cardInfo.bonusRange;
@@ -61,12 +62,12 @@ public class UnitCardInstance : CardInstance
 
     public UnitCard UnitCard    {get {return unitCard;}}
 
-    public int Strength         {get {return UnitCard.Strength + strengthBonus;}}
+    public int Power         {get {return UnitCard.Power + powerBonus;}}
     public int Health           {get {return UnitCard.Health + healthBonus;}}
     public int MovementSpeed    {get {return UnitCard.MovementSpeed + speedBonus;}}
     public int AttackRange      {get {return UnitCard.AttackRange + rangeBonus;}}
 
-    public int StrengthBonus    {get {return strengthBonus;}}
+    public int PowerBonus    {get {return powerBonus;}}
     public int HealthBonus      {get {return healthBonus;}}
     public int RangeBonus       {get {return rangeBonus;}}
     public int SpeedBonus       {get {return speedBonus;}}

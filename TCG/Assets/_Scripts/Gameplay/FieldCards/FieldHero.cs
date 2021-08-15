@@ -7,16 +7,9 @@ using TMPro;
 using MLAPI.Messaging;
 using MLAPI.Spawning;
 
-public class FieldHero : FieldCard, IDamageable, ITargetable
+public class FieldHero : FieldCard, ITargetable
 {
     HeroCardInstance heroCard;
-
-    [SerializeField] TextMeshPro healthText;
-
-    public NetworkVariableInt health = new NetworkVariableInt(new NetworkVariableSettings{
-        ReadPermission = NetworkVariablePermission.Everyone,
-        WritePermission = NetworkVariablePermission.ServerOnly
-    });
 
     public void SummonHero (CardInstance card, Player player, HexagonCell cell) {
         if (!IsServer) return;
@@ -105,7 +98,7 @@ public class FieldHero : FieldCard, IDamageable, ITargetable
         
     }
 
-    public Damage TakeDamage(Damage damageInfo)
+    public override Damage TakeDamage(Damage damageInfo)
     {
         if (!IsServer) return null;
 
@@ -122,7 +115,7 @@ public class FieldHero : FieldCard, IDamageable, ITargetable
         return damageInfo;
     }
 
-    public Heal TakeHeal(Heal healInfo)
+    public override Heal TakeHeal(Heal healInfo)
     {
         if (!IsServer) return null;
 

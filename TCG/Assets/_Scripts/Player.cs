@@ -232,7 +232,7 @@ public class Player : NetworkBehaviour
             if (playerHand[i] is UnitCardInstance) {
                 UnitCardInstance unitCardInstance = playerHand[i] as UnitCardInstance;
 
-                cardInfos[i] = new CardInstanceInfo (playerHand[i].CostChange, unitCardInstance.StrengthBonus, unitCardInstance.HealthBonus, unitCardInstance.RangeBonus, unitCardInstance.SpeedBonus, 0);
+                cardInfos[i] = new CardInstanceInfo (playerHand[i].CostChange, unitCardInstance.PowerBonus, unitCardInstance.HealthBonus, unitCardInstance.RangeBonus, unitCardInstance.SpeedBonus, 0);
             }
         }
 

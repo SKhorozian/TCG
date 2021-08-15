@@ -19,11 +19,13 @@ MonoBehaviour:
   cardArt: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
   cardType: 0
   extraCost: {fileID: 0}
-  strength: 150
-  health: 150
+  power: 100
+  health: 100
   movementSpeed: 2
   attackRange: 1
   cardEffects:
   - {fileID: 11400000, guid: 64a9b372fc7ad954b9d470874e07f75d, type: 2}
+  cardEffectListeners: []
   staticKeywords: 0
   onPlayEffect: {fileID: 0}
+  actions: []

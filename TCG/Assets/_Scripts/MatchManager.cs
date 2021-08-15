@@ -410,9 +410,9 @@ public class MatchManager : NetworkBehaviour
     public bool CheckCanAttack (FieldUnit attacker, FieldUnit target) { //Returns true if this card fits all the conditions to attack a target
         if (attacker.Player.FieldUnits.Contains (target)) return false; //Return if target unit is a friendly.
         //Check for Menacing keyword.
-        if (target.UnitsCard.UnitCard.StaticKeywords.HasFlag (UnitCardStaticKeywords.Menacing) && attacker.strength.Value < target.strength.Value) return false;
+        if (target.UnitsCard.UnitCard.StaticKeywords.HasFlag (StaticKeywords.Menacing) && attacker.Power < target.Power) return false;
         //Check for Stealth keyword.
-        if (target.UnitsCard.UnitCard.StaticKeywords.HasFlag (UnitCardStaticKeywords.Stealth) && !attacker.UnitsCard.UnitCard.StaticKeywords.HasFlag (UnitCardStaticKeywords.Scout)) return false;
+        if (target.UnitsCard.UnitCard.StaticKeywords.HasFlag (StaticKeywords.Stealth) && !(attacker.UnitsCard.UnitCard.StaticKeywords.HasFlag (StaticKeywords.Scout) || attacker.UnitsCard.UnitCard.StaticKeywords.HasFlag (StaticKeywords.Stealth))) return false;
 
         return true;
     }

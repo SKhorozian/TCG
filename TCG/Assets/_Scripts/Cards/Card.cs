@@ -14,6 +14,12 @@ public abstract class Card : ScriptableObject
 
     [SerializeField] CardType cardType;
 
+    [SerializeField] CardTribe cardTribe;
+
+    [Space (20)]
+    //Keywords
+    [SerializeField] StaticKeywords staticKeywords;
+
     [Space (10), SerializeField] ExtraCost extraCost;
 
     //Getters
@@ -22,7 +28,9 @@ public abstract class Card : ScriptableObject
     public Sprite CardArt       {get {return cardArt;}}
     public int Cost             {get {return cost;}}
     public CardColor Color      {get {return color;}}
-    public CardType Type        {get {return cardType;}}        
+    public CardType Type        {get {return cardType;}}   
+    public CardTribe Tribe      {get {return cardTribe;}}
+    public StaticKeywords StaticKeywords    {get {return staticKeywords;}}
     public ExtraCost ExtraCost  {get {return extraCost;}}
 
     public override string ToString () {

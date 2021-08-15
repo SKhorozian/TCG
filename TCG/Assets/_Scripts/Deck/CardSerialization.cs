@@ -5,31 +5,31 @@ public struct CardInstanceInfo : INetworkSerializable {
     public int costChange;
     
     //Unit Stuff
-    public int bonusStrength;
+    public int bonusPower;
     public int bonusHealth;
     public int bonusRange;
     public int bonusSpeed;
-    public UnitCardStaticKeywords unitStatics;
+    public StaticKeywords staticKeywords;
 
     //
 
-    public CardInstanceInfo (int costChange, int bonusStrength, int bonusHealth, int bonusRange, int bonusSpeed, UnitCardStaticKeywords unitStatics) {
+    public CardInstanceInfo (int costChange, int bonusPower, int bonusHealth, int bonusRange, int bonusSpeed, StaticKeywords staticKeywords) {
         this.costChange = costChange;
-        this.bonusStrength = bonusStrength;
+        this.bonusPower = bonusPower;
         this.bonusHealth = bonusHealth;
         this.bonusRange = bonusRange;
         this.bonusSpeed = bonusSpeed;
-        this.unitStatics = unitStatics;
+        this.staticKeywords = staticKeywords;
     }
 
     public void NetworkSerialize(NetworkSerializer serializer)
     {
         serializer.Serialize(ref costChange);
-        serializer.Serialize(ref bonusStrength);
+        serializer.Serialize(ref bonusPower);
         serializer.Serialize(ref bonusHealth);
         serializer.Serialize(ref bonusRange);
         serializer.Serialize(ref bonusSpeed);
-        serializer.Serialize(ref unitStatics);
+        serializer.Serialize(ref staticKeywords);
     }
 
 }

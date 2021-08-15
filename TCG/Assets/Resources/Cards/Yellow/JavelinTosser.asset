@@ -20,7 +20,7 @@ MonoBehaviour:
   cardArt: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
   cardType: 0
   extraCost: {fileID: 0}
-  strength: 200
+  power: 200
   health: 100
   movementSpeed: 1
   attackRange: 2

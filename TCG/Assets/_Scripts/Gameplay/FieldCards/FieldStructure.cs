@@ -28,6 +28,8 @@ public class FieldStructure : FieldCard
 
         this.cell = cell;
 
+        this.health.Value = structureCard.Health;
+
         Energize ();
 
         SummonStructureClientRPC (card.CardLocation, player.NetworkObjectId, cell.Position);
@@ -90,6 +92,7 @@ public class FieldStructure : FieldCard
     public void UpdateStructure () {
         transform.position = position.Value;
         tallyText.text = tallies.Value.ToString();
+        healthText.text = health.Value.ToString ();
 
         if (IsServer) UpdateStructureClientRPC ();
     }
@@ -97,6 +100,7 @@ public class FieldStructure : FieldCard
     void UpdateStructureClientRPC () {
         transform.position = position.Value;
         tallyText.text = tallies.Value.ToString();
+        healthText.text = health.Value.ToString ();
     }
 
     public override void TurnStart()
@@ -123,7 +127,13 @@ public class FieldStructure : FieldCard
 
     public override void OnRemove()
     {
-        
+        if (!IsServer) return;
+
+        toBeRemoved.Value = true;
+
+        for (int i = 0; i < effectListeners.Length; i++) { //Remove all listener effects
+            effectListeners[i].RemoveListener (player);
+        }
     }
 
     void Update () {
@@ -135,6 +145,49 @@ public class FieldStructure : FieldCard
     public override void Energize()
     {
         currActionPoints.Value = 1;
+    }
+
+    public override Damage TakeDamage(Damage damageInfo)
+    {
+        if (!IsServer) return null;
+
+        health.Value -= damageInfo.DamageAmount;
+        
+        health.Value = Mathf.Clamp (health.Value, 0, structureCard.Health);
+
+        if (health.Value <= 0) {
+            player.StructureToDemolish (this);
+
+            //Call OnDestroy Effects
+            foreach (CardEffectTrigger effect in effectTriggers) {
+                if (effect.Trigger.HasFlag (EffectTrigger.OnDestroy)) {
+                    player.MatchManage.AddEffectToStack (effect.GetCardEffect());
+                }
+            }
+        } else {
+            //Call Damage Survive effects
+            foreach (CardEffectTrigger effect in effectTriggers) {
+                if (effect.Trigger.HasFlag (EffectTrigger.DamageTaken)) {
+                    player.MatchManage.AddEffectToStack (effect.GetCardEffect());
+                }
+            }
+        }
+
+        UpdateStructure ();
+
+        return damageInfo;
+    }
+
+    public override Heal TakeHeal(Heal healInfo)
+    {
+        if (!IsServer) return null;
+
+        health.Value += healInfo.HealAmount;
+        health.Value = Mathf.Clamp (health.Value, 0, structureCard.Health);
+
+        UpdateStructure ();
+
+        return healInfo;
     }
 
     public new CardInstance Card {get {return structureCard;}}

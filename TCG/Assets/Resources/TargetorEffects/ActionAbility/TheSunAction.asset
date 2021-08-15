@@ -16,7 +16,7 @@ MonoBehaviour:
   speed: 0
   targetTypes: 
   description: Tally <b>The Sun</b> 1.
-  manaCost: 2
+  manaCost: 1
   usesActionPoint: 1
   extraCost: {fileID: 0}
   tallyAmount: 1

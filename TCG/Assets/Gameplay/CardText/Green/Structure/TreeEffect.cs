@@ -11,12 +11,12 @@ public class TreeEffect : CardEffectTrigger
     }
 
     bool Condition (IDamageable damageable) {
-        if (damageable is FieldUnit) {
-            FieldUnit unit = damageable as FieldUnit;
-            return fieldCard.Player.FieldUnits.Contains (unit);
-        } else if (damageable is FieldHero) {
-            return (damageable as FieldHero).Equals (fieldCard.Player.FieldHero);
-        }   
+        if (damageable.Equals (fieldCard)) return false;
+
+        if (damageable is FieldCard) {
+            FieldCard card = damageable as FieldCard;
+            return card.Player.Equals (fieldCard.Player);
+        }
 
         return false;
     }

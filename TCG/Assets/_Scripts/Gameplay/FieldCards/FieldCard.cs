@@ -5,10 +5,15 @@ using MLAPI.Messaging;
 using System.Collections.Generic;
 using TMPro;
 
-public abstract class FieldCard : NetworkBehaviour, ITargetable
+public abstract class FieldCard : NetworkBehaviour, ITargetable, IDamageable
 {
     [SerializeField] protected CardInstance card;
     [SerializeField] protected Player player;
+
+    protected NetworkVariableInt health = new NetworkVariableInt(new NetworkVariableSettings{
+        ReadPermission = NetworkVariablePermission.Everyone,
+        WritePermission = NetworkVariablePermission.ServerOnly
+    });
 
     [SerializeField] public NetworkVariableBool toBeRemoved = new NetworkVariableBool (new NetworkVariableSettings {
         ReadPermission = NetworkVariablePermission.Everyone,
@@ -32,6 +37,7 @@ public abstract class FieldCard : NetworkBehaviour, ITargetable
     });
 
     [SerializeField] protected HexagonCell cell;
+    [SerializeField] protected TextMeshPro healthText;
     [SerializeField] protected SpriteRenderer icon;
 
     [SerializeField] protected TextMeshPro tallyText;
@@ -100,4 +106,8 @@ public abstract class FieldCard : NetworkBehaviour, ITargetable
     public abstract void TurnEnd ();
     public abstract void OnRemove ();
 
+    public int Health       {get {return health.Value;}}
+
+    public abstract Damage TakeDamage(Damage damageInfo);
+    public abstract Heal TakeHeal(Heal healInfo);
 }

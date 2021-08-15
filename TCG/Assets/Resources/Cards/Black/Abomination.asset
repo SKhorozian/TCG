@@ -18,13 +18,13 @@ MonoBehaviour:
   color: 2
   cardArt: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
   cardType: 0
+  staticKeywords: 2
   extraCost: {fileID: 11400000, guid: 14d0798f19fbc424cb2a849423060c86, type: 2}
-  strength: 400
+  power: 400
   health: 200
   movementSpeed: 2
   attackRange: 1
   cardEffects: []
   cardEffectListeners: []
-  staticKeywords: 2
   onPlayEffect: {fileID: 0}
   actions: []

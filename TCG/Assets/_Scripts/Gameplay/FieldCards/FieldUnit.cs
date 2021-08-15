@@ -8,37 +8,31 @@ using TMPro;
 using System;
 using MLAPI.Spawning;
 
-public class FieldUnit : FieldCard, IDamageable
+public class FieldUnit : FieldCard
 {
     UnitCardInstance unitCard;
 
-    public NetworkVariableInt strength = new NetworkVariableInt(new NetworkVariableSettings{
+    NetworkVariableInt power = new NetworkVariableInt(new NetworkVariableSettings{
         ReadPermission = NetworkVariablePermission.Everyone,
         WritePermission = NetworkVariablePermission.ServerOnly
     });
 
-    public NetworkVariableInt health = new NetworkVariableInt(new NetworkVariableSettings{
+    NetworkVariableInt movementSpeed = new NetworkVariableInt(new NetworkVariableSettings{
         ReadPermission = NetworkVariablePermission.Everyone,
         WritePermission = NetworkVariablePermission.ServerOnly
     });
 
-    public NetworkVariableInt movementSpeed = new NetworkVariableInt(new NetworkVariableSettings{
+    NetworkVariableInt attackRange = new NetworkVariableInt(new NetworkVariableSettings{
         ReadPermission = NetworkVariablePermission.Everyone,
         WritePermission = NetworkVariablePermission.ServerOnly
     });
 
-    public NetworkVariableInt attackRange = new NetworkVariableInt(new NetworkVariableSettings{
+    NetworkVariableBool hasMoved = new NetworkVariableBool(new NetworkVariableSettings{
         ReadPermission = NetworkVariablePermission.Everyone,
         WritePermission = NetworkVariablePermission.ServerOnly
     });
 
-    public NetworkVariableBool hasMoved = new NetworkVariableBool(new NetworkVariableSettings{
-        ReadPermission = NetworkVariablePermission.Everyone,
-        WritePermission = NetworkVariablePermission.ServerOnly
-    });
-
-    [SerializeField] TextMeshPro strengthText;
-    [SerializeField] TextMeshPro healthText;
+    [SerializeField] TextMeshPro powerText;
     [SerializeField] TextMeshPro actionPointText;
 
 
@@ -61,7 +55,7 @@ public class FieldUnit : FieldCard, IDamageable
         this.cell = cell;
 
         //Initialize stats
-        strength.Value = unitCard.Strength;
+        power.Value = unitCard.Power;
         health.Value = unitCard.Health;
 
         Energize ();
@@ -69,7 +63,7 @@ public class FieldUnit : FieldCard, IDamageable
         movementSpeed.Value = unitCard.MovementSpeed;
         attackRange.Value = unitCard.AttackRange;
 
-        CardInstanceInfo cardInfo = new CardInstanceInfo (card.CostChange, unitCard.StrengthBonus, unitCard.HealthBonus, unitCard.RangeBonus, unitCard.SpeedBonus, 0);
+        CardInstanceInfo cardInfo = new CardInstanceInfo (card.CostChange, unitCard.PowerBonus, unitCard.HealthBonus, unitCard.RangeBonus, unitCard.SpeedBonus, 0);
 
         SummonUnitClientRPC (card.CardLocation, cardInfo, player.NetworkObjectId, cell.Position);
 
@@ -119,7 +113,7 @@ public class FieldUnit : FieldCard, IDamageable
         //Render Card Art on object
         //icon.sprite = card.CardArt;
 
-        strengthText.text = strength.Value.ToString();
+        powerText.text = power.Value.ToString();
         healthText.text = health.Value.ToString();
 
         //Color to show ownership
@@ -161,8 +155,8 @@ public class FieldUnit : FieldCard, IDamageable
     public void Strike (IDamageable target) {
         if (!IsServer) return;
 
-        if (strength.Value <= 0) return; //If this unit has no strength, it cannot strike.
-        Damage damage = new Damage (strength.Value, DamageSource.Attack, player);
+        if (power.Value <= 0) return; //If this unit has no power, it cannot strike.
+        Damage damage = new Damage (power.Value, DamageSource.Attack, player);
         player.DamageTarget (target, damage);
 
         //player.MatchManage.eventTracker.AddEvent (new StrikeEvent (player, player.MatchManage.TurnNumber, unitCard, ));
@@ -170,25 +164,25 @@ public class FieldUnit : FieldCard, IDamageable
 
     public void UpdateUnit () {
         transform.position = position.Value;
-        strengthText.text = strength.Value.ToString();
+        powerText.text = power.Value.ToString();
         healthText.text = health.Value.ToString();
         tallyText.text = tallies.Value.ToString ();
 
-        if (IsServer) UpdateUnitClientRPC (cell.Position, card.CostChange, unitCard.StrengthBonus, unitCard.HealthBonus, unitCard.RangeBonus, unitCard.SpeedBonus, 0);
+        if (IsServer) UpdateUnitClientRPC (cell.Position, card.CostChange, unitCard.PowerBonus, unitCard.HealthBonus, unitCard.RangeBonus, unitCard.SpeedBonus, 0);
     }
     [ClientRpc]
-    void UpdateUnitClientRPC (Vector2 cellPos, int costChange, int bonusStrength, int bonusHealth, int bonusRange, int bonusSpeed, UnitCardStaticKeywords unitStatics) {
+    void UpdateUnitClientRPC (Vector2 cellPos, int costChange, int bonuspower, int bonusHealth, int bonusRange, int bonusSpeed, StaticKeywords staticKeywords) {
         if (!IsClient) return;
         if (player == null) {SynchronizeObjectRequestServerRPC (); return;} //Syncronize the object, then return.
 
         transform.position = position.Value;
-        strengthText.text = strength.Value.ToString();
+        powerText.text = power.Value.ToString();
         healthText.text = health.Value.ToString();
         actionPointText.text = currActionPoints.Value.ToString();
         tallyText.text = tallies.Value.ToString ();
 
         if (unitCard != null)
-            unitCard.SetCardInfo (new CardInstanceInfo (costChange, bonusStrength, bonusHealth, bonusRange, bonusSpeed, unitStatics));
+            unitCard.SetCardInfo (new CardInstanceInfo (costChange, bonuspower, bonusHealth, bonusRange, bonusSpeed, staticKeywords));
 
         if (player.MatchManage.FieldGrid.Cells.TryGetValue (cellPos, out var hexCell))
             cell = hexCell;
@@ -196,7 +190,7 @@ public class FieldUnit : FieldCard, IDamageable
 
     [ServerRpc]
     public void SynchronizeObjectRequestServerRPC () {
-        CardInstanceInfo cardInfo = new CardInstanceInfo (card.CostChange, unitCard.StrengthBonus, unitCard.HealthBonus, unitCard.RangeBonus, unitCard.SpeedBonus, 0);
+        CardInstanceInfo cardInfo = new CardInstanceInfo (card.CostChange, unitCard.PowerBonus, unitCard.HealthBonus, unitCard.RangeBonus, unitCard.SpeedBonus, 0);
         SyncronizeObjectClientRPC (card.CardLocation, cardInfo, player.NetworkObjectId, cell.Position);
     }
     [ClientRpc]
@@ -225,7 +219,7 @@ public class FieldUnit : FieldCard, IDamageable
     public override void Energize () {
         if (!IsServer) return;
 
-        currActionPoints.Value = unitCard.UnitCard.StaticKeywords.HasFlag (UnitCardStaticKeywords.DoubleAction) ? 2: 1;
+        currActionPoints.Value = unitCard.UnitCard.StaticKeywords.HasFlag (StaticKeywords.DoubleAction) ? 2: 1;
         hasMoved.Value = false;
     }
 
@@ -271,12 +265,12 @@ public class FieldUnit : FieldCard, IDamageable
         }
 
         //If this is Decaying, kill it at the end of round.
-        if (unitCard.UnitCard.StaticKeywords.HasFlag (UnitCardStaticKeywords.Decaying)) player.UnitToDie (this);
+        if (unitCard.UnitCard.StaticKeywords.HasFlag (StaticKeywords.Decaying)) player.UnitToDie (this);
 
     }
 
-    public void GiveStats (int strength, int health, int range, int speed) {
-        this.strength.Value += strength;
+    public void GiveStats (int power, int health, int range, int speed) {
+        this.power.Value += power;
         this.health.Value += health;
         this.attackRange.Value += range;
         this.movementSpeed.Value += speed;
@@ -289,7 +283,26 @@ public class FieldUnit : FieldCard, IDamageable
         }
     }
 
-    public Damage TakeDamage(Damage damageInfo)
+    public override void OnRemove () {
+        if (!IsServer) return;
+
+        toBeRemoved.Value = true;
+
+        for (int i = 0; i < effectListeners.Length; i++) { //Remove all listener effects
+            effectListeners[i].RemoveListener (player);
+        }
+
+        //Remove all non-permanent Effects
+        foreach (StatusEffect status in unitCard.StatusEffects) {
+            if (status.Duration != StatusDuration.Permanent) {
+                unitCard.RemoveStatusEffect (status);
+            }
+        }
+        unitCard.StatusEffects.RemoveAll (status => status.Duration == StatusDuration.TurnEnd || status.Duration == StatusDuration.TurnStart);
+
+    }
+
+    public override Damage TakeDamage(Damage damageInfo)
     {
         if (!IsServer) return null;
 
@@ -315,43 +328,29 @@ public class FieldUnit : FieldCard, IDamageable
             }
         }
 
-        UpdateUnitClientRPC (cell.Position, card.CostChange, unitCard.StrengthBonus, unitCard.HealthBonus, unitCard.RangeBonus, unitCard.SpeedBonus, 0);
+        UpdateUnit ();
 
         return damageInfo;
     }
 
-    public override void OnRemove () {
-        if (!IsServer) return;
-
-        toBeRemoved.Value = true;
-
-        for (int i = 0; i < effectListeners.Length; i++) { //Remove all listener effects
-            effectListeners[i].RemoveListener (player);
-        }
-
-        //Remove all non-permanent Effects
-        foreach (StatusEffect status in unitCard.StatusEffects) {
-            if (status.Duration != StatusDuration.Permanent) {
-                unitCard.RemoveStatusEffect (status);
-            }
-        }
-        unitCard.StatusEffects.RemoveAll (status => status.Duration == StatusDuration.TurnEnd || status.Duration == StatusDuration.TurnStart);
-
-    }
-
-    public Heal TakeHeal(Heal healInfo)
+    public override Heal TakeHeal(Heal healInfo)
     {
         if (!IsServer) return null;
 
         health.Value += healInfo.HealAmount;
         health.Value = Mathf.Clamp (health.Value, 0, unitCard.Health);
 
-        UpdateUnitClientRPC (cell.Position, card.CostChange, unitCard.StrengthBonus, unitCard.HealthBonus, unitCard.RangeBonus, unitCard.SpeedBonus, 0);
+        UpdateUnit ();
 
         return healInfo;
     }
 
     public new CardInstance Card {get {return unitCard;}}
     public UnitCardInstance UnitsCard {get {return unitCard;}}
+
+    public int Power     {get {return power.Value;}}
+    public int Range     {get {return attackRange.Value;}}
+    public int Speed     {get {return movementSpeed.Value;}}
+    public bool HasMoved {get {return hasMoved.Value;} set {hasMoved.Value = true;}}
 
 }

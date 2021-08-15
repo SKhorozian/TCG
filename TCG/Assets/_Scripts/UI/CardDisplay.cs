@@ -66,7 +66,7 @@ public class CardDisplay : MonoBehaviour
                         unitStuff.SetActive (true);
 
                         UnitCardInstance unitCard = card as UnitCardInstance;
-                        strength.text = unitCard.Strength.ToString();
+                        strength.text = unitCard.Power.ToString();
                         health.text = unitCard.Health.ToString();   
                         range.text = unitCard.AttackRange.ToString();
                         speed.text = unitCard.MovementSpeed.ToString();

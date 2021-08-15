@@ -7,7 +7,7 @@ using UnityEngine;
 public class UnitCard : Card
 {
     [Space (20)]
-    [SerializeField] int strength;
+    [SerializeField] int power;
     [SerializeField] int health;
     [SerializeField] int movementSpeed;
     [SerializeField] int attackRange;
@@ -16,10 +16,6 @@ public class UnitCard : Card
     //Card Effects
     [SerializeField] CardEffectTrigger[] cardEffects;
     [SerializeField] CardEffectListener[] cardEffectListeners;
- 
-    [Space (20)]
-    //Keywords
-    [SerializeField] UnitCardStaticKeywords staticKeywords;
 
     [Space (20)]
     //Play Effect
@@ -30,11 +26,10 @@ public class UnitCard : Card
     [SerializeField] List<ActionAbility> actions;
     
 
-    public int Strength                             {get {return strength;}}
+    public int Power                                {get {return power;}}
     public int Health                               {get {return health;}}
     public int MovementSpeed                        {get {return movementSpeed;}}
     public int AttackRange                          {get {return attackRange;}}
-    public UnitCardStaticKeywords StaticKeywords    {get {return staticKeywords;}}
     public CardEffectTrigger[] CardEffects          {get {return cardEffects;}}
     public CardEffectListener[] CardEffectListeners {get {return cardEffectListeners;}}
     public PlayAbility OnPlayEffect                 {get {return onPlayEffect;}}

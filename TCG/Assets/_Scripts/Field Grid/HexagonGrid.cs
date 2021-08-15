@@ -11,7 +11,6 @@ public class HexagonGrid : MonoBehaviour
 
     Dictionary<Vector2, HexagonCell> cells = new Dictionary<Vector2, HexagonCell>();
 
-
     public void InitializeGrid() {
 
         for (int z = 0; z < height; z++) {
@@ -81,14 +80,7 @@ public class HexagonGrid : MonoBehaviour
         cell.transform.localPosition = position;
         cell.Position = cellPos;
     }
-
-
-    // Start is called before the first frame update
-    void Start()
-    {
-
-    }
-
+    
     // Update is called once per frame
     void Update()
     {
