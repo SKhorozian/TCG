@@ -14,11 +14,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cardName: Imperial Soldier
   cost: 1
-  description: 
+  description: 'Domination: This has +100 <sprite name="str"> +100 <sprite name="hp">.'
   color: 0
   cardArt: {fileID: 0}
   cardType: 0
-  cardTribe: 4
+  cardTribe: 0
+  cardRarity: 0
   staticKeywords: 0
   extraCost: {fileID: 0}
   power: 200

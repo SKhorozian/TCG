@@ -19,5 +19,8 @@ MonoBehaviour:
   color: 4
   cardArt: {fileID: 0}
   cardType: 1
+  cardTribe: 0
+  cardRarity: 2
+  staticKeywords: 0
   extraCost: {fileID: 0}
   spell: {fileID: 11400000, guid: 483319ed69ea95247bc5432ddca39e3c, type: 2}

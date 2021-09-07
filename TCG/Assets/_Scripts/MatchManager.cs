@@ -92,6 +92,18 @@ public class MatchManager : NetworkBehaviour
         fieldGrid = Instantiate (fieldGridPrefab).GetComponent<HexagonGrid> ();
         fieldGrid.InitializeGrid();
 
+        //Each player conquer their initial tiles.
+        HexagonCell cCell;
+        if (fieldGrid.Cells.TryGetValue (new Vector2 (3, 13), out cCell)) {cCell.ConquerHex (CardColor.Colorless, player1);}
+        if (fieldGrid.Cells.TryGetValue (new Vector2 (2, 12), out cCell)) {cCell.ConquerHex (CardColor.Colorless, player1);}
+        if (fieldGrid.Cells.TryGetValue (new Vector2 (3, 11), out cCell)) {cCell.ConquerHex (CardColor.Colorless, player1);}
+        if (fieldGrid.Cells.TryGetValue (new Vector2 (4, 12), out cCell)) {cCell.ConquerHex (CardColor.Colorless, player1);}
+
+        if (fieldGrid.Cells.TryGetValue (new Vector2 (3, 1), out cCell)) {cCell.ConquerHex (CardColor.Colorless, player2);}
+        if (fieldGrid.Cells.TryGetValue (new Vector2 (2, 2), out cCell)) {cCell.ConquerHex (CardColor.Colorless, player2);}
+        if (fieldGrid.Cells.TryGetValue (new Vector2 (3, 3), out cCell)) {cCell.ConquerHex (CardColor.Colorless, player2);}
+        if (fieldGrid.Cells.TryGetValue (new Vector2 (4, 2), out cCell)) {cCell.ConquerHex (CardColor.Colorless, player2);}
+
         if (IsServer) SummonHeros (); 
     }
 
@@ -410,9 +422,9 @@ public class MatchManager : NetworkBehaviour
     public bool CheckCanAttack (FieldUnit attacker, FieldUnit target) { //Returns true if this card fits all the conditions to attack a target
         if (attacker.Player.FieldUnits.Contains (target)) return false; //Return if target unit is a friendly.
         //Check for Menacing keyword.
-        if (target.UnitsCard.UnitCard.StaticKeywords.HasFlag (StaticKeywords.Menacing) && attacker.Power < target.Power) return false;
+        if (target.UnitsCard.UnitCard.StaticKeywords.Contains (StaticKeyword.Menacing) && attacker.Power < target.Power) return false;
         //Check for Stealth keyword.
-        if (target.UnitsCard.UnitCard.StaticKeywords.HasFlag (StaticKeywords.Stealth) && !(attacker.UnitsCard.UnitCard.StaticKeywords.HasFlag (StaticKeywords.Scout) || attacker.UnitsCard.UnitCard.StaticKeywords.HasFlag (StaticKeywords.Stealth))) return false;
+        if (target.UnitsCard.UnitCard.StaticKeywords.Contains (StaticKeyword.Stealth) && !(attacker.UnitsCard.UnitCard.StaticKeywords.Contains (StaticKeyword.Scout) || attacker.UnitsCard.UnitCard.StaticKeywords.Contains (StaticKeyword.Stealth))) return false;
 
         return true;
     }
@@ -557,6 +569,9 @@ public class MatchManager : NetworkBehaviour
 
         //TODO end turn stuff here
         playerTurn.EndTurn (turnNumber.Value);
+
+        Debug.Log (effectStack.Count);
+        CallEffects ();
     }
 
     void StartTurn () {
@@ -565,6 +580,9 @@ public class MatchManager : NetworkBehaviour
         turnNumber.Value++;
 
         playerTurn.StartTurn (turnNumber.Value);
+
+        Debug.Log (effectStack.Count);
+        CallEffects ();
     }
 
     public bool LocalPlayerTurn {

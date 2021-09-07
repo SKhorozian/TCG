@@ -232,7 +232,7 @@ public class Player : NetworkBehaviour
             if (playerHand[i] is UnitCardInstance) {
                 UnitCardInstance unitCardInstance = playerHand[i] as UnitCardInstance;
 
-                cardInfos[i] = new CardInstanceInfo (playerHand[i].CostChange, unitCardInstance.PowerBonus, unitCardInstance.HealthBonus, unitCardInstance.RangeBonus, unitCardInstance.SpeedBonus, 0);
+                cardInfos[i] = new CardInstanceInfo (playerHand[i].CostChange, unitCardInstance.PowerBonus, unitCardInstance.HealthBonus, unitCardInstance.RangeBonus, unitCardInstance.SpeedBonus, new StaticKeyword[0]);
             }
         }
 
@@ -413,9 +413,6 @@ public class Player : NetworkBehaviour
         }
 
         playerHero.TurnStart ();
-
-        matchManager.CallEffects ();
-
     }
 
 
@@ -487,6 +484,9 @@ public class Player : NetworkBehaviour
 
         fieldCardDestroyEvent?.Invoke (unit);
 
+        //Trigger Scavenger
+        ScavengerStatic.Trigger (matchManager);
+
         matchManager.AddEffectToStack(new UnitDeath (unit));
     }
 
@@ -496,12 +496,10 @@ public class Player : NetworkBehaviour
         if (!controledUnits.Contains (unit)) return;
 
         graveyard.Add (unit.UnitsCard);
-
         FieldUnits.Remove (unit);
 
         unit.NetworkObject.Despawn (true);
         unit.Cell.FieldCard = null;
-
     }
 
     #endregion 

@@ -64,21 +64,29 @@ MonoBehaviour:
   startDeck:
     hero: {fileID: 11400000, guid: 1d21d192733755c47bca7aa700162953, type: 2}
     deck:
-    - card: {fileID: 11400000, guid: 86675df5381bccb4085263a2a83be2db, type: 2}
+    - card: {fileID: 11400000, guid: 986f5d4cd712be343bc8e8b9cad6f7fb, type: 2}
       copies: 3
-    - card: {fileID: 11400000, guid: f8c319a3befbf9b4d8ce2243825140ef, type: 2}
+    - card: {fileID: 11400000, guid: 768c515a8c1b8794fa6414ae1a50e7ad, type: 2}
       copies: 3
-    - card: {fileID: 11400000, guid: 323fb40fb6650ba4da2b2b155d8888f5, type: 2}
+    - card: {fileID: 11400000, guid: 1f2bda2a11780c54eb9f7140e8f32ccd, type: 2}
+      copies: 3
+    - card: {fileID: 11400000, guid: aeb62965e19183e45ba5fd61063d565b, type: 2}
+      copies: 3
+    - card: {fileID: 11400000, guid: 4f8e2eb53497fdd4f93113e95e825568, type: 2}
+      copies: 3
+    - card: {fileID: 11400000, guid: 478af43053d2c3c49863b21d6b980e0c, type: 2}
+      copies: 3
+    - card: {fileID: 11400000, guid: a0796825ca2e0b64baec404aa939708e, type: 2}
+      copies: 3
+    - card: {fileID: 11400000, guid: e94920fbe9430f542b8b0c6bcb311967, type: 2}
+      copies: 3
+    - card: {fileID: 11400000, guid: dd9fb0dd363a0c1419b0ed3a0f858b65, type: 2}
+      copies: 3
+    - card: {fileID: 11400000, guid: 7ecc22de103aa784ebd0f1a065ac3c47, type: 2}
+      copies: 3
+    - card: {fileID: 11400000, guid: c1da1338cbe2cc44abb5f40975e82994, type: 2}
       copies: 3
     - card: {fileID: 11400000, guid: 84257c174fdc8874eb27432d629418b1, type: 2}
-      copies: 3
-    - card: {fileID: 11400000, guid: 2dd25e381ef3a7142873031536fcd193, type: 2}
-      copies: 3
-    - card: {fileID: 11400000, guid: 465775347a2d488418f8164f799cb765, type: 2}
-      copies: 3
-    - card: {fileID: 11400000, guid: 912474eb2ec21714c960bd7d3f687f95, type: 2}
-      copies: 3
-    - card: {fileID: 11400000, guid: dc60e7dcaea6e0a4c96a0347de8bff8e, type: 2}
       copies: 3
   playerHero: {fileID: 0}
   controledUnits: []

@@ -19,7 +19,8 @@ MonoBehaviour:
   cardArt: {fileID: 0}
   cardType: 0
   cardTribe: 0
-  staticKeywords: 1
+  cardRarity: 0
+  staticKeywords: 00000000
   extraCost: {fileID: 0}
   power: 100
   health: 100

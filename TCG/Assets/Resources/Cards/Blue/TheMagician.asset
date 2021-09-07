@@ -22,6 +22,7 @@ MonoBehaviour:
   cardArt: {fileID: 0}
   cardType: 0
   cardTribe: 16
+  cardRarity: 2
   staticKeywords: 64
   extraCost: {fileID: 0}
   power: 100

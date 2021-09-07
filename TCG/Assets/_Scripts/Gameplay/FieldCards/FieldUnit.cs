@@ -63,7 +63,7 @@ public class FieldUnit : FieldCard
         movementSpeed.Value = unitCard.MovementSpeed;
         attackRange.Value = unitCard.AttackRange;
 
-        CardInstanceInfo cardInfo = new CardInstanceInfo (card.CostChange, unitCard.PowerBonus, unitCard.HealthBonus, unitCard.RangeBonus, unitCard.SpeedBonus, 0);
+        CardInstanceInfo cardInfo = new CardInstanceInfo (card.CostChange, unitCard.PowerBonus, unitCard.HealthBonus, unitCard.RangeBonus, unitCard.SpeedBonus, new StaticKeyword[0]);
 
         SummonUnitClientRPC (card.CardLocation, cardInfo, player.NetworkObjectId, cell.Position);
 
@@ -168,10 +168,10 @@ public class FieldUnit : FieldCard
         healthText.text = health.Value.ToString();
         tallyText.text = tallies.Value.ToString ();
 
-        if (IsServer) UpdateUnitClientRPC (cell.Position, card.CostChange, unitCard.PowerBonus, unitCard.HealthBonus, unitCard.RangeBonus, unitCard.SpeedBonus, 0);
+        if (IsServer) UpdateUnitClientRPC (cell.Position, card.CostChange, unitCard.PowerBonus, unitCard.HealthBonus, unitCard.RangeBonus, unitCard.SpeedBonus, new StaticKeyword[0]);
     }
     [ClientRpc]
-    void UpdateUnitClientRPC (Vector2 cellPos, int costChange, int bonuspower, int bonusHealth, int bonusRange, int bonusSpeed, StaticKeywords staticKeywords) {
+    void UpdateUnitClientRPC (Vector2 cellPos, int costChange, int bonuspower, int bonusHealth, int bonusRange, int bonusSpeed, StaticKeyword[] staticKeywords) {
         if (!IsClient) return;
         if (player == null) {SynchronizeObjectRequestServerRPC (); return;} //Syncronize the object, then return.
 
@@ -190,7 +190,7 @@ public class FieldUnit : FieldCard
 
     [ServerRpc]
     public void SynchronizeObjectRequestServerRPC () {
-        CardInstanceInfo cardInfo = new CardInstanceInfo (card.CostChange, unitCard.PowerBonus, unitCard.HealthBonus, unitCard.RangeBonus, unitCard.SpeedBonus, 0);
+        CardInstanceInfo cardInfo = new CardInstanceInfo (card.CostChange, unitCard.PowerBonus, unitCard.HealthBonus, unitCard.RangeBonus, unitCard.SpeedBonus, new StaticKeyword[0]);
         SyncronizeObjectClientRPC (card.CardLocation, cardInfo, player.NetworkObjectId, cell.Position);
     }
     [ClientRpc]
@@ -219,13 +219,16 @@ public class FieldUnit : FieldCard
     public override void Energize () {
         if (!IsServer) return;
 
-        currActionPoints.Value = unitCard.UnitCard.StaticKeywords.HasFlag (StaticKeywords.DoubleAction) ? 2: 1;
+        currActionPoints.Value = unitCard.UnitCard.StaticKeywords.Contains (StaticKeyword.DoubleAction) ? 2: 1;
         hasMoved.Value = false;
     }
 
     public override void TurnStart()
     {
         if (!IsServer) return;
+
+        //If this is Decaying, kill it at the start of round.
+        if (unitCard.UnitCard.StaticKeywords.Contains (StaticKeyword.Decaying)) player.UnitToDie (this);
 
         Energize ();
     
@@ -263,10 +266,6 @@ public class FieldUnit : FieldCard
                 player.MatchManage.AddEffectToStack (effect.GetCardEffect());
             }
         }
-
-        //If this is Decaying, kill it at the end of round.
-        if (unitCard.UnitCard.StaticKeywords.HasFlag (StaticKeywords.Decaying)) player.UnitToDie (this);
-
     }
 
     public void GiveStats (int power, int health, int range, int speed) {

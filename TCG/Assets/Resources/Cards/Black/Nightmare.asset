@@ -10,13 +10,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 94dd13c0caf2dad43a67c5390b0a842a, type: 3}
-  m_Name: Insight
+  m_Name: Nightmare
   m_EditorClassIdentifier: 
-  cardName: Insight
-  cost: 3
-  description: Draw 2.
-  color: 1
+  cardName: NIghtmare
+  cost: 1
+  description: Deal 100 damage to an enemy unit. If this kills it, give all enemies
+    -50 <sprite name="str">.
+  color: 2
   cardArt: {fileID: 0}
   cardType: 1
+  cardTribe: 0
+  cardRarity: 0
+  staticKeywords: 
   extraCost: {fileID: 0}
-  spell: {fileID: 11400000, guid: f6c8ed5ef3cdb194887b3d6d7afda9e1, type: 2}
+  spell: {fileID: 0}

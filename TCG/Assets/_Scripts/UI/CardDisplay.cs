@@ -30,7 +30,6 @@ public class CardDisplay : MonoBehaviour
     [SerializeField] TextMeshProUGUI health;
 
     [SerializeField] TextMeshProUGUI range;
-    [SerializeField] TextMeshProUGUI speed;
 
 
     // Start is called before the first frame update
@@ -40,7 +39,7 @@ public class CardDisplay : MonoBehaviour
     }
 
     void Update () {
-        textBoxElement.preferredHeight = 20 + description.preferredHeight;
+        textBoxElement.preferredHeight = 30 + description.preferredHeight;
     }
 
     void UpdateCard () {
@@ -50,10 +49,12 @@ public class CardDisplay : MonoBehaviour
 
             cost.text = card.Cost.ToString();
 
-            if (card.Description.Length > 0) {
+            if (true) {
                 textBox.gameObject.SetActive (true);
-                description.SetText (card.Description);
-                textBoxElement.preferredHeight = 5 + description.preferredHeight;
+
+                string staticKeywords = GetCardStatics ();
+
+                description.SetText (staticKeywords + card.Description);
             } else {
                 textBox.gameObject.SetActive (false);
                 description.SetText ("");
@@ -69,7 +70,6 @@ public class CardDisplay : MonoBehaviour
                         strength.text = unitCard.Power.ToString();
                         health.text = unitCard.Health.ToString();   
                         range.text = unitCard.AttackRange.ToString();
-                        speed.text = unitCard.MovementSpeed.ToString();
                     }
                     break;
                 case CardType.Structure:
@@ -113,6 +113,20 @@ public class CardDisplay : MonoBehaviour
             }
 
         }
+    }
+
+    public string GetCardStatics () {
+        string staticKeywords = "<b>";
+
+        foreach (StaticKeyword keyword in card.Card.StaticKeywords) {
+            //"<sprite name="+keyword.ToString()+"> " + 
+            //Use above once u have an icon for each static keyword.
+            staticKeywords += keyword.ToString () + ", ";
+        }
+
+        staticKeywords += "</b>\n";
+
+        return staticKeywords;
     }
 
     public void SetCard (CardInstance card) {

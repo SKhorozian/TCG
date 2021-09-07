@@ -19,6 +19,9 @@ MonoBehaviour:
   color: 4
   cardArt: {fileID: 0}
   cardType: 0
+  cardTribe: 0
+  cardRarity: 1
+  staticKeywords: 
   extraCost: {fileID: 0}
   power: 300
   health: 300
@@ -26,7 +29,6 @@ MonoBehaviour:
   attackRange: 1
   cardEffects: []
   cardEffectListeners: []
-  staticKeywords: 0
   onPlayEffect: {fileID: 0}
   actions:
-  - {fileID: 11400000, guid: a3a66d043d8376f469ee0f97c27a9828, type: 2}
+  - {fileID: 0}

@@ -9,11 +9,11 @@ public struct CardInstanceInfo : INetworkSerializable {
     public int bonusHealth;
     public int bonusRange;
     public int bonusSpeed;
-    public StaticKeywords staticKeywords;
+    public StaticKeyword[] staticKeywords;
 
     //
 
-    public CardInstanceInfo (int costChange, int bonusPower, int bonusHealth, int bonusRange, int bonusSpeed, StaticKeywords staticKeywords) {
+    public CardInstanceInfo (int costChange, int bonusPower, int bonusHealth, int bonusRange, int bonusSpeed, StaticKeyword[] staticKeywords) {
         this.costChange = costChange;
         this.bonusPower = bonusPower;
         this.bonusHealth = bonusHealth;

@@ -14,13 +14,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cardName: Woeful Prey
   cost: 2
-  description: '<sprite name="entrance"> or Epitaph: Summon a <b>Sacrificial Tribute</b>
-    nearby.'
+  description: '<sprite name="entrance"> or Epitaph: Summon a <b>Lamb</b> nearby.'
   color: 2
   cardArt: {fileID: 0}
   cardType: 0
   cardTribe: 0
-  staticKeywords: 0
+  cardRarity: 0
+  staticKeywords: 
   extraCost: {fileID: 0}
   power: 100
   health: 100

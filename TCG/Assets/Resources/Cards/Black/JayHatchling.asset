@@ -20,6 +20,7 @@ MonoBehaviour:
   cardArt: {fileID: 0}
   cardType: 0
   cardTribe: 1
+  cardRarity: 1
   staticKeywords: 0
   extraCost: {fileID: 0}
   power: 0

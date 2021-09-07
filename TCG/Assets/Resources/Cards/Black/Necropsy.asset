@@ -19,6 +19,7 @@ MonoBehaviour:
   cardArt: {fileID: 0}
   cardType: 1
   cardTribe: 0
-  staticKeywords: 0
+  cardRarity: 0
+  staticKeywords: 
   extraCost: {fileID: 0}
   spell: {fileID: 0}
